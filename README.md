@@ -1,6 +1,6 @@
 # XPower Token UI
 
-The XPower token (XPOW) user interface allows you to *mine* for random nonces and to then *mint* for the corresponding amounts. It runs in a modern browser and expects the [Metamask] extension (or add-on) to be available.
+The XPower user interface allows you to *mine* for random nonces and to then *mint* for the corresponding amounts. It runs in a modern browser and expects the [Metamask] extension (or add-on) to be available.
 
 [Metamask]: https://metamask.io/
 
@@ -69,7 +69,7 @@ speed | number | 50 | speed percentage (w.r.t a single browser tab) between 0 an
 
 ### Examples
 
-To ignore (frequent & low-value) nonces with an amount less than 5 CPU tokens and mine with a speed of 100% use:
+To ignore (frequent & low-value) nonces with an amount less than 5 PARA tokens and mine with a speed of 100% use:
 
 ```
 http://localhost:3000?min-level=5&speed=100
@@ -99,7 +99,7 @@ To log nonces to console use (may impact mining performance):
 http://localhost:3000?logger=true
 ```
 
-> **Note:** All non-minted nonces are cleared at the start of each interval (i.e. every hour), independent of the flags above! Further, (reloaded) nonces cannot be minted once the interval (i.e. hour), at which they have been mined, expires.
+> **Note:** All non-minted nonces are cleared at the start of each interval (i.e. every hour), independent of the flags above! Further, (reloaded) nonces cannot be minted once the interval (i.e. hour) &mdash; at which they have been mined &mdash; expires.
 
 ## Copyright
 

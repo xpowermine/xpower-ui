@@ -221,31 +221,33 @@ function amount(
     token: Token, level: Level
 ) {
     const n_difficulty = difficulty({
-        /** @todo: adjust timestamp w.r.t. deployment */
-        timestamp: Date.parse('2022-03-15T00:00:00.000Z')
+        timestamp: Date.parse('2022-02-22T22:22:22.000Z')
     });
     const n_level = BigInt(level);
+    const n_threshold =
+        n_level > n_difficulty + 1n
+            ? n_level : n_difficulty + 1n;
     switch (token) {
-        case Token.ASIC:
+        case Token.QRSH:
             return (hash: string) => {
                 const lhs_zeros = zeros(hash);
-                if (lhs_zeros >= n_level && lhs_zeros > n_difficulty) {
+                if (lhs_zeros >= n_threshold) {
                     return 16n ** (lhs_zeros - n_difficulty) - 1n;
                 }
                 return 0n;
             };
-        case Token.GPU:
+        case Token.AQCH:
             return (hash: string) => {
                 const lhs_zeros = zeros(hash);
-                if (lhs_zeros >= n_level && lhs_zeros > n_difficulty) {
+                if (lhs_zeros >= n_threshold) {
                     return 2n ** (lhs_zeros - n_difficulty) - 1n;
                 }
                 return 0n;
             };
-        case Token.CPU:
+        case Token.PARA:
             return (hash: string) => {
                 const lhs_zeros = zeros(hash);
-                if (lhs_zeros >= n_level && lhs_zeros > n_difficulty) {
+                if (lhs_zeros >= n_threshold) {
                     return (lhs_zeros - n_difficulty);
                 }
                 return 0n;
@@ -297,7 +299,7 @@ function abi_encoder(
             const template = abi.encode([
                 'string', 'address', 'uint256', 'bytes32', 'uint256'
             ], [
-                'XPOW.' + token,
+                token,
                 x40(address),
                 interval,
                 x64(block_hash),

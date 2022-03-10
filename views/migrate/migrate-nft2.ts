@@ -1,5 +1,5 @@
 /* eslint @typescript-eslint/no-explicit-any: [off] */
-import './migrate-nft.scss';
+import './migrate-nft2.scss';
 
 import { Blockchain } from '../../source/blockchain';
 import { BigNumber } from 'ethers';
@@ -11,26 +11,26 @@ import { Years } from '../../source/years';
 $(window).on('load', function enableAllowanceButton() {
     if (Blockchain.isInstalled()) {
         Blockchain.onConnect(() => {
-            const $approve = $('.approve-allowance-nft');
+            const $approve = $('.approve-allowance-nft2');
             $approve.prop('disabled', false);
         });
     }
 });
-$('button.approve-allowance-nft').on('click', async function approveTokens(ev) {
+$('button.approve-allowance-nft2').on('click', async function approveTokens(ev) {
     const $approve = $(ev.target);
     if ($approve.hasClass('para')) {
         await approve(Token.PARA, {
-            $approve, $execute: $('.execute-migration-nft.para')
+            $approve, $execute: $('.execute-migration-nft2.para')
         });
     }
     if ($approve.hasClass('aqch')) {
         await approve(Token.AQCH, {
-            $approve, $execute: $('.execute-migration-nft.aqch')
+            $approve, $execute: $('.execute-migration-nft2.aqch')
         });
     }
     if ($approve.hasClass('qrsh')) {
         await approve(Token.QRSH, {
-            $approve, $execute: $('.execute-migration-nft.qrsh')
+            $approve, $execute: $('.execute-migration-nft2.qrsh')
         });
     }
 });
@@ -41,12 +41,12 @@ async function approve(token: Token, { $approve, $execute }: {
     if (!address) {
         throw new Error('missing selected-address');
     }
-    const v2_xpower = XPowerNftFactory({ token, version: 'v2' });
-    const v3_xpower = XPowerNftFactory({ token, version: 'v3a' });
-    const v2_approved = await v2_xpower.isApprovedForAll(
-        x40(address), v3_xpower.address
+    const v3a_xpower = XPowerNftFactory({ token, version: 'v3a' });
+    const v3b_xpower = XPowerNftFactory({ token, version: 'v3b' });
+    const v3a_approved = await v3a_xpower.isApprovedForAll(
+        x40(address), v3b_xpower.address
     );
-    if (v2_approved) {
+    if (v3a_approved) {
         const $alert = $(alert(`NFTs have already been approved for; you can migrate now.`, Alert.info));
         $alert.insertAfter($approve.parent('div'));
         $execute.prop('disabled', false);
@@ -54,8 +54,8 @@ async function approve(token: Token, { $approve, $execute }: {
     }
     try {
         $(`.alert`).remove();
-        await v2_xpower.setApprovalForAll(
-            v3_xpower.address, true
+        await v3a_xpower.setApprovalForAll(
+            v3b_xpower.address, true
         );
         const $alert = $(alert(`NFTs have successfully been approved for; you can migrate now.`, Alert.success));
         $alert.insertAfter($approve.parent('div'));
@@ -76,7 +76,7 @@ async function approve(token: Token, { $approve, $execute }: {
         return;
     }
 }
-$('button.execute-migration-nft').on('click', async function migrateTokens(ev) {
+$('button.execute-migration-nft2').on('click', async function migrateTokens(ev) {
     const $execute = $(ev.target);
     if ($execute.hasClass('para')) {
         await migrate(Token.PARA, { $execute });
@@ -95,12 +95,12 @@ async function migrate(token: Token, { $execute }: {
     if (!address) {
         throw new Error('missing selected-address');
     }
-    const v2_xpower = XPowerNftFactory({ token, version: 'v2' });
-    const v3_xpower = XPowerNftFactory({ token, version: 'v3a' });
-    const v2_approved = await v2_xpower.isApprovedForAll(
-        x40(address), v3_xpower.address
+    const v3a_xpower = XPowerNftFactory({ token, version: 'v3a' });
+    const v3b_xpower = XPowerNftFactory({ token, version: 'v3b' });
+    const v3a_approved = await v3a_xpower.isApprovedForAll(
+        x40(address), v3b_xpower.address
     );
-    if (v2_approved === false) {
+    if (v3a_approved === false) {
         const $alert = $(alert(`Old NFTs have not been approved for! Did your approval transaction actually get confirmed? Wait a little bit and then retry.`, Alert.warning));
         $alert.insertAfter($execute.parent('div'));
         return;
@@ -112,20 +112,24 @@ async function migrate(token: Token, { $execute }: {
     const accounts = ids.map(() => {
         return x40(address);
     });
-    const v2_balances: BigNumber[] = await v2_xpower.balanceOfBatch(
+    const v3a_balances: BigNumber[] = await v3a_xpower.balanceOfBatch(
         accounts, ids
     );
-    console.debug('[v2:balances]', v2_balances.map((b) => b.toString()));
-    const v2_zero = v2_balances.reduce((acc, b) => acc && b.isZero(), true);
-    if (v2_zero) {
+    console.debug('[v3a:balances]', v3a_balances.map((b) => b.toString()));
+    const v3a_zero = v3a_balances.reduce((acc, b) => acc && b.isZero(), true);
+    if (v3a_zero) {
         const $alert = $(alert(`Your old NFT balances are zero; nothing to migrate here. Do you have the correct wallet address selected?`, Alert.warning));
         $alert.insertAfter($execute.parent('div'));
         return;
     }
-    const nz = filter(ids, v2_balances, { zero: false });
+    const nz = filter(ids, v3a_balances, {
+        zero: false
+    });
     try {
         $(`.alert`).remove();
-        await v3_xpower.migrateBatch(nz.ids, nz.balances);
+        await v3b_xpower.migrateBatch(
+            nz.ids, nz.balances
+        );
         const $alert = $(alert(`Your old NFTs have successfully been migrated! ;)`, Alert.success, {
             id: 'success'
         }));
@@ -140,6 +144,65 @@ async function migrate(token: Token, { $execute }: {
             } else {
                 const $alert = $(alert(ex.message, Alert.warning));
                 $alert.insertAfter($execute.parent('div'));
+            }
+        }
+        console.error(ex);
+        return;
+    }
+}
+$('button.burn-empty-nft2').on('click', async function burnEmpty(ev) {
+    const $burn = $(ev.target);
+    if ($burn.hasClass('para')) {
+        await burn(Token.PARA, { $burn });
+    }
+    if ($burn.hasClass('aqch')) {
+        await burn(Token.AQCH, { $burn });
+    }
+    if ($burn.hasClass('qrsh')) {
+        await burn(Token.QRSH, { $burn });
+    }
+});
+async function burn(token: Token, { $burn }: {
+    $burn: JQuery<HTMLElement>
+}) {
+    const address = await Blockchain.selectedAddress;
+    if (!address) {
+        throw new Error('missing selected-address');
+    }
+    const v3a_xpower = XPowerNftFactory({ token, version: 'v3a' });
+    const ids = Nft.coreIds({
+        issues: Array.from(Years()),
+        levels: Array.from(NftLevels())
+    });
+    const accounts = ids.map(() => {
+        return x40(address);
+    });
+    const v3a_balances: BigNumber[] = await v3a_xpower.balanceOfBatch(
+        accounts, ids
+    );
+    console.debug('[v3a:balances]', v3a_balances.map((b) => b.toString()));
+    const zz = filter(ids, v3a_balances, {
+        zero: true
+    });
+    try {
+        $(`.alert`).remove();
+        await v3a_xpower.burnBatch(
+            x40(address), zz.ids, zz.balances
+        );
+        const $alert = $(alert(`Your empty NFTs have successfully been burned! ;)`, Alert.success, {
+            id: 'success'
+        }));
+        $alert.insertAfter($burn.parent('div'));
+        return;
+    } catch (ex: any) {
+        if (ex.message) {
+            if (ex.data && ex.data.message) {
+                const message = `${ex.message} [${ex.data.message}]`;
+                const $alert = $(alert(message, Alert.warning));
+                $alert.insertAfter($burn.parent('div'));
+            } else {
+                const $alert = $(alert(ex.message, Alert.warning));
+                $alert.insertAfter($burn.parent('div'));
             }
         }
         console.error(ex);

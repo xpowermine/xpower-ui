@@ -4,7 +4,7 @@ import { nftTotalBy } from './nft-total-by';
 describe('total', () => {
     const issue = 2021;
     const level = NftLevel.UNIT;
-    const token = NftToken.ASIC;
+    const token = NftToken.QRSH;
     it('should return total = { amount: 0n, supply: 0n }', () => {
         const total = nftTotalBy({ items: {} });
         expect(total).toEqual({
@@ -14,7 +14,7 @@ describe('total', () => {
     it('should return total = { amount: 1n, supply: 2n }', () => {
         const total = nftTotalBy({
             items: {
-                'ASIC:202100': {
+                'QRSH:202100': {
                     amount: 1n, supply: 2n
                 }
             }
@@ -28,10 +28,10 @@ describe('total', () => {
     it('should return total = { amount: 3n, supply: 6n }', () => {
         const total = nftTotalBy({
             items: {
-                'ASIC:202100': {
+                'QRSH:202100': {
                     amount: 1n, supply: 2n
                 },
-                'ASIC:202103': {
+                'QRSH:202103': {
                     amount: 2n, supply: 4n
                 }
             }

@@ -3,14 +3,14 @@ form#minting
     | Mined Amounts (not minted yet)
   - let level = 1
   while level <= 64
-    - let amount_asic = 16n ** BigInt(level) - 1n
-    - let amount_gpu = 2n ** BigInt(level) - 1n
-    - let amount_cpu = BigInt(level)
+    - let amount_qrsh = 16n ** BigInt(level) - 1n
+    - let amount_aqch = 2n ** BigInt(level) - 1n
+    - let amount_para = BigInt(level)
     div.btn-group.mint(
       role="group" data-level=`${level}` data-tx-counter=0
-      data-amount-asic=`${amount_asic.toString()}`
-      data-amount-gpu=`${amount_gpu.toString()}`
-      data-amount-cpu=`${amount_cpu.toString()}`
+      data-amount-qrsh=`${amount_qrsh.toString()}`
+      data-amount-aqch=`${amount_aqch.toString()}`
+      data-amount-para=`${amount_para.toString()}`
     )
       button.btn.btn-outline-warning.minter(
         type="button" disabled

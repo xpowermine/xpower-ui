@@ -54,7 +54,7 @@ export function alert(
         }
     }
     const el = document.createElement('div');
-    el.innerHTML = `<div data-id="${options.id}" class="alert alert-${type} alert-dismissible d-flex align-items-center" role="alert" style="margin: 0.5em 0"><i class="bi bi-${options.icon} flex-shrink-0 me-3"></i>${message}<button type="button" class="btn-sm btn-close" data-bs-dismiss="alert"></button></div>`;
+    el.innerHTML = `<div data-id="${options.id}" class="alert alert-${type} alert-dismissible d-flex align-items-center" role="alert" style="margin: 0 0 0.5em 0"><i class="bi bi-${options.icon} flex-shrink-0 me-3"></i>${message}<button type="button" class="btn-sm btn-close" data-bs-dismiss="alert"></button></div>`;
     return el;
 }
 export default alert;

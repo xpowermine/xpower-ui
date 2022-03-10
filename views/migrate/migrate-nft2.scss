@@ -1,0 +1,42 @@
+form#allowance-nft2 {
+  div.approve-allowance-nft2 {
+    button.approve-allowance-nft2 {
+      width: calc(100% - 42px);
+      text-align: center;
+    }
+    .info > svg {
+      position: relative;
+      top: -1px;
+    }
+    margin-bottom: 0.5em;
+    width: 100%;
+  }
+}
+form#migration-nft2 {
+  div.execute-migration-nft2 {
+    button.execute-migration-nft2 {
+      text-align: center;
+      width: calc(100% - 42px);
+    }
+    .info > svg {
+      position: relative;
+      top: -1px;
+    }
+    margin-bottom: 0.5em;
+    width: 100%;
+  }
+}
+form#burn-nft2 {
+  div.burn-empty-nft2 {
+    button.burn-empty-nft2 {
+      text-align: center;
+      width: calc(100% - 42px);
+    }
+    .info > svg {
+      position: relative;
+      top: -1px;
+    }
+    margin-bottom: 0.5em;
+    width: 100%;
+  }
+}

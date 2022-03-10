@@ -309,8 +309,12 @@ export class App {
     }
     public static get version() {
         switch (this.params.get('version')) {
-            case 'v2': return 'v2';
-            default: return 'v3';
+            case 'v2':
+                return 'v2';
+            case 'v3a':
+                return 'v3a';
+            default:
+                return 'v3b';
         }
     }
     public static get params(): URLSearchParams {

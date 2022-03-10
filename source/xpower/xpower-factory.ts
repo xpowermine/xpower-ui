@@ -7,7 +7,7 @@ import { XPower } from '.';
 export function XPowerFactory({
     version, token
 }: {
-    version?: 'v2' | 'v3', token?: Token
+    version?: 'v2' | 'v3a' | 'v3b', token?: Token
 } = {}): Contract {
     if (version === undefined) {
         version = App.version;

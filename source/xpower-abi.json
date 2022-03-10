@@ -2,13 +2,18 @@
     {
         "inputs": [
             {
+                "internalType": "string",
+                "name": "symbol",
+                "type": "string"
+            },
+            {
                 "internalType": "address",
-                "name": "_base",
+                "name": "base",
                 "type": "address"
             },
             {
                 "internalType": "uint256",
-                "name": "_deadlineIn",
+                "name": "deadlineIn",
                 "type": "uint256"
             }
         ],
@@ -236,6 +241,19 @@
             }
         ],
         "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "difficulty",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
         "type": "function"
     },
     {

@@ -4,8 +4,9 @@ import { ChainId } from '../../source/blockchain';
 import { Tokenizer } from '../../source/token';
 
 $(window).on('load', function setContractAddress() {
+    const version = App.version;
     const symbol = Tokenizer.symbolAlt(App.token);
-    const address = $(`#g-xpower-address-${symbol}`).data('value');
+    const address = $(`#g-xpower-address-${symbol}-${version}`).data('value');
     const $link = $('a.smart-contract');
     $link.attr('href', `https://snowtrace.io/address/${address}`);
 });

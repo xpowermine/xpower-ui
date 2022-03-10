@@ -74,7 +74,6 @@
     "build": "npm run wp-pro",
     "predebug": "npm run lint && tsc",
     "debug": "concurrently npm:wp-dev npm:ts-dev -c bold.blue,bold.grey",
-    "prestart": "npm run build",
     "start": "npm run ts-app",
     "pretest": "tsc",
     "test": "jest --verbose",

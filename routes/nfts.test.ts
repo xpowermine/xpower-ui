@@ -19,11 +19,11 @@ describe('GET /nfts', () => {
         });
     });
 });
-describe('GET /nfts/cpu/(0*)222200.json', () => {
+describe('GET /nfts/para/(0*)222200.json', () => {
     let get: request.Test;
     beforeEach(() => {
         get = request(app).get(
-            '/nfts/cpu/222200.json'
+            '/nfts/para/222200.json'
         );
     });
     it('should return w/an HTTP code = 200 OK', async () => {
@@ -42,25 +42,25 @@ describe('GET /nfts/cpu/(0*)222200.json', () => {
         await get.expect((res) => {
             const { name, describe, image } = res.body;
             expect(name).toEqual(
-                'XPOW.CPU UNIT'
+                'PARA UNIT'
             );
             expect(describe).toBe(
-                'Stakeable XPOW.CPU UNIT NFT'
+                'Stakeable PARA UNIT NFT'
             );
             expect(image).toMatch(
                 new RegExp('^http://127.0.0.1:')
             );
             expect(image).toMatch(
-                new RegExp('/images/nft/2222/xpow.cpu-unit.png$')
+                new RegExp('/images/nft/2222/xpow.para-unit.png$')
             );
         });
     });
 });
-describe('GET /nfts/cpu/(0*)363f8.json', () => {
+describe('GET /nfts/para/(0*)363f8.json', () => {
     let get: request.Test;
     beforeEach(() => {
         get = request(app).get(
-            '/nfts/cpu/363f8.json'
+            '/nfts/para/363f8.json'
         );
     });
     it('should return w/an HTTP code = 200 OK', async () => {
@@ -79,25 +79,25 @@ describe('GET /nfts/cpu/(0*)363f8.json', () => {
         await get.expect((res) => {
             const { name, describe, image } = res.body;
             expect(name).toEqual(
-                'XPOW.CPU UNIT'
+                'PARA UNIT'
             );
             expect(describe).toBe(
-                'Stakeable XPOW.CPU UNIT NFT'
+                'Stakeable PARA UNIT NFT'
             );
             expect(image).toMatch(
                 new RegExp('^http://127.0.0.1:')
             );
             expect(image).toMatch(
-                new RegExp('/images/nft/2222/xpow.cpu-unit.png$')
+                new RegExp('/images/nft/2222/xpow.para-unit.png$')
             );
         });
     });
 });
-describe('REDIRECT /nfts/cpu/(0*)333300.json', () => {
+describe('REDIRECT /nfts/para/(0*)333300.json', () => {
     let get: request.Test;
     beforeEach(() => {
         get = request(app).get(
-            '/nfts/cpu/333300.json'
+            '/nfts/para/333300.json'
         );
     });
     it('should return w/an HTTP code = 302 OK', async () => {
@@ -111,11 +111,11 @@ describe('REDIRECT /nfts/cpu/(0*)333300.json', () => {
         });
     });
 });
-describe('REDIRECT /nfts/cpu/(0*)515f4.json', () => {
+describe('REDIRECT /nfts/para/(0*)515f4.json', () => {
     let get: request.Test;
     beforeEach(() => {
         get = request(app).get(
-            '/nfts/cpu/515f4.json'
+            '/nfts/para/515f4.json'
         );
     });
     it('should return w/an HTTP code = 302 OK', async () => {
@@ -129,11 +129,11 @@ describe('REDIRECT /nfts/cpu/(0*)515f4.json', () => {
         });
     });
 });
-describe('GET /nfts/gpu/(0*)202203.json', () => {
+describe('GET /nfts/aqch/(0*)202203.json', () => {
     let get: request.Test;
     beforeEach(() => {
         get = request(app).get(
-            '/nfts/gpu/00000000000000000000000000202203.json'
+            '/nfts/aqch/00000000000000000000000000202203.json'
         );
     });
     it('should return w/an HTTP code = 200 OK', async () => {
@@ -152,25 +152,25 @@ describe('GET /nfts/gpu/(0*)202203.json', () => {
         await get.expect((res) => {
             const { name, describe, image } = res.body;
             expect(name).toEqual(
-                'XPOW.GPU KILO'
+                'AQCH KILO'
             );
             expect(describe).toBe(
-                'Stakeable XPOW.GPU KILO NFT'
+                'Stakeable AQCH KILO NFT'
             );
             expect(image).toMatch(
                 new RegExp('^http://127.0.0.1:')
             );
             expect(image).toMatch(
-                new RegExp('/images/nft/2022/xpow.gpu-kilo.png$')
+                new RegExp('/images/nft/2022/xpow.aqch-kilo.png$')
             );
         });
     });
 });
-describe('GET /nfts/gpu/(0*)315db.json', () => {
+describe('GET /nfts/aqch/(0*)315db.json', () => {
     let get: request.Test;
     beforeEach(() => {
         get = request(app).get(
-            '/nfts/gpu/00000000000000000000000000315db.json'
+            '/nfts/aqch/00000000000000000000000000315db.json'
         );
     });
     it('should return w/an HTTP code = 200 OK', async () => {
@@ -189,25 +189,25 @@ describe('GET /nfts/gpu/(0*)315db.json', () => {
         await get.expect((res) => {
             const { name, describe, image } = res.body;
             expect(name).toEqual(
-                'XPOW.GPU KILO'
+                'AQCH KILO'
             );
             expect(describe).toBe(
-                'Stakeable XPOW.GPU KILO NFT'
+                'Stakeable AQCH KILO NFT'
             );
             expect(image).toMatch(
                 new RegExp('^http://127.0.0.1:')
             );
             expect(image).toMatch(
-                new RegExp('/images/nft/2022/xpow.gpu-kilo.png$')
+                new RegExp('/images/nft/2022/xpow.aqch-kilo.png$')
             );
         });
     });
 });
-describe('REDIRECT /nfts/gpu/(0*)333303.json', () => {
+describe('REDIRECT /nfts/aqch/(0*)333303.json', () => {
     let get: request.Test;
     beforeEach(() => {
         get = request(app).get(
-            '/nfts/gpu/333303.json'
+            '/nfts/aqch/333303.json'
         );
     });
     it('should return w/an HTTP code = 302 OK', async () => {
@@ -221,11 +221,11 @@ describe('REDIRECT /nfts/gpu/(0*)333303.json', () => {
         });
     });
 });
-describe('REDIRECT /nfts/gpu/(0*)515f7.json', () => {
+describe('REDIRECT /nfts/aqch/(0*)515f7.json', () => {
     let get: request.Test;
     beforeEach(() => {
         get = request(app).get(
-            '/nfts/gpu/515f7.json'
+            '/nfts/aqch/515f7.json'
         );
     });
     it('should return w/an HTTP code = 302 OK', async () => {
@@ -239,11 +239,11 @@ describe('REDIRECT /nfts/gpu/(0*)515f7.json', () => {
         });
     });
 });
-describe('GET /nfts/asic/(0*)202306.json', () => {
+describe('GET /nfts/qrsh/(0*)202306.json', () => {
     let get: request.Test;
     beforeEach(() => {
         get = request(app).get(
-            '/nfts/asic/0000000000000000000000000000000000000000000000000000000000202306.json'
+            '/nfts/qrsh/0000000000000000000000000000000000000000000000000000000000202306.json'
         );
     });
     it('should return w/an HTTP code = 200 OK', async () => {
@@ -262,25 +262,25 @@ describe('GET /nfts/asic/(0*)202306.json', () => {
         await get.expect((res) => {
             const { name, describe, image } = res.body;
             expect(name).toEqual(
-                'XPOW.ASIC MEGA'
+                'QRSH MEGA'
             );
             expect(describe).toBe(
-                'Stakeable XPOW.ASIC MEGA NFT'
+                'Stakeable QRSH MEGA NFT'
             );
             expect(image).toMatch(
                 new RegExp('^http://127.0.0.1:')
             );
             expect(image).toMatch(
-                new RegExp('/images/nft/2023/xpow.asic-mega.png$')
+                new RegExp('/images/nft/2023/xpow.qrsh-mega.png$')
             );
         });
     });
 });
-describe('GET /nfts/asic/(0*)31642.json', () => {
+describe('GET /nfts/qrsh/(0*)31642.json', () => {
     let get: request.Test;
     beforeEach(() => {
         get = request(app).get(
-            '/nfts/asic/000000000000000000000000000000000000000000000000000000000031642.json'
+            '/nfts/qrsh/000000000000000000000000000000000000000000000000000000000031642.json'
         );
     });
     it('should return w/an HTTP code = 200 OK', async () => {
@@ -299,25 +299,25 @@ describe('GET /nfts/asic/(0*)31642.json', () => {
         await get.expect((res) => {
             const { name, describe, image } = res.body;
             expect(name).toEqual(
-                'XPOW.ASIC MEGA'
+                'QRSH MEGA'
             );
             expect(describe).toBe(
-                'Stakeable XPOW.ASIC MEGA NFT'
+                'Stakeable QRSH MEGA NFT'
             );
             expect(image).toMatch(
                 new RegExp('^http://127.0.0.1:')
             );
             expect(image).toMatch(
-                new RegExp('/images/nft/2023/xpow.asic-mega.png$')
+                new RegExp('/images/nft/2023/xpow.qrsh-mega.png$')
             );
         });
     });
 });
-describe('REDIRECT /nfts/asic/(0*)333306.json', () => {
+describe('REDIRECT /nfts/qrsh/(0*)333306.json', () => {
     let get: request.Test;
     beforeEach(() => {
         get = request(app).get(
-            '/nfts/asic/333306.json'
+            '/nfts/qrsh/333306.json'
         );
     });
     it('should return w/an HTTP code = 302 OK', async () => {
@@ -331,11 +331,11 @@ describe('REDIRECT /nfts/asic/(0*)333306.json', () => {
         });
     });
 });
-describe('REDIRECT /nfts/asic/(0*)515fa.json', () => {
+describe('REDIRECT /nfts/qrsh/(0*)515fa.json', () => {
     let get: request.Test;
     beforeEach(() => {
         get = request(app).get(
-            '/nfts/asic/515fa.json'
+            '/nfts/qrsh/515fa.json'
         );
     });
     it('should return w/an HTTP code = 302 OK', async () => {

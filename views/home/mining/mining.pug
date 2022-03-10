@@ -10,23 +10,23 @@ form#mining
 
     span(
       data-bs-toggle="tooltip" data-bs-placement="top"
-      title="Select from one of three XPOW tokens to mine"
+      title="Select from one of three XPower tokens to mine"
     )
       button.btn.btn-outline-warning#select-token.dropdown-toggle(
         type="button" data-bs-toggle="dropdown"
       )
         | {{TOKEN_SUFFIX}}
       ul.dropdown-menu
-        li: a.dropdown-item(href="?token=XPOW.CPU")
-          | XPOW.CPU: ideal for (in-browser) CPU miners
-        li: a.dropdown-item(href="?token=XPOW.GPU")
-          | XPOW.GPU: meant for dedicated GPU miners
-        li: a.dropdown-item(href="?token=XPOW.ASIC")
-          | XPOW.ASIC: choice of professional ASIC miners
+        li: a.dropdown-item(href="?token=PARA")
+          | PARA: ideal for (in-browser) miners
+        li: a.dropdown-item(href="?token=AQCH")
+          | AQCH: meant for dedicated miners
+        li: a.dropdown-item(href="?token=QRSH")
+          | QRSH: choice of professional miners
 
     button.btn.btn-outline-warning.info(
       type="button" data-bs-toggle="tooltip" data-bs-placement="top"
-      title="Toggle mining for XPOW tokens (w/o minting them)"
+      title="Toggle mining for XPower tokens (w/o minting them)"
     )
       include ../../../public/images/pug/info-circle-fill.svg.pug
 

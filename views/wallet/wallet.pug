@@ -1,6 +1,6 @@
 form#wallet
   label.form-label(for="wallet-address")
-    | Wallet Address and XPOW Balance
+    | Wallet Address and {{TOKEN}} Balance
   div.input-group.wallet-address
     span.input-group-text#otf-wallet-toggle(
       data-bs-toggle="tooltip" data-bs-placement="top"
@@ -14,7 +14,7 @@ form#wallet
     )
     input#wallet-balance.form-control(
       data-bs-toggle="tooltip" data-bs-placement="top"
-      title=`Balance of {{TOKEN}} proof-of-work tokens` readonly
+      title=`Balance of proof-of-work {{TOKEN}} tokens` readonly
       type="text" placeholder="0"
     )
     span.input-group-text.info(

@@ -19,15 +19,15 @@ footer {
         color: white;
     }
     a.add-token {
-        i.bi-lightning-charge {
+        i.bi-plus-square {
             display: none;
         }
     }
     a.add-token:hover {
-        i.bi-lightning-charge-fill {
+        i.bi-plus-square-fill {
             display: none;
         }
-        i.bi-lightning-charge {
+        i.bi-plus-square {
             display: block;
         }
     }

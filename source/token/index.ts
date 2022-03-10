@@ -1,19 +1,19 @@
 import { Amount, Token } from '../redux/types';
 
 enum TokenSuffix {
-    ASIC = 'asic',
-    GPU = 'gpu',
-    CPU = 'cpu',
+    QRSH = 'qrsh',
+    AQCH = 'aqch',
+    PARA = 'para',
 }
 enum TokenSymbol {
-    ASIC = 'XPOW.ASIC',
-    GPU = 'XPOW.GPU',
-    CPU = 'XPOW.CPU',
+    QRSH = 'QRSH',
+    AQCH = 'AQCH',
+    PARA = 'PARA',
 }
 enum TokenSymbolAlt {
-    ASIC = 'XPOW_ASIC',
-    GPU = 'XPOW_GPU',
-    CPU = 'XPOW_CPU',
+    QRSH = 'QRSH',
+    AQCH = 'AQCH',
+    PARA = 'PARA',
 }
 export class Tokenizer {
     public static token(value: string | null): Token {
@@ -21,55 +21,55 @@ export class Tokenizer {
             const suffix = value.match(/^xpow[._]/i)
                 ? value.replace('.', '_').split('_')[1] : value;
             switch (suffix.toLowerCase()) {
-                case 'asic':
-                    return Token.ASIC;
-                case 'gpu':
-                    return Token.GPU;
-                case 'cpu':
-                    return Token.CPU;
+                case 'qrsh':
+                    return Token.QRSH;
+                case 'aqch':
+                    return Token.AQCH;
+                case 'para':
+                    return Token.PARA;
                 default:
-                    return Token.CPU;
+                    return Token.PARA;
             }
         }
-        return Token.CPU;
+        return Token.PARA;
     }
     public static suffix(token: Token): TokenSuffix {
         switch (token) {
-            case Token.ASIC:
-                return TokenSuffix.ASIC;
-            case Token.GPU:
-                return TokenSuffix.GPU;
-            case Token.CPU:
-                return TokenSuffix.CPU;
+            case Token.QRSH:
+                return TokenSuffix.QRSH;
+            case Token.AQCH:
+                return TokenSuffix.AQCH;
+            case Token.PARA:
+                return TokenSuffix.PARA;
         }
     }
     public static symbol(token: Token): TokenSymbol {
         switch (token) {
-            case Token.ASIC:
-                return TokenSymbol.ASIC;
-            case Token.GPU:
-                return TokenSymbol.GPU;
-            case Token.CPU:
-                return TokenSymbol.CPU;
+            case Token.QRSH:
+                return TokenSymbol.QRSH;
+            case Token.AQCH:
+                return TokenSymbol.AQCH;
+            case Token.PARA:
+                return TokenSymbol.PARA;
         }
     }
     public static symbolAlt(token: Token): TokenSymbolAlt {
         switch (token) {
-            case Token.ASIC:
-                return TokenSymbolAlt.ASIC;
-            case Token.GPU:
-                return TokenSymbolAlt.GPU;
-            case Token.CPU:
-                return TokenSymbolAlt.CPU;
+            case Token.QRSH:
+                return TokenSymbolAlt.QRSH;
+            case Token.AQCH:
+                return TokenSymbolAlt.AQCH;
+            case Token.PARA:
+                return TokenSymbolAlt.PARA;
         }
     }
     public static amount(token: Token, zeros: number): Amount {
         switch (token) {
-            case Token.ASIC:
+            case Token.QRSH:
                 return 16n ** BigInt(zeros) - 1n;
-            case Token.GPU:
+            case Token.AQCH:
                 return 2n ** BigInt(zeros) - 1n;
-            case Token.CPU:
+            case Token.PARA:
                 return BigInt(zeros);
         }
     }

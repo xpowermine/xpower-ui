@@ -27,14 +27,14 @@ router.get('/:token/:id.json', (req, res) => {
   const LEVEL = NftLevel[nft.level].toUpperCase();
   const level = LEVEL.toLowerCase();
   res.send({
-    name: `XPOW.${TOKEN} ${LEVEL}`,
-    describe: `Stakeable XPOW.${TOKEN} ${LEVEL} NFT`,
+    name: `${TOKEN} ${LEVEL}`,
+    describe: `Stakeable ${TOKEN} ${LEVEL} NFT`,
     image: `${host(req)}/images/nft/${nft.issue}/xpow.${token}-${level}.png`,
     properties: {
       issue: `${nft.issue}`,
       label: LEVEL,
       level: `${nft.level}`,
-      token: `XPOW.${TOKEN}`
+      token: `${TOKEN}`
     }
   });
 });

@@ -1,15 +1,15 @@
 form#integration {
-  div.add-xpow.cpu,
-  div.add-xpow.gpu,
-  div.add-xpow.asic {
-    button {
-      margin-bottom: 0.5em;
-    }
-    button.add-xpow.cpu,
-    button.add-xpow.gpu,
-    button.add-xpow.asic {
+  div.add-xpow.para,
+  div.add-xpow.aqch,
+  div.add-xpow.qrsh {
+    button.add-xpow.para,
+    button.add-xpow.aqch,
+    button.add-xpow.qrsh {
       img {
+        background-color: var(--xp-dimgray);
+        border-radius: 10px;
         margin-top: 2px;
+        padding: 1px;
       }
       text-align: center;
       width: calc(100% - 42px);

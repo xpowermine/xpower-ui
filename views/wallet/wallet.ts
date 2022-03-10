@@ -166,14 +166,21 @@ async function depositOtf() {
     if (!address) {
         throw new Error('missing selected-address');
     }
-    const provider = new Web3Provider(Blockchain.provider);
-    const signer = provider.getSigner(x40(address));
-    const balance = await signer.getBalance();
     const unit = parseUnits('1.0');
-    const value = balance.gt(unit) ? unit : balance;
+    const provider = new Web3Provider(Blockchain.provider);
+    const mmw_signer = provider.getSigner(x40(address));
+    const mmw_balance = await mmw_signer.getBalance();
+    const gas_limit = await mmw_signer.estimateGas({
+        to: x40(address), value: unit
+    });
+    const gas_price = await mmw_signer.getGasPrice();
+    const fee = gas_limit.mul(gas_price)
+    const value = mmw_balance.lt(unit.add(fee))
+        ? mmw_balance.sub(fee) : unit;
     const otf_wallet = await OtfWallet.init();
     const otf_address = await otf_wallet.getAddress();
-    const tx = await signer.sendTransaction({
+    const tx = await mmw_signer.sendTransaction({
+        gasLimit: gas_limit, gasPrice: gas_price,
         to: otf_address, value
     });
     tx.wait(1).then(() => {
@@ -189,14 +196,15 @@ async function withdrawOtf() {
     if (!address) {
         throw new Error('missing selected-address');
     }
-    const otf_wallet = await OtfWallet.init();
-    const otf_balance = await otf_wallet.getBalance();
-    const gas_limit = await otf_wallet.estimateGas({
+    const otf_signer = await OtfWallet.init();
+    const otf_balance = await otf_signer.getBalance();
+    const gas_limit = await otf_signer.estimateGas({
         to: x40(address), value: otf_balance
     });
-    const gas_price = await otf_wallet.getGasPrice();
-    const value = otf_balance.sub(gas_limit.mul(gas_price));
-    const tx = await otf_wallet.sendTransaction({
+    const gas_price = await otf_signer.getGasPrice();
+    const fee = gas_limit.mul(gas_price)
+    const value = otf_balance.sub(fee);
+    const tx = await otf_signer.sendTransaction({
         gasLimit: gas_limit, gasPrice: gas_price,
         to: x40(address), value
     });

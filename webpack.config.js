@@ -92,7 +92,8 @@ const configuration = (options) => ({
         }),
         new HTMLWebpackPlugin({
             templateContent: pug.renderFile('./views/migrate/index.pug', {
-                ...env.default, filters, PAGE: 'migrate', TITLE: 'XPower: Migrate'
+                ...env.default, filters, PAGE: 'migrate',
+                TITLE: 'XPower: Migrate'
             }),
             filename: '../views/migrate/index.pig',
             minify: false, inject: 'body',
@@ -100,7 +101,8 @@ const configuration = (options) => ({
         }),
         new HTMLWebpackPlugin({
             templateContent: pug.renderFile('./views/home/home.pug', {
-                ...env.default, filters, PAGE: 'home', TITLE: 'XPower'
+                ...env.default, filters, PAGE: 'home',
+                TITLE: 'XPower'
             }),
             filename: '../views/home/home.pig',
             minify: false, inject: 'body',
@@ -108,7 +110,8 @@ const configuration = (options) => ({
         }),
         new HTMLWebpackPlugin({
             templateContent: pug.renderFile('./views/nfts/nfts.pug', {
-                ...env.default, filters, PAGE: 'nfts', TITLE: 'XPower: NFTs',
+                ...env.default, filters, PAGE: 'nfts',
+                TITLE: 'XPower: NFTs',
                 YEARS: Array.from(Years())
             }),
             filename: '../views/nfts/nfts.pig',
@@ -117,7 +120,8 @@ const configuration = (options) => ({
         }),
         new HTMLWebpackPlugin({
             templateContent: pug.renderFile('./views/staking/staking.pug', {
-                ...env.default, filters, PAGE: 'staking', TITLE: 'XPower: Staking'
+                ...env.default, filters, PAGE: 'staking',
+                TITLE: 'XPower: Staking'
             }),
             filename: '../views/staking/staking.pig',
             minify: false, inject: 'body',
@@ -125,7 +129,8 @@ const configuration = (options) => ({
         }),
         new HTMLWebpackPlugin({
             templateContent: pug.renderFile('./views/about/about.pug', {
-                ...env.default, filters, PAGE: 'about', TITLE: 'XPower: About'
+                ...env.default, filters, PAGE: 'about',
+                TITLE: 'XPower: About'
             }),
             filename: '../views/about/about.pig',
             minify: false, inject: 'body',
@@ -133,7 +138,8 @@ const configuration = (options) => ({
         }),
         new HTMLWebpackPlugin({
             templateContent: pug.renderFile('./views/error/error.pug', {
-                ...env.default, filters, PAGE: 'error', TITLE: 'XPower: Error',
+                ...env.default, filters, PAGE: 'error',
+                TITLE: 'XPower: Error',
             }),
             filename: '../views/error/error.pig',
             minify: false, inject: 'body',
