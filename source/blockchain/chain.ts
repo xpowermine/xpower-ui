@@ -1,7 +1,7 @@
 export enum ChainId {
-    AVALANCHE_MAINNET = '0xa86a',
-    AVALANCHE_FUJI = '0xa869',
-    AVALANCHE_LOCAL = '0xa868',
+    AVALANCHE_MAINNET = '0xa86a',   // 43114
+    AVALANCHE_FUJI = '0xa869',      // 43113
+    AVALANCHE_LOCAL = '0xa868',     // 43112
 }
 export class Chain {
     public constructor(id: ChainId) {
@@ -10,9 +10,9 @@ export class Chain {
     public get name(): string {
         switch (this._id) {
             case ChainId.AVALANCHE_MAINNET:
-                return 'Avalanche Mainnet';
+                return 'Avalanche C-Chain';
             case ChainId.AVALANCHE_FUJI:
-                return 'Avalanche Testnet';
+                return 'Avalanche Fuji Testnet';
             case ChainId.AVALANCHE_LOCAL:
                 return 'Avalanche Localhost';
         }
@@ -47,9 +47,9 @@ export class Chain {
     public get explorerUrls(): string[] {
         switch (this._id) {
             case ChainId.AVALANCHE_MAINNET:
-                return ['https://snowtrace.io/'];
+                return ['https://snowtrace.io'];
             case ChainId.AVALANCHE_FUJI:
-                return ['https://testnet.snowtrace.io/'];
+                return ['https://testnet.snowtrace.io'];
             case ChainId.AVALANCHE_LOCAL:
                 return [];
         }
