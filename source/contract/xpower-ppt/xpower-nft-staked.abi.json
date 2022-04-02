@@ -1,26 +1,5 @@
 [
     {
-        "inputs": [
-            {
-                "internalType": "string",
-                "name": "uri",
-                "type": "string"
-            },
-            {
-                "internalType": "address",
-                "name": "xpower",
-                "type": "address"
-            },
-            {
-                "internalType": "address",
-                "name": "base",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "nonpayable",
-        "type": "constructor"
-    },
-    {
         "anonymous": false,
         "inputs": [
             {
@@ -283,6 +262,30 @@
             },
             {
                 "internalType": "uint256",
+                "name": "nftId",
+                "type": "uint256"
+            }
+        ],
+        "name": "ageOf",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "account",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
                 "name": "id",
                 "type": "uint256"
             }
@@ -326,17 +329,17 @@
         "inputs": [
             {
                 "internalType": "address",
-                "name": "account",
+                "name": "from",
                 "type": "address"
             },
             {
                 "internalType": "uint256",
-                "name": "id",
+                "name": "nftId",
                 "type": "uint256"
             },
             {
                 "internalType": "uint256",
-                "name": "value",
+                "name": "amount",
                 "type": "uint256"
             }
         ],
@@ -349,23 +352,42 @@
         "inputs": [
             {
                 "internalType": "address",
-                "name": "account",
+                "name": "from",
                 "type": "address"
             },
             {
                 "internalType": "uint256[]",
-                "name": "ids",
+                "name": "nftIds",
                 "type": "uint256[]"
             },
             {
                 "internalType": "uint256[]",
-                "name": "values",
+                "name": "amounts",
                 "type": "uint256[]"
             }
         ],
         "name": "burnBatch",
         "outputs": [],
         "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "level",
+                "type": "uint256"
+            }
+        ],
+        "name": "denominationOf",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "pure",
         "type": "function"
     },
     {
@@ -391,7 +413,7 @@
         "inputs": [
             {
                 "internalType": "uint256",
-                "name": "_year",
+                "name": "anno",
                 "type": "uint256"
             },
             {
@@ -415,7 +437,7 @@
         "inputs": [
             {
                 "internalType": "uint256",
-                "name": "_year",
+                "name": "anno",
                 "type": "uint256"
             },
             {
@@ -463,7 +485,26 @@
         "inputs": [
             {
                 "internalType": "uint256",
-                "name": "id",
+                "name": "nftId",
+                "type": "uint256"
+            }
+        ],
+        "name": "levelOf",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "pure",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "nftId",
                 "type": "uint256"
             },
             {
@@ -481,7 +522,7 @@
         "inputs": [
             {
                 "internalType": "uint256[]",
-                "name": "ids",
+                "name": "nftIds",
                 "type": "uint256[]"
             },
             {
@@ -504,7 +545,7 @@
             },
             {
                 "internalType": "uint256",
-                "name": "level",
+                "name": "nftId",
                 "type": "uint256"
             },
             {
@@ -527,7 +568,7 @@
             },
             {
                 "internalType": "uint256[]",
-                "name": "levels",
+                "name": "nftIds",
                 "type": "uint256[]"
             },
             {
@@ -575,7 +616,7 @@
             },
             {
                 "internalType": "uint256[]",
-                "name": "ids",
+                "name": "nftIds",
                 "type": "uint256[]"
             },
             {
@@ -608,7 +649,7 @@
             },
             {
                 "internalType": "uint256",
-                "name": "id",
+                "name": "nftId",
                 "type": "uint256"
             },
             {
@@ -688,6 +729,25 @@
         "inputs": [
             {
                 "internalType": "uint256",
+                "name": "nftId",
+                "type": "uint256"
+            }
+        ],
+        "name": "totalAgeOf",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
                 "name": "id",
                 "type": "uint256"
             }
@@ -746,6 +806,25 @@
             }
         ],
         "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "nftId",
+                "type": "uint256"
+            }
+        ],
+        "name": "yearOf",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "pure",
         "type": "function"
     }
 ]

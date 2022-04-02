@@ -5,7 +5,7 @@ import { Blockchain } from '../../source/blockchain';
 import { BigNumber } from 'ethers';
 import { alert, Alert, x40 } from '../../source/functions';
 import { Nft, NftLevels, Token } from '../../source/redux/types';
-import { XPowerNftFactory } from '../../source/xpower';
+import { XPowerNftFactory } from '../../source/contract';
 import { Years } from '../../source/years';
 
 $(window).on('load', function enableAllowanceButton() {

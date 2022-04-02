@@ -6,33 +6,40 @@ block styles
 block globals
   include ../global/global.pug
 
-  span#g-xpower-nft-address-PARA-v2(
-    style="display:none" data-value=`${XPOWER_NFT_ADDRESS_PARA_V2}`)
-  span#g-xpower-nft-address-AQCH-v2(
-    style="display:none" data-value=`${XPOWER_NFT_ADDRESS_AQCH_V2}`)
-  span#g-xpower-nft-address-QRSH-v2(
-    style="display:none" data-value=`${XPOWER_NFT_ADDRESS_QRSH_V2}`)
+  span#g-PARA_NFT_v2a(
+    style="display:none" data-value=`${PARA_NFT_V2a}`)
+  span#g-AQCH_NFT_v2a(
+    style="display:none" data-value=`${AQCH_NFT_V2a}`)
+  span#g-QRSH_NFT_v2a(
+    style="display:none" data-value=`${QRSH_NFT_V2a}`)
 
-  span#g-xpower-nft-address-PARA-v3a(
-    style="display:none" data-value=`${XPOWER_NFT_ADDRESS_PARA_V3a}`)
-  span#g-xpower-nft-address-AQCH-v3a(
-    style="display:none" data-value=`${XPOWER_NFT_ADDRESS_AQCH_V3a}`)
-  span#g-xpower-nft-address-QRSH-v3a(
-    style="display:none" data-value=`${XPOWER_NFT_ADDRESS_QRSH_V3a}`)
+  span#g-PARA_NFT_v3a(
+    style="display:none" data-value=`${PARA_NFT_V3a}`)
+  span#g-AQCH_NFT_v3a(
+    style="display:none" data-value=`${AQCH_NFT_V3a}`)
+  span#g-QRSH_NFT_v3a(
+    style="display:none" data-value=`${QRSH_NFT_V3a}`)
 
-  span#g-xpower-nft-address-PARA-v3b(
-    style="display:none" data-value=`${XPOWER_NFT_ADDRESS_PARA_V3b}`)
-  span#g-xpower-nft-address-AQCH-v3b(
-    style="display:none" data-value=`${XPOWER_NFT_ADDRESS_AQCH_V3b}`)
-  span#g-xpower-nft-address-QRSH-v3b(
-    style="display:none" data-value=`${XPOWER_NFT_ADDRESS_QRSH_V3b}`)
+  span#g-PARA_NFT_v3b(
+    style="display:none" data-value=`${PARA_NFT_V3b}`)
+  span#g-AQCH_NFT_v3b(
+    style="display:none" data-value=`${AQCH_NFT_V3b}`)
+  span#g-QRSH_NFT_v3b(
+    style="display:none" data-value=`${QRSH_NFT_V3b}`)
+
+  span#g-PARA_NFT_v4a(
+    style="display:none" data-value=`${PARA_NFT_V4a}`)
+  span#g-AQCH_NFT_v4a(
+    style="display:none" data-value=`${AQCH_NFT_V4a}`)
+  span#g-QRSH_NFT_v4a(
+    style="display:none" data-value=`${QRSH_NFT_V4a}`)
 
 block header
   include ../header/header.pug
 
 block content
   content
-    h1: | Mint stakeable XPower NFT Bonds on Avalanche <img src="/images/png/avalanche-icon/avalanche-64x64.png" height=24 width=24>
+    h1: | Mint stakeable XPower NFTs on Avalanche <img src="/images/png/avalanche-icon/avalanche-64x64.png" height=24 width=24>
     include ../connector/connector.pug
     include ../wallet/wallet.pug
     include ../selector/selector.pug

@@ -3,7 +3,7 @@ declare const global: Global;
 
 import { Address, Amount, Balance } from '../../../source/redux/types';
 import { NftLevel, NftLevels } from '../../../source/redux/types';
-import { Wallet, OnTransfer } from '../../../source/wallet';
+import { MoeWallet, OnTransfer } from '../../../source/wallet';
 
 $('#connect-metamask').on('connected', async function initAmounts(ev, {
     address
@@ -11,12 +11,12 @@ $('#connect-metamask').on('connected', async function initAmounts(ev, {
     address: Address
 }) {
     const on_transfer: OnTransfer = async () => {
-        const balance = await wallet.balance;
+        const balance = await moe_wallet.balance;
         syncAmounts(balance);
     };
-    const wallet = new Wallet(address);
-    wallet.onTransfer(on_transfer);
-    const balance = await wallet.balance;
+    const moe_wallet = new MoeWallet(address);
+    moe_wallet.onTransfer(on_transfer);
+    const balance = await moe_wallet.balance;
     syncAmounts(balance);
 });
 async function syncAmounts(
@@ -45,6 +45,11 @@ async function syncAmounts(
         $amount.data('max', `${amount}`);
         $amount.data('min', `${0}`);
         $amount.text(`${amount}`);
+        $amount.trigger('change', {
+            amount: amount,
+            max: amount,
+            min: 0
+        });
     }
 }
 $('.increase')

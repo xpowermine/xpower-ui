@@ -1,24 +1,21 @@
 import { App } from '../app';
-import { Contract } from 'ethers';
 import { Tokenizer } from '../token';
 import { Token } from '../redux/types';
-import { XPower } from '.';
 
-export function XPowerFactory({
-    version, token
+export function address({
+    infix, version, token
 }: {
-    version?: 'v2' | 'v3a' | 'v3b', token?: Token
-} = {}): Contract {
+    infix: string, version?: typeof App.version, token?: Token
+}): string {
     if (version === undefined) {
         version = App.version;
     }
     const symbol = Tokenizer.symbolAlt(token ?? App.token);
-    const element_id = `#g-xpower-address-${symbol}-${version}`;
+    const element_id = `#g-${symbol}_${infix}_${version}`;
     const address = $(element_id).data('value');
     if (!address) {
         throw new Error(`missing ${element_id}`);
     }
-    const contract = new XPower(address);
-    return contract.connect(); // instance
+    return address;
 }
-export default XPowerFactory;
+export default address;

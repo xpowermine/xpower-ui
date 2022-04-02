@@ -9,36 +9,38 @@ footer.mt-auto.pb-3
                     = ' ' + UI_COPYRIGHT
 
         ul.navbar-nav.d-flex.flex-row.ml-auto
-            li.nav-item.pt-1.pe-1
+            li.nav-item.pb-1.pt-1.pe-1
                 a.nav-link.link-light.lower.migrate(
                     href="/migrate?token={{TOKEN}}" title="Migrate tokens"
                     data-bs-toggle="tooltip" data-bs-placement="top"
                 )
                     i.bi.bi-capslock-fill
                     i.bi.bi-capslock
-            li.nav-item.pt-1.pe-1
+            li.nav-item.pb-1.pt-1.pe-1
                 a.nav-link.link-light.lower.smart-contract(
                     target="_blank" title="Smart contract of the {{TOKEN}} token"
                     data-bs-toggle="tooltip" data-bs-placement="top"
                 )
                     i.bi.bi-cpu-fill
                     i.bi.bi-cpu
-            li.nav-item.pt-1.pe-1
+            li.nav-item.pb-1.pt-1.pe-1
                 a.nav-link.link-light.lower.add-token(
                     href="#" title="Add the {{TOKEN}} token to your Metamask"
                     data-bs-toggle="tooltip" data-bs-placement="top"
                 )
                     i.bi.bi-plus-square-fill
                     i.bi.bi-plus-square
-            li.nav-item.pt-1.pe-1
+            li.nav-item.pb-1.pt-1.pe-1
                 a.nav-link.link-light.lower.github(
                     href="https://github.com/xpowermine" target="_blank"
                     data-bs-toggle="tooltip" data-bs-placement="top" title="GitHub"
                 )
                     i.bi.bi-github
-            li.nav-item.pt-1.pe-1
+            li.nav-item.pb-1.pt-1.pe-1
                 include ./footer-discord.pug
-            li.nav-item.pt-1.pe-1
+            li.nav-item.pb-1.pt-1.pe-1
+                include ./footer-telegram.pug
+            li.nav-item.pb-1.pt-1.pe-1
                 include ./footer-twitter.pug
-            li.nav-item
+            li.nav-item.d-none.d-sm-block
                 include ./footer-avalanche.pug

@@ -1,5 +1,6 @@
 import { combineReducers, createStore } from 'redux';
 import { nftReducer } from '../reducers';
+import { pptReducer } from '../reducers';
 import { nonceReducer } from '../reducers';
 import { refreshReducer } from '../reducers';
 import { tokenReducer } from '../reducers';
@@ -12,6 +13,7 @@ describe('onNftAdded', () => {
     it('should invoke handler (for addNft)', () => {
         const reducer = combineReducers({
             nfts: nftReducer,
+            ppts: pptReducer,
             nonces: nonceReducer,
             refresh: refreshReducer,
             tokens: tokenReducer,
@@ -36,6 +38,7 @@ describe('onNftRemoved', () => {
     it('should invoke handler (for removeNft)', () => {
         const reducer = combineReducers({
             nfts: nftReducer,
+            ppts: pptReducer,
             nonces: nonceReducer,
             refresh: refreshReducer,
             tokens: tokenReducer,

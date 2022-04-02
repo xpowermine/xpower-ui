@@ -42,10 +42,10 @@ describe('GET /nfts/para/(0*)222200.json', () => {
         await get.expect((res) => {
             const { name, describe, image } = res.body;
             expect(name).toEqual(
-                'PARA UNIT'
+                'UNIT PARA'
             );
             expect(describe).toBe(
-                'Stakeable PARA UNIT NFT'
+                'UNIT PARA NFT'
             );
             expect(image).toMatch(
                 new RegExp('^http://127.0.0.1:')
@@ -79,10 +79,10 @@ describe('GET /nfts/para/(0*)363f8.json', () => {
         await get.expect((res) => {
             const { name, describe, image } = res.body;
             expect(name).toEqual(
-                'PARA UNIT'
+                'UNIT PARA'
             );
             expect(describe).toBe(
-                'Stakeable PARA UNIT NFT'
+                'UNIT PARA NFT'
             );
             expect(image).toMatch(
                 new RegExp('^http://127.0.0.1:')
@@ -152,10 +152,10 @@ describe('GET /nfts/aqch/(0*)202203.json', () => {
         await get.expect((res) => {
             const { name, describe, image } = res.body;
             expect(name).toEqual(
-                'AQCH KILO'
+                'KILO AQCH'
             );
             expect(describe).toBe(
-                'Stakeable AQCH KILO NFT'
+                'KILO AQCH NFT'
             );
             expect(image).toMatch(
                 new RegExp('^http://127.0.0.1:')
@@ -189,10 +189,10 @@ describe('GET /nfts/aqch/(0*)315db.json', () => {
         await get.expect((res) => {
             const { name, describe, image } = res.body;
             expect(name).toEqual(
-                'AQCH KILO'
+                'KILO AQCH'
             );
             expect(describe).toBe(
-                'Stakeable AQCH KILO NFT'
+                'KILO AQCH NFT'
             );
             expect(image).toMatch(
                 new RegExp('^http://127.0.0.1:')
@@ -262,10 +262,10 @@ describe('GET /nfts/qrsh/(0*)202306.json', () => {
         await get.expect((res) => {
             const { name, describe, image } = res.body;
             expect(name).toEqual(
-                'QRSH MEGA'
+                'MEGA QRSH'
             );
             expect(describe).toBe(
-                'Stakeable QRSH MEGA NFT'
+                'MEGA QRSH NFT'
             );
             expect(image).toMatch(
                 new RegExp('^http://127.0.0.1:')
@@ -299,10 +299,10 @@ describe('GET /nfts/qrsh/(0*)31642.json', () => {
         await get.expect((res) => {
             const { name, describe, image } = res.body;
             expect(name).toEqual(
-                'QRSH MEGA'
+                'MEGA QRSH'
             );
             expect(describe).toBe(
-                'Stakeable QRSH MEGA NFT'
+                'MEGA QRSH NFT'
             );
             expect(image).toMatch(
                 new RegExp('^http://127.0.0.1:')

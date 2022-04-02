@@ -54,6 +54,9 @@ const configuration = (options) => ({
             './library/index.ts',
             './views/theme/theme.ts',
             './views/tooltips/tooltips.ts',
+            './views/connector/connector.ts',
+            './views/wallet/wallet.ts',
+            './views/selector/selector.ts',
             './views/staking/staking.ts',
             './views/footer/footer.ts',
         ],
@@ -121,7 +124,8 @@ const configuration = (options) => ({
         new HTMLWebpackPlugin({
             templateContent: pug.renderFile('./views/staking/staking.pug', {
                 ...env.default, filters, PAGE: 'staking',
-                TITLE: 'XPower: Staking'
+                TITLE: 'XPower: NFT Staking',
+                YEARS: Array.from(Years())
             }),
             filename: '../views/staking/staking.pig',
             minify: false, inject: 'body',

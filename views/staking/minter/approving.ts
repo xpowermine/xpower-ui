@@ -22,17 +22,17 @@ $(window).on('load', function toggleApprovalSpinner() {
     $approval.on('approving', () => {
         $spinner.css('visibility', 'visible');
         $spinner.addClass('spinner-grow');
-        $text.text('Approving…');
+        $text.text('Approving NFT Staking…');
     });
     $approval.on('approved', () => {
         $spinner.css('visibility', 'hidden');
         $spinner.removeClass('spinner-grow');
-        $text.text('Approve');
+        $text.text('Approve NFT Staking');
     });
     $approval.on('error', () => {
         $spinner.css('visibility', 'hidden');
         $spinner.removeClass('spinner-grow');
-        $text.text('Approve');
+        $text.text('Approve NFT Staking');
     });
 });
 $(window).on('load', function toggleApprovalTooltip() {

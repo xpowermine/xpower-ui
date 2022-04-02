@@ -5,7 +5,7 @@ declare const global: Global;
 import { App } from '../../../source/app';
 import { Blockchain } from '../../../source/blockchain';
 import { Transaction } from 'ethers';
-import { Amount, Supply } from '../../../source/redux/types';
+import { Amount, NftCoreId, Supply } from '../../../source/redux/types';
 import { Nft, NftFullId } from '../../../source/redux/types';
 import { NftLevel, NftLevels } from '../../../source/redux/types';
 import { NftWallet, NftWalletMock } from '../../../source/wallet';
@@ -45,17 +45,17 @@ $('.nft-minter').on('expanded', async function setImage(
     } else {
         await set_image(new NftWalletMock());
     }
-    async function set_image(wallet: NftWallet) {
+    async function set_image(nft_wallet: NftWallet) {
         const $nft_details = $(
             `.nft-details[data-level=${NftLevel[level]}]`
         );
         for (const dy of DeltaYears()) {
-            const nft_year = await wallet.year(dy);
-            const nft_id = await wallet.idBy(nft_year, level);
+            const nft_year = await nft_wallet.year(dy);
+            const nft_id = await nft_wallet.idBy(nft_year, level);
             const $row = $nft_details.find(
                 `.row[data-year=${nft_year}]`
             );
-            const meta = await wallet.meta(nft_id);
+            const meta = await nft_wallet.meta(nft_id);
             const $image = $row.find('.nft-image');
             if ($image.attr('src') !== meta.image) {
                 $image.attr('src', meta.image);
@@ -221,23 +221,16 @@ $('.nft-sender>.sender').on('click', async function transferNft(ev) {
         throw new Error('missing selected-address');
     }
     const $nft_sender = $(ev.target).parents('.nft-sender');
+    const id = $nft_sender.data('id') as NftCoreId;
+    const level = $nft_sender.data('level') as NftLevels;
     const $sender = $nft_sender.find('.sender');
     const $transfer_to = $nft_sender.siblings('.nft-transfer-to');
     const $address_to = $transfer_to.find('>input');
+    const address_to = BigInt($address_to.val() as string);
     const $transfer_amount = $nft_sender.siblings('.nft-transfer-amount');
     const $amount = $transfer_amount.find('>input');
-    const level = $nft_sender.data('level') as NftLevels;
-    const address_to = BigInt($address_to.val() as string);
     const amount = BigInt($amount.val() as string);
-    const $row = $nft_sender.parents('.row.year');
-    const wallet = new NftWallet(address);
-    const now_year = new Date().getUTCFullYear();
-    const nft_year = await wallet.year(
-        now_year - Number($row.data('year'))
-    );
-    const nft_id = await wallet.idBy(
-        nft_year, NftLevel[level] as any
-    );
+    const nft_wallet = new NftWallet(address);
     const on_single_tx: OnTransferSingle = async (
         op, from, to, id, value, ev
     ) => {
@@ -248,14 +241,14 @@ $('.nft-sender>.sender').on('click', async function transferNft(ev) {
     };
     let tx: Transaction | undefined;
     try {
-        $sender.trigger('sending', { level, id: nft_id });
-        wallet.onTransferSingle(on_single_tx);
-        tx = await wallet.safeTransfer(
-            address_to, nft_id, amount
+        $sender.trigger('sending', { level, id });
+        nft_wallet.onTransferSingle(on_single_tx);
+        tx = await nft_wallet.safeTransfer(
+            address_to, id, amount
         );
     } catch (ex) {
         $sender.trigger('error', {
-            level, id: nft_id, error: ex
+            level, id, error: ex
         });
         console.error(ex);
     }
@@ -263,20 +256,20 @@ $('.nft-sender>.sender').on('click', async function transferNft(ev) {
 $(window).on('load', function toggleSender() {
     const $sender = $('.nft-sender>.sender');
     $sender.on('sending', disableSender);
-    $sender.on('error', enableSender);
     $sender.on('sent', disableSender);
     $sender.on('sent', resetAmount);
-    function disableSender(
-        ev: JQuery.TriggeredEvent
-    ) {
-        const $sender = $(ev.target);
-        $sender.prop('disabled', true);
-    }
+    $sender.on('error', enableSender);
     function enableSender(
         ev: JQuery.TriggeredEvent
     ) {
         const $sender = $(ev.target);
         $sender.prop('disabled', false);
+    }
+    function disableSender(
+        ev: JQuery.TriggeredEvent
+    ) {
+        const $sender = $(ev.target);
+        $sender.prop('disabled', true);
     }
     function resetAmount(
         ev: JQuery.TriggeredEvent
@@ -317,7 +310,7 @@ $(window).on('load', function toggleSenderSpinner() {
         $text.text(`Send ${level} NFTs`);
     }
 });
-$('.sender-expander').on('click', function showSend(ev) {
+$('.sender-expander').on('click', function showSender(ev) {
     const $expander = $(ev.target).parents('.nft-sender-expander');
     $expander.hide();
     const $transfer_label = $expander.siblings('.nft-transfer-to-label');

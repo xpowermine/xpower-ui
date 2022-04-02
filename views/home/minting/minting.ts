@@ -13,7 +13,7 @@ import { Amount } from '../../../source/redux/types';
 import { Nonce } from '../../../source/redux/types';
 import { Token } from '../../../source/redux/types';
 import { OnTransfer } from '../../../source/wallet';
-import { OtfWallet, Wallet } from '../../../source/wallet';
+import { OtfWallet, MoeWallet } from '../../../source/wallet';
 
 const { Tooltip } = global.bootstrap as any;
 
@@ -67,16 +67,16 @@ $('.mint>button.minter').on('click', async function mint(
     if (!nonce) {
         throw new Error(`missing nonce for amount=${amount}`);
     }
-    const wallet = new Wallet(address);
+    const moe_wallet = new MoeWallet(address);
     try {
         const on_transfer: OnTransfer = async (from, to, amount, ev) => {
             if (ev.transactionHash === mint.hash) {
-                wallet.offTransfer(on_transfer);
+                moe_wallet.offTransfer(on_transfer);
                 decreaseTxCounter($mint);
             }
         };
-        const mint = await wallet.mint(block_hash, nonce);
-        wallet.onTransfer(on_transfer);
+        const mint = await moe_wallet.mint(block_hash, nonce);
+        moe_wallet.onTransfer(on_transfer);
         console.debug('[mint]', mint);
         increaseTxCounter($mint);
         App.removeNonce(nonce, {

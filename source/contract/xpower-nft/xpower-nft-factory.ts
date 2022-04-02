@@ -1,27 +1,24 @@
 /* eslint @typescript-eslint/no-explicit-any: [off] */
-import { App } from '../app';
+import { Global } from '../../../source/types';
+declare const global: Global;
+
+import { App } from '../../app';
 import { BigNumber, Contract } from 'ethers';
-import { NftLevel, Token } from '../../source/redux/types';
-import { MAX_YEAR } from '../../source/years';
-import { Tokenizer } from '../token';
-import { XPowerNft } from '.';
+import { NftLevel, Token } from '../../redux/types';
+import { MAX_YEAR } from '../../years';
+import { Tokenizer } from '../../token';
+import { XPowerNft } from './xpower-nft';
+import { address } from '../address';
 
 export function XPowerNftFactory({
     version, token
 }: {
-    version?: 'v2' | 'v3a' | 'v3b', token?: Token
+    version?: typeof App.version, token?: Token
 } = {}): Contract {
-    if (version === undefined) {
-        version = App.version;
-    }
-    const symbol = Tokenizer.symbolAlt(token ?? App.token);
-    const element_id = `#g-xpower-nft-address-${symbol}-${version}`;
-    const address = $(element_id).data('value');
-    if (!address) {
-        throw new Error(`missing ${element_id}`);
-    }
-    const contract = new XPowerNft(address);
-    return contract.connect(); // instance
+    const contract = new XPowerNft(address({
+        infix: 'NFT', version, token
+    }));
+    return global.XPOWER_NFT = contract.connect();
 }
 export function XPowerNftMockFactory({ token }: {
     token?: Token

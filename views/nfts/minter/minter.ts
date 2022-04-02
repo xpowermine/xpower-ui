@@ -1,12 +1,25 @@
 import { Blockchain } from '../../../source/blockchain';
 import { Transaction } from 'ethers';
-import { Address, Amount } from '../../../source/redux/types';
+import { Amount } from '../../../source/redux/types';
 import { NftLevel, NftLevels } from '../../../source/redux/types';
-import { NftWallet, OnTransferBatch, Wallet } from '../../../source/wallet';
+import { NftWallet, OnTransferBatch } from '../../../source/wallet';
 
-import './allowance';
-import './approval';
-
+$('#connect-metamask').on('connected', function initMinter() {
+    const $minter = $('#batch-minter');
+    const $approval = $('#burn-approval');
+    $approval.on('approved', async () => {
+        $minter.prop('disabled', !positives($amounts));
+        $minter.addClass('show');
+    });
+    const $amounts = $('.amount');
+    $amounts.on('change', (el, { amount }) => {
+        if (amount > 0n) {
+            $minter.prop('disabled', false);
+        } else if (amount === 0n) {
+            $minter.prop('disabled', !positives($amounts));
+        }
+    });
+});
 $('#batch-minter').on('click', async function batchMintNfts() {
     const address = await Blockchain.selectedAddress;
     if (!address) {
@@ -31,12 +44,12 @@ $('#batch-minter').on('click', async function batchMintNfts() {
         $minter.trigger('minted');
     };
     const $minter = $('#batch-minter');
-    const wallet = new NftWallet(address);
+    const nft_wallet = new NftWallet(address);
     let tx: Transaction | undefined;
     try {
         $minter.trigger('minting');
-        wallet.onTransferBatch(on_batch_tx);
-        tx = await wallet.mintBatch(levels, amounts);
+        nft_wallet.onTransferBatch(on_batch_tx);
+        tx = await nft_wallet.mintBatch(levels, amounts);
     } catch (ex) {
         $minter.trigger('error', {
             error: ex
@@ -44,33 +57,13 @@ $('#batch-minter').on('click', async function batchMintNfts() {
         console.error(ex);
     }
 });
-$('#connect-metamask').on('connected', function toggleMinter(ev, {
-    address
-}: {
-    address: Address
-}) {
+$('#connect-metamask').on('connected', function toggleMinter() {
     const $minter = $('#batch-minter');
     $minter.on('minting', () => {
         $minter.prop('disabled', true);
     });
-    $minter.on('minted', async () => {
-        const wallet = new Wallet(address);
-        const balance = await wallet.balance;
-        $minter.prop('disabled', balance === 0n);
-    });
     $minter.on('error', async () => {
         $minter.prop('disabled', false);
-    });
-    const $approval = $('#burn-approval');
-    $approval.on('approved', async () => {
-        const wallet = new Wallet(address);
-        const balance = await wallet.balance;
-        $minter.prop('disabled', balance === 0n);
-        $minter.addClass('full');
-    });
-    $approval.on('error', () => {
-        $minter.prop('disabled', true);
-        $minter.removeClass('full');
     });
 });
 $('#connect-metamask').on('connected', function toggleMinterSpinner() {
@@ -80,16 +73,23 @@ $('#connect-metamask').on('connected', function toggleMinterSpinner() {
     $minter.on('minting', () => {
         $spinner.css('visibility', 'visible');
         $spinner.addClass('spinner-grow');
-        $text.text('Batch Minting NFTs…');
+        $text.text('Minting NFTs…');
     });
     $minter.on('minted', () => {
         $spinner.css('visibility', 'hidden');
         $spinner.removeClass('spinner-grow');
-        $text.text('Batch Mint NFTs');
+        $text.text('Mint NFTs');
     });
     $minter.on('error', () => {
         $spinner.css('visibility', 'hidden');
         $spinner.removeClass('spinner-grow');
-        $text.text('Batch Mint NFTs');
+        $text.text('Mint NFTs');
     });
 });
+function positives($amounts: JQuery<HTMLElement>) {
+    const amounts = Array.from(
+        $amounts.map((i, el) => BigInt($(el).text() || 0n))
+    );
+    const positives = amounts.filter((a) => a > 0n);
+    return positives.length > 0;
+}

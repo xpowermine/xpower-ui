@@ -1,16 +1,10 @@
+import { OnApproval as on_approval } from '../contract';
+import { OnTransfer as on_transfer } from '../contract';
 import { BigNumber, Contract, Transaction, Event } from 'ethers';
-import { x40, x64 } from '../functions';
-import { OtfWallet } from './otf-wallet';
-import { Address, Allowance, Amount, Supply } from '../redux/types';
-import { Balance, BlockHash, Nonce, Timestamp } from '../redux/types';
-import { OnApproval as on_approval } from '../xpower';
-import { OnInit as on_init } from '../xpower';
-import { OnTransfer as on_transfer } from '../xpower';
-import { XPowerFactory } from '../xpower';
+import { Address, Allowance, Amount, Balance, Supply } from '../redux/types';
 
-export type OnInit = (
-    block_hash: BlockHash, timestamp: Timestamp, ev: Event
-) => void;
+import { x40 } from '../functions';
+
 export type OnApproval = (
     owner: Address, spender: Address, value: Amount, ev: Event
 ) => void;
@@ -18,7 +12,7 @@ export type OnTransfer = (
     from: Address, to: Address, amount: Amount, ev: Event
 ) => void;
 
-export class Wallet {
+export abstract class ERC20Wallet {
     constructor(
         address: Address | string
     ) {
@@ -56,42 +50,6 @@ export class Wallet {
         return this.contract.increaseAllowance(
             spender_address, allowance
         );
-    }
-    async init(): Promise<Transaction> {
-        const contract = await OtfWallet.connect(
-            this.contract
-        );
-        return contract.init();
-    }
-    async mint(
-        block_hash: BlockHash, nonce: Nonce
-    ): Promise<Transaction> {
-        const contract = await OtfWallet.connect(
-            this.contract
-        );
-        return contract.mint(
-            this._address, x64(block_hash), x64(nonce)
-        );
-    }
-    async onInit(
-        handler: OnInit, { once } = { once: false }
-    ) {
-        const on_init: on_init = (
-            block_hash, timestamp, ev
-        ) => {
-            handler(BigInt(block_hash), timestamp.toBigInt(), ev);
-        };
-        const contract = await OtfWallet.connect(
-            this.contract
-        );
-        if (once) {
-            contract.once('Init', on_init);
-        } else {
-            contract.on('Init', on_init);
-        }
-    }
-    offInit(handler: OnInit) {
-        this.contract.off('Init', handler);
     }
     onApproval(
         handler: OnApproval, { once } = { once: false }
@@ -142,13 +100,8 @@ export class Wallet {
         const supply = this.contract.totalSupply();
         return supply.then((s: BigNumber) => s.toBigInt());
     }
-    private get contract(): Contract {
-        if (this._contract === undefined) {
-            this._contract = XPowerFactory();
-        }
-        return this._contract;
-    }
+    abstract get contract(): Contract;
     protected readonly _address: string;
     protected _contract: Contract | undefined;
 }
-export default Wallet;
+export default ERC20Wallet;

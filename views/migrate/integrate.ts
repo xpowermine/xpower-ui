@@ -9,10 +9,10 @@ $('button.add-xpow.para').on('click', async () => {
     if (Blockchain.isInstalled()) {
         if (await Blockchain.isAvalanche()) {
             const token = Tokenizer.symbolAlt(Token.PARA);
-            const address = $(`#g-xpower-address-${token}-v3b`).data('value');
-            const symbol = $(`#g-xpower-symbol-${token}-v3b`).data('value');
-            const decimals = $(`#g-xpower-decimals-${token}-v3b`).data('value');
-            const image = $(`#g-xpower-image-${token}-v3b`).data('value');
+            const address = $(`#g-${token}_MOE_v4a`).data('value');
+            const symbol = $(`#g-${token}_SYMBOL_v4a`).data('value');
+            const decimals = $(`#g-${token}_DECIMALS_v4a`).data('value');
+            const image = $(`#g-${token}_IMAGE_v4a`).data('value');
             await Blockchain.addToken({
                 address, symbol, decimals, image
             });
@@ -27,10 +27,10 @@ $('button.add-xpow.aqch').on('click', async () => {
     if (Blockchain.isInstalled()) {
         if (await Blockchain.isAvalanche()) {
             const token = Tokenizer.symbolAlt(Token.AQCH);
-            const address = $(`#g-xpower-address-${token}-v3b`).data('value');
-            const symbol = $(`#g-xpower-symbol-${token}-v3b`).data('value');
-            const decimals = $(`#g-xpower-decimals-${token}-v3b`).data('value');
-            const image = $(`#g-xpower-image-${token}-v3b`).data('value');
+            const address = $(`#g-${token}_MOE_v4a`).data('value');
+            const symbol = $(`#g-${token}_SYMBOL_v4a`).data('value');
+            const decimals = $(`#g-${token}_DECIMALS_v4a`).data('value');
+            const image = $(`#g-${token}_IMAGE_v4a`).data('value');
             await Blockchain.addToken({
                 address, symbol, decimals, image
             });
@@ -45,10 +45,10 @@ $('button.add-xpow.qrsh').on('click', async () => {
     if (Blockchain.isInstalled()) {
         if (await Blockchain.isAvalanche()) {
             const token = Tokenizer.symbolAlt(Token.QRSH);
-            const address = $(`#g-xpower-address-${token}-v3b`).data('value');
-            const symbol = $(`#g-xpower-symbol-${token}-v3b`).data('value');
-            const decimals = $(`#g-xpower-decimals-${token}-v3b`).data('value');
-            const image = $(`#g-xpower-image-${token}-v3b`).data('value');
+            const address = $(`#g-${token}_MOE_v4a`).data('value');
+            const symbol = $(`#g-${token}_SYMBOL_v4a`).data('value');
+            const decimals = $(`#g-${token}_DECIMALS_v4a`).data('value');
+            const image = $(`#g-${token}_IMAGE_v4a`).data('value');
             await Blockchain.addToken({
                 address, symbol, decimals, image
             });

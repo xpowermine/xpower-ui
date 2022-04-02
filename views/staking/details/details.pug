@@ -1,0 +1,129 @@
+each year in Array.from(YEARS).reverse()
+  - let nft_id = 100 * year + 3 * index
+  - let now_year = new Date().getFullYear()
+  - let apy = 3 * index + (now_year - year) / 1000
+  div.row.year(
+    data-year=`${year}` style=`display:${
+      YEARS[YEARS.length-1] - year ? 'none' : 'flex'
+    }`
+    data-state=`${
+      YEARS[YEARS.length-1] - year ? 'off' : 'on'
+    }`
+  )
+    div.col-sm.nft-details-lhs
+      div.nft-image-wrap
+        span.spinner.spinner-border(
+          role="status"
+        )
+        img.img-fluid.nft-image(
+          data-bs-toggle="tooltip" data-bs-placement="top" loading="lazy" data-id=`${nft_id}`
+          title=`Trade staked ${levels[index]} NFTs (level ${index+1}/9 & ID #${nft_id})`
+        )
+
+    div.col-sm.nft-details-rhs
+      label.form-label
+        | Year of Issuance
+      div.input-group.nft-issuance-year
+        input.form-control(
+          type="number" value=`${year}` readonly
+        )
+        span.input-group-text.info(
+          data-bs-toggle="tooltip" data-bs-placement="top"
+          title=`Year of issuance of these staked ${levels[index]} NFTs`
+        )
+          include ../../../public/images/pug/info-circle-fill.svg.pug
+
+      label.form-label
+        | Personal Balance
+      div.input-group.nft-balance
+        input.form-control(
+          type="number" placeholder="0" readonly
+        )
+        span.input-group-text.info(
+          data-bs-toggle="tooltip" data-bs-placement="top"
+          title=`Personal balance of ${levels[index]} NFTs staked (for ${year})`
+        )
+          include ../../../public/images/pug/info-circle-fill.svg.pug
+
+      label.form-label
+        | Total Supply
+      div.input-group.nft-total-supply
+        input.form-control(
+          type="number" placeholder="0" readonly
+        )
+        span.input-group-text.info(
+          data-bs-toggle="tooltip" data-bs-placement="top"
+          title=`Total supply of ${levels[index]} NFTs staked so far (for ${year})`
+        )
+          include ../../../public/images/pug/info-circle-fill.svg.pug
+
+      div.btn-group.nft-claimer-expander.d-sm-none(
+        role="group" data-level=`${levels[index]}`
+        style="margin-top: 1em; width: 100%"
+      )
+        button.btn.btn-outline-warning.toggle-old.no-ellipsis(
+          type="button" data-bs-toggle="tooltip" data-bs-placement="top"
+          title=`Show older NFTs` data-state="off"
+        )
+          i.bi-eye-fill
+        button.btn.btn-outline-warning.claimer-expander(
+          type="button"
+        )
+          i.bi-chevron-down
+        button.btn.btn-outline-warning.info(
+          type="button" data-bs-toggle="tooltip" data-bs-placement="top"
+          title=`Show claimed & claimable` style="width: 43px"
+        )
+          include ../../../public/images/pug/info-circle-fill.svg.pug
+
+      label.form-label.nft-claimed-label.d-none.d-sm-flex
+        | Claimed Amount
+      div.input-group.nft-claimed.d-none.d-sm-flex(
+        role="group"  data-level=`${levels[index]}`
+      )
+        input.form-control(
+          type="number" placeholder="0" readonly
+        )
+        span.input-group-text.info(
+          data-bs-toggle="tooltip" data-bs-placement="top"
+          title=`Amount of claimed {{TOKEN}} rewards so far (for ${year})`
+        )
+          include ../../../public/images/pug/info-circle-fill.svg.pug
+
+      label.form-label.nft-claimable-label.d-none.d-sm-flex
+        | Claimable Amount
+      div.input-group.nft-claimable.d-none.d-sm-flex(
+        role="group"  data-level=`${levels[index]}`
+      )
+        input.form-control(
+          type="number" placeholder="0" readonly
+        )
+        span.input-group-text.info(
+          data-bs-toggle="tooltip" data-bs-placement="top"
+          title=`Min. amount of claimable {{TOKEN}} rewards (for ${year})`
+        )
+          include ../../../public/images/pug/info-circle-fill.svg.pug
+
+      div.btn-group.nft-claimer.d-none.d-sm-flex(
+        role="group" data-id=`${nft_id}` data-level=`${levels[index]}`
+      )
+        button.btn.btn-outline-warning.toggle-old.no-ellipsis(
+          type="button" data-bs-toggle="tooltip" data-bs-placement="top"
+          title=`Show older NFTs` data-state="off"
+        )
+          i.bi-eye-fill
+        button.btn.btn-outline-warning.claimer(
+          type="button" disabled
+        )
+          span.spinner.spinner-border.spinner-border-sm.float-start(
+            role="status" style="visibility: hidden"
+          )
+          span.text: | Claim Rewards
+        button.btn.btn-outline-warning.info(
+          type="button" data-bs-toggle="tooltip" data-bs-placement="top"
+          title=`Claim {{TOKEN}}s for staked ${levels[index]} NFTs at ${apy.toFixed(3)}% APY`
+        )
+          include ../../../public/images/pug/info-circle-fill.svg.pug
+  hr.year(style=`display:${
+    YEARS[YEARS.length-1] - year ? 'none' : 'block'
+  }`)

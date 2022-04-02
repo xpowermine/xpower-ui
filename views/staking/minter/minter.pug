@@ -1,0 +1,36 @@
+form#batch-minting
+  div.btn-group.nft-batch-minter(
+    role="group" data-level=`${levels[index]}`
+  )
+    button.btn.btn-outline-warning#toggle-all.no-ellipsis(
+      type="button" data-bs-toggle="tooltip" data-bs-placement="top"
+      title=`Show all NFT levels` data-state="off"
+    )
+      i.bi-chevron-down
+    button.btn.btn-outline-warning#burn-approval(
+      type="button" data-bs-toggle="tooltip" data-bs-placement="top"
+      title="Approve staking (and unstaking) of NFTs" disabled
+    )
+      span.spinner.spinner-border.spinner-border-sm.float-start(
+        role="status" style="visibility: hidden"
+      )
+      span.text: | Approve NFT Staking
+    button.btn.btn-outline-warning#batch-minter(
+      type="button" disabled
+    )
+      span.spinner.spinner-border.spinner-border-sm.float-start(
+        role="status" style="visibility: hidden"
+      )
+      span.text: | Stake<span class="d-none d-sm-inline"> NFTs</span>
+    button.btn.btn-outline-warning#batch-burner(
+      type="button" disabled
+    )
+      span.spinner.spinner-border.spinner-border-sm.float-start(
+        role="status" style="visibility: hidden"
+      )
+      span.text: | Unstake<span class="d-none d-sm-inline"> NFTs</span>
+    button.btn.btn-outline-warning.info(
+      type="button" data-bs-toggle="tooltip" data-bs-placement="top"
+      title="(Batch) stake or unstake {{TOKEN}} NFTs"
+    )
+      include ../../../public/images/pug/info-circle-fill.svg.pug

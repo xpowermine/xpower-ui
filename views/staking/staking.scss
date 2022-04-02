@@ -1,38 +1,12 @@
 @import "../index.scss";
 @import "../header/header.scss";
+@import "../connector/connector.scss";
 @import "../footer/footer.scss";
 
-h1 {
-  text-align: center;
+form#selector {
+    margin-top: 1em;
 }
-table.piggy {
-  @media (min-width: 576px) {
-    i.bi {
-      font-size: 20em;
-    }
-  }
-  @media (max-width: 576px) {
-    i.bi {
-      font-size: 16em;
-    }
-  }
-  width: 100%;
-}
-h2 {
-  @keyframes rotate {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
-  span.hourglass {
-    animation: rotate 3s infinite;
-    display: inline-block;
-  }
-  font-size: 20px;
-  font-weight: bold;
-  text-align: center;
-  margin: 0 0 1em 0;
-}
+
+@import "./list/list.scss";
+@import "./details/details.scss";
+@import "./minter/minter.scss";

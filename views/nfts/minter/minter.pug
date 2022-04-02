@@ -9,19 +9,19 @@ form#batch-minting
       i.bi-chevron-down
     button.btn.btn-outline-warning#burn-approval(
       type="button" data-bs-toggle="tooltip" data-bs-placement="top"
-      title="Approve XPOWs to be burned (to enable minting)" disabled
+      title="Approve burning of {{TOKEN}}s to enable NFT minting" disabled
     )
       span.spinner.spinner-border.spinner-border-sm.float-start(
         role="status" style="visibility: hidden"
       )
-      span.text: | Approve
+      span.text: | Approve NFT Minting
     button.btn.btn-outline-warning#batch-minter(
       type="button" disabled
     )
       span.spinner.spinner-border.spinner-border-sm.float-start(
         role="status" style="visibility: hidden"
       )
-      span.text: | Batch Mint NFTs
+      span.text: | Mint NFTs
     button.btn.btn-outline-warning.info(
       type="button" data-bs-toggle="tooltip" data-bs-placement="top"
       title="(Batch) mint stakeable {{TOKEN}} NFTs"

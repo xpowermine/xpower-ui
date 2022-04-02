@@ -1,7 +1,7 @@
 import { NftLevel, NftToken } from '../types';
 import { nftTotalBy } from './nft-total-by';
 
-describe('total', () => {
+describe('nft-total-by', () => {
     const issue = 2021;
     const level = NftLevel.UNIT;
     const token = NftToken.QRSH;

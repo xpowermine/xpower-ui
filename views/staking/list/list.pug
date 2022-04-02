@@ -1,0 +1,45 @@
+form#single-minting
+  label.form-label(for="minting")
+    | Stake & Manage {{TOKEN}} NFTs
+  - let levels = ["UNIT", "KILO", "MEGA", "GIGA", "TERA", "PETA", "EXA", "ZETTA", "YOTTA", "1E27"]
+  - let index = 0
+  while index < 9
+    div.btn-group.nft-minter(
+      role="group" data-level=`${levels[index]}` style="display: none"
+    )
+      div.btn-group(role="group")
+        button.btn.btn-outline-warning.toggle.no-ellipsis(
+          type="button" data-bs-toggle="tooltip" data-bs-placement="top"
+          title=`Show ${levels[index]} NFTs` data-state="off"
+        )
+          i.bi-chevron-down
+      button.btn.btn-outline-warning.minter(
+        type="button" data-bs-toggle="tooltip" data-bs-placement="top"
+        title=`(Un)stake ${levels[index]} NFTs`
+      )
+        | #{levels[index].slice(0,1)}<span class="d-none d-sm-inline">#{levels[index].slice(1)} NFTs</span>
+      button.btn.btn-outline-warning.balance(
+        type="button" data-bs-toggle="tooltip" data-bs-placement="top"
+        title=`Overall personal balance & supply (staked ${levels[index]} NFTs)`
+      )
+        | &middot;&middot;&middot;
+      div.btn-group(role="group")
+        button.btn.btn-outline-warning.decrease(
+          type="button" disabled
+        )
+          include ../../../public/images/pug/dash-circle-fill.svg.pug
+      button.btn.btn-outline-warning.amount(
+        type="button" data-bs-toggle="tooltip" data-bs-placement="top"
+        title=`${levels[index]} NFTs to (un)stake`
+      )
+        | 0
+      div.btn-group(role="group")
+        button.btn.btn-outline-warning.increase(
+          type="button" disabled
+        )
+          include ../../../public/images/pug/plus-circle-fill.svg.pug
+    div.nft-details(
+      role="group" data-level=`${levels[index]}`
+    )
+      include ../details/details.pug
+    - index++

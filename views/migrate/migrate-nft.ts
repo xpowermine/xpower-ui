@@ -5,7 +5,7 @@ import { Blockchain } from '../../source/blockchain';
 import { BigNumber } from 'ethers';
 import { alert, Alert, x40 } from '../../source/functions';
 import { Nft, NftLevels, Token } from '../../source/redux/types';
-import { XPowerNftFactory } from '../../source/xpower';
+import { XPowerNftFactory } from '../../source/contract';
 import { Years } from '../../source/years';
 
 $(window).on('load', function enableAllowanceButton() {
@@ -41,7 +41,7 @@ async function approve(token: Token, { $approve, $execute }: {
     if (!address) {
         throw new Error('missing selected-address');
     }
-    const v2_xpower = XPowerNftFactory({ token, version: 'v2' });
+    const v2_xpower = XPowerNftFactory({ token, version: 'v2a' });
     const v3_xpower = XPowerNftFactory({ token, version: 'v3a' });
     const v2_approved = await v2_xpower.isApprovedForAll(
         x40(address), v3_xpower.address
@@ -95,7 +95,7 @@ async function migrate(token: Token, { $execute }: {
     if (!address) {
         throw new Error('missing selected-address');
     }
-    const v2_xpower = XPowerNftFactory({ token, version: 'v2' });
+    const v2_xpower = XPowerNftFactory({ token, version: 'v2a' });
     const v3_xpower = XPowerNftFactory({ token, version: 'v3a' });
     const v2_approved = await v2_xpower.isApprovedForAll(
         x40(address), v3_xpower.address

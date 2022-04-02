@@ -1,0 +1,38 @@
+form#single-minting {
+  margin-bottom: 0;
+}
+form#single-minting {
+  .nft-minter {
+    .btn-group {
+      .toggle {
+        width: 43px;
+      }
+      .toggle > i {
+        position: relative;
+        top: 1px;
+      }
+      .increase,
+      .decrease {
+        width: 43px;
+      }
+      .increase > svg,
+      .decrease > svg {
+        position: relative;
+        top: -1px;
+      }
+    }
+    .minter {
+      width: calc(50% - 126px);
+    }
+    .balance {
+      font-size: smaller;
+      width: calc(25% - 126px);
+    }
+    .amount {
+      font-size: smaller;
+      width: calc(25% - 126px);
+    }
+    margin-bottom: 1em;
+    width: 100%;
+  }
+}

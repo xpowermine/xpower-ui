@@ -6,10 +6,12 @@ import { NftFullId, NftIssue, NftLevel, NftToken } from '../redux/types';
 import { BlockHash, State } from '../redux/types';
 
 import { middleware } from '../redux/middleware';
-import { Action } from '../redux/actions'
+import { Action, } from '../redux/actions'
 
 import { onNftAdded, OnNftAdded } from '../redux/observers';
+import { onPptAdded, OnPptAdded } from '../redux/observers';
 import { onNftRemoved, OnNftRemoved } from '../redux/observers';
+import { onPptRemoved, OnPptRemoved } from '../redux/observers';
 import { onNonceAdded, OnNonceAdded } from '../redux/observers';
 import { onNonceRemoved, OnNonceRemoved } from '../redux/observers';
 import { onTokenAdded, OnTokenAdded } from '../redux/observers';
@@ -23,11 +25,11 @@ import { nonceReducer } from '../redux/reducers';
 import { noncesBy } from '../redux/selectors';
 import { nonceBy } from '../redux/selectors';
 
-import { setNft } from '../redux/actions';
-import { addNft } from '../redux/actions';
-import { removeNft } from '../redux/actions';
-import { nftReducer } from '../redux/reducers';
-import { nftTotalBy } from '../redux/selectors';
+import { setNft, setPpt } from '../redux/actions';
+import { addNft, addPpt } from '../redux/actions';
+import { removeNft, removePpt } from '../redux/actions';
+import { nftReducer, pptReducer } from '../redux/reducers';
+import { nftTotalBy, pptTotalBy } from '../redux/selectors';
 
 import { setToken } from '../redux/actions';
 import { addToken } from '../redux/actions';
@@ -58,6 +60,7 @@ export class App {
             refresh: refreshReducer,
             nonces: nonceReducer,
             nfts: nftReducer,
+            ppts: pptReducer,
             tokens: tokenReducer
         });
         if (App.clear) {
@@ -157,6 +160,19 @@ export class App {
     ) {
         this.me.store.dispatch(setNft(nft, item));
     }
+    public static setPpt(
+        ppt: NftFullId | {
+            token: NftToken,
+            issue: NftIssue,
+            level: NftLevel,
+        },
+        item: {
+            amount: Amount,
+            supply: Supply
+        }
+    ) {
+        this.me.store.dispatch(setPpt(ppt, item));
+    }
     public static addNft(
         nft: NftFullId | {
             token: NftToken,
@@ -169,6 +185,19 @@ export class App {
         }
     ) {
         this.me.store.dispatch(addNft(nft, item));
+    }
+    public static addPpt(
+        ppt: NftFullId | {
+            token: NftToken,
+            issue: NftIssue,
+            level: NftLevel,
+        },
+        item?: {
+            amount: Amount,
+            supply?: Supply
+        }
+    ) {
+        this.me.store.dispatch(addPpt(ppt, item));
     }
     public static removeNft(
         nft: NftFullId | {
@@ -183,21 +212,51 @@ export class App {
     ) {
         this.me.store.dispatch(removeNft(nft, item));
     }
+    public static removePpt(
+        ppt: NftFullId | {
+            token: NftToken,
+            issue: NftIssue,
+            level: NftLevel,
+        },
+        item?: {
+            amount: Amount,
+            supply?: Supply
+        }
+    ) {
+        this.me.store.dispatch(removePpt(ppt, item));
+    }
     public static onNftAdded(
         callback: OnNftAdded
     ) {
         return onNftAdded(this.me.store, callback);
+    }
+    public static onPptAdded(
+        callback: OnPptAdded
+    ) {
+        return onPptAdded(this.me.store, callback);
     }
     public static onNftRemoved(
         callback: OnNftRemoved
     ) {
         return onNftRemoved(this.me.store, callback);
     }
+    public static onPptRemoved(
+        callback: OnPptRemoved
+    ) {
+        return onPptRemoved(this.me.store, callback);
+    }
     public static onNftChanged(
         callback: OnNftAdded | OnNftRemoved
     ): Unsubscribe {
         const un_add = this.onNftAdded(callback);
         const un_rem = this.onNftRemoved(callback);
+        return () => { un_add(); un_rem(); };
+    }
+    public static onPptChanged(
+        callback: OnNftAdded | OnNftRemoved
+    ): Unsubscribe {
+        const un_add = this.onPptAdded(callback);
+        const un_rem = this.onPptRemoved(callback);
         return () => { un_add(); un_rem(); };
     }
     public static getNftTotalBy(nft: NftFullId | {
@@ -209,6 +268,16 @@ export class App {
     } {
         const { nfts } = this.me.store.getState();
         return nftTotalBy(nfts, nft);
+    }
+    public static getPptTotalBy(ppt: NftFullId | {
+        issue?: NftIssue,
+        level?: NftLevel,
+        token?: NftToken,
+    }): {
+        amount: Amount, supply: Supply
+    } {
+        const { ppts } = this.me.store.getState();
+        return pptTotalBy(ppts, ppt);
     }
     public static setToken(
         token: Token, item: {
@@ -309,12 +378,16 @@ export class App {
     }
     public static get version() {
         switch (this.params.get('version')) {
-            case 'v2':
-                return 'v2';
+            case 'v2a':
+                return 'v2a';
             case 'v3a':
                 return 'v3a';
-            default:
+            case 'v3b':
                 return 'v3b';
+            case 'v4a':
+                return 'v4a';
+            default:
+                return 'v4a';
         }
     }
     public static get params(): URLSearchParams {

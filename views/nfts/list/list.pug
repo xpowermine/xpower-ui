@@ -15,12 +15,12 @@ form#single-minting
           i.bi-chevron-down
       button.btn.btn-outline-warning.minter(
         type="button" data-bs-toggle="tooltip" data-bs-placement="top"
-        title=`Stakeable ${levels[index]} NFTs (for [1${levels[index].slice(0,1)}...1${levels[index+1].toUpperCase().slice(0,1)}] XPOW tokens)`
+        title=`Mint ${levels[index]} NFTs (for [1${levels[index].slice(0,1)}...1${levels[index+1].toUpperCase().slice(0,1)}] {{TOKEN_SUFFIX}} tokens)`
       )
         | #{levels[index].slice(0,1)}<span class="d-none d-sm-inline">#{levels[index].slice(1)} NFTs</span>
       button.btn.btn-outline-warning.balance(
         type="button" data-bs-toggle="tooltip" data-bs-placement="top"
-        title=`Overall personal balance & supply of ${levels[index]} NFTs`
+        title=`Overall personal balance & supply (${levels[index]} NFTs)`
       )
         | &middot;&middot;&middot;
       div.btn-group(role="group")

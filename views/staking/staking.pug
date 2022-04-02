@@ -6,17 +6,66 @@ block styles
 block globals
   include ../global/global.pug
 
+  span#g-PARA_NFT_v2a(
+    style="display:none" data-value=`${PARA_NFT_V2a}`)
+  span#g-AQCH_NFT_v2a(
+    style="display:none" data-value=`${AQCH_NFT_V2a}`)
+  span#g-QRSH_NFT_v2a(
+    style="display:none" data-value=`${QRSH_NFT_V2a}`)
+
+  span#g-PARA_NFT_v3a(
+    style="display:none" data-value=`${PARA_NFT_V3a}`)
+  span#g-AQCH_NFT_v3a(
+    style="display:none" data-value=`${AQCH_NFT_V3a}`)
+  span#g-QRSH_NFT_v3a(
+    style="display:none" data-value=`${QRSH_NFT_V3a}`)
+
+  span#g-PARA_NFT_v3b(
+    style="display:none" data-value=`${PARA_NFT_V3b}`)
+  span#g-AQCH_NFT_v3b(
+    style="display:none" data-value=`${AQCH_NFT_V3b}`)
+  span#g-QRSH_NFT_v3b(
+    style="display:none" data-value=`${QRSH_NFT_V3b}`)
+
+  span#g-PARA_NFT_v4a(
+    style="display:none" data-value=`${PARA_NFT_V4a}`)
+  span#g-AQCH_NFT_v4a(
+    style="display:none" data-value=`${AQCH_NFT_V4a}`)
+  span#g-QRSH_NFT_v4a(
+    style="display:none" data-value=`${QRSH_NFT_V4a}`)
+
+  span#g-PARA_PPT_v4a(
+    style="display:none" data-value=`${PARA_PPT_V4a}`)
+  span#g-AQCH_PPT_v4a(
+    style="display:none" data-value=`${AQCH_PPT_V4a}`)
+  span#g-QRSH_PPT_v4a(
+    style="display:none" data-value=`${QRSH_PPT_V4a}`)
+
+  span#g-PARA_PPT_TREASURY_v4a(
+    style="display:none" data-value=`${PARA_PPT_TREASURY_V4a}`)
+  span#g-AQCH_PPT_TREASURY_v4a(
+    style="display:none" data-value=`${AQCH_PPT_TREASURY_V4a}`)
+  span#g-QRSH_PPT_TREASURY_v4a(
+    style="display:none" data-value=`${QRSH_PPT_TREASURY_V4a}`)
+
+  span#g-PARA_MOE_TREASURY_v4a(
+    style="display:none" data-value=`${PARA_MOE_TREASURY_V4a}`)
+  span#g-AQCH_MOE_TREASURY_v4a(
+    style="display:none" data-value=`${AQCH_MOE_TREASURY_V4a}`)
+  span#g-QRSH_MOE_TREASURY_v4a(
+    style="display:none" data-value=`${QRSH_MOE_TREASURY_V4a}`)
+
 block header
   include ../header/header.pug
 
 block content
-  h1: | Stake your XPower NFT Bonds on Avalanche <img src="/images/png/avalanche-icon/avalanche-64x64.png" height=24 width=24>
-
-  table.piggy
-    td.text-center
-      i.bi.bi-piggy-bank-fill
-
-  h2: | Coming soon… <span class="hourglass"><i class="bi bi-hourglass-split"></i></span>
+  content
+    h1: | Stake minted XPower NFTs on Avalanche <img src="/images/png/avalanche-icon/avalanche-64x64.png" height=24 width=24>
+    include ../connector/connector.pug
+    include ../wallet/wallet.pug
+    include ../selector/selector.pug
+    include ./list/list.pug
+    include ./minter/minter.pug
 
 block footer
   include ../footer/footer.pug

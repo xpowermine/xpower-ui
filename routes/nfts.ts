@@ -17,7 +17,7 @@ router.get('/:token/:id.json', (req, res) => {
     level: Nft.level(id),
     token: Nft.token(token)
   };
-  const location = env.XPOWER_NFT_REDIRECT[
+  const location = env.NFT_URI[
     `${token}/${Nft.coreId(nft)}.json`
   ];
   if (typeof location === 'string') {
@@ -27,8 +27,37 @@ router.get('/:token/:id.json', (req, res) => {
   const LEVEL = NftLevel[nft.level].toUpperCase();
   const level = LEVEL.toLowerCase();
   res.send({
-    name: `${TOKEN} ${LEVEL}`,
-    describe: `Stakeable ${TOKEN} ${LEVEL} NFT`,
+    name: `${LEVEL} ${TOKEN}`,
+    describe: `${LEVEL} ${TOKEN} NFT`,
+    image: `${host(req)}/images/nft/${nft.issue}/xpow.${token}-${level}.png`,
+    properties: {
+      issue: `${nft.issue}`,
+      label: LEVEL,
+      level: `${nft.level}`,
+      token: `${TOKEN}`
+    }
+  });
+});
+/** GET nfts/{token}/{id}-ppt.json metadata. */
+router.get('/:token/:id-ppt.json', (req, res) => {
+  const { token, id } = req.params;
+  const nft = {
+    issue: Nft.issue(id),
+    level: Nft.level(id),
+    token: Nft.token(token)
+  };
+  const location = env.PPT_URI[
+    `${token}/${Nft.coreId(nft)}-ppt.json`
+  ];
+  if (typeof location === 'string') {
+    return res.redirect(location);
+  }
+  const TOKEN = NftToken[nft.token].toUpperCase();
+  const LEVEL = NftLevel[nft.level].toUpperCase();
+  const level = LEVEL.toLowerCase();
+  res.send({
+    name: `${LEVEL} ${TOKEN}`,
+    describe: `${LEVEL} ${TOKEN} PPT`,
     image: `${host(req)}/images/nft/${nft.issue}/xpow.${token}-${level}.png`,
     properties: {
       issue: `${nft.issue}`,

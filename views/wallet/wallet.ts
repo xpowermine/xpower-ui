@@ -8,7 +8,7 @@ import { Blockchain, Connect } from '../../source/blockchain';
 import { x40 } from '../../source/functions';
 import { Tokenizer } from '../../source/token';
 import { Amount, Token } from '../../source/redux/types';
-import { OnTransfer, OtfWallet, Wallet } from '../../source/wallet';
+import { MoeWallet, OnTransfer, OtfWallet } from '../../source/wallet';
 
 import { Web3Provider } from '@ethersproject/providers';
 import { formatUnits } from '@ethersproject/units';
@@ -20,10 +20,10 @@ $('#connect-metamask').on('connected', async function initWallet(
     ev, { address }: Connect
 ) {
     const token = Tokenizer.token(App.params.get('token'));
-    const wallet = new Wallet(address);
+    const moe_wallet = new MoeWallet(address);
     App.setToken(token, {
-        amount: await wallet.balance,
-        supply: await wallet.supply
+        amount: await moe_wallet.balance,
+        supply: await moe_wallet.supply
     });
     const $address = $('#wallet-address');
     $address.val(x40(address));
@@ -35,14 +35,14 @@ $('#connect-metamask').on('connected', async function onTransfer(
         console.debug('[on:transfer]', x40(from), x40(to), amount);
         if (address === from || address === to) {
             App.setToken(token, {
-                amount: await wallet.balance,
-                supply: await wallet.supply
+                amount: await moe_wallet.balance,
+                supply: await moe_wallet.supply
             });
         }
     };
     const token = Tokenizer.token(App.params.get('token'));
-    const wallet = new Wallet(address);
-    wallet.onTransfer(on_transfer);
+    const moe_wallet = new MoeWallet(address);
+    moe_wallet.onTransfer(on_transfer);
 });
 App.onTokenChanged(function setBalance(
     token: Token, { amount: balance }: { amount: Amount }
@@ -173,8 +173,9 @@ async function depositOtf() {
     const gas_limit = await mmw_signer.estimateGas({
         to: x40(address), value: unit
     });
-    const gas_price = await mmw_signer.getGasPrice();
-    const fee = gas_limit.mul(gas_price)
+    const gas_price_base = await mmw_signer.getGasPrice();
+    const gas_price = gas_price_base.mul(1125).div(1000);
+    const fee = gas_limit.mul(gas_price);
     const value = mmw_balance.lt(unit.add(fee))
         ? mmw_balance.sub(fee) : unit;
     const otf_wallet = await OtfWallet.init();
@@ -201,8 +202,9 @@ async function withdrawOtf() {
     const gas_limit = await otf_signer.estimateGas({
         to: x40(address), value: otf_balance
     });
-    const gas_price = await otf_signer.getGasPrice();
-    const fee = gas_limit.mul(gas_price)
+    const gas_price_base = await otf_signer.getGasPrice();
+    const gas_price = gas_price_base.mul(1125).div(1000);
+    const fee = gas_limit.mul(gas_price);
     const value = otf_balance.sub(fee);
     const tx = await otf_signer.sendTransaction({
         gasLimit: gas_limit, gasPrice: gas_price,
@@ -216,4 +218,3 @@ async function withdrawOtf() {
     $otf_transfer.off('click')
     console.debug('[withdraw-otf]', tx);
 }
-export default Wallet;

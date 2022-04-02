@@ -82,6 +82,13 @@ footer {
             display: block;
         }
     }
+    a.telegram {
+        svg:hover {
+            background-color: white;
+            border-radius: 8px;
+            color: #0088cc;
+        }
+    }
     a.twitter {
         svg:hover {
             color: #55acee;

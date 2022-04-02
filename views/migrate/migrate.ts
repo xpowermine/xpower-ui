@@ -4,7 +4,7 @@ import './migrate.scss';
 import { Blockchain } from '../../source/blockchain';
 import { alert, Alert, x40 } from '../../source/functions';
 import { Token } from '../../source/redux/types';
-import { XPowerFactory } from '../../source/xpower';
+import { XPowerFactory } from '../../source/contract';
 
 $(window).on('load', function enableAllowanceButton() {
     if (Blockchain.isInstalled()) {
@@ -39,7 +39,7 @@ async function approve(token: Token, { $approve, $execute }: {
     if (!address) {
         throw new Error('missing selected-address');
     }
-    const v2_xpower = XPowerFactory({ token, version: 'v2' });
+    const v2_xpower = XPowerFactory({ token, version: 'v2a' });
     const v3_xpower = XPowerFactory({ token, version: 'v3b' });
     const v2_balance = await v2_xpower.balanceOf(x40(address));
     const v2_allowance = await v2_xpower.allowance(x40(address), v3_xpower.address);
@@ -93,7 +93,7 @@ async function migrate(token: Token, { $execute }: {
     if (!address) {
         throw new Error('missing selected-address');
     }
-    const v2_xpower = XPowerFactory({ token, version: 'v2' });
+    const v2_xpower = XPowerFactory({ token, version: 'v2a' });
     const v2_balance = await v2_xpower.balanceOf(x40(address));
     console.debug('[v2:balance]', v2_balance.toNumber());
     if (v2_balance.isZero()) {

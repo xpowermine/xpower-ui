@@ -1,29 +1,17 @@
-import { BigNumber, Contract, Event, Signer } from 'ethers';
+import { Contract, ContractInterface, Signer } from 'ethers';
 import { Web3Provider } from '@ethersproject/providers';
 import { Blockchain } from '../blockchain';
 
-import XPOWER_ABI from '../xpower-abi.json';
-
-export type OnInit = (
-    block_hash: string, timestamp: BigNumber, ev: Event
-) => void;
-export type OnTransfer = (
-    from: string, to: string, amount: BigNumber, ev: Event
-) => void;
-export type OnApproval = (
-    owner: string, spender: string, value: BigNumber, ev: Event
-) => void;
-
-export class XPower {
+export class Base {
     public constructor(
-        address: string, abi = XPOWER_ABI
+        address: string, abi: ContractInterface
     ) {
         if (!address) {
-            throw new Error('missing XPower contract address');
+            throw new Error('missing contract address');
         }
         this._address = address;
         if (!abi) {
-            throw new Error('missing XPower ABI');
+            throw new Error('missing ABI');
         }
         this._abi = abi;
     }
@@ -48,8 +36,8 @@ export class XPower {
     private get address() {
         return this._address;
     }
-    private _abi: typeof XPOWER_ABI;
+    private _abi: ContractInterface;
     private _address: string;
     private _contract: Contract | undefined;
 }
-export default XPower;
+export default Base;

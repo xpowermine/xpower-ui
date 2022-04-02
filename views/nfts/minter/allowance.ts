@@ -1,8 +1,7 @@
-import { App } from '../../../source/app';
 import { Blockchain } from '../../../source/blockchain';
 import { Transaction } from 'ethers';
-import { Address, Amount, Token } from '../../../source/redux/types';
-import { NftWallet, OnApproval, Wallet } from '../../../source/wallet';
+import { Address } from '../../../source/redux/types';
+import { NftWallet, OnApproval, MoeWallet } from '../../../source/wallet';
 
 export const MAX_UINT256 = 2n ** 256n - 1n;
 export const MID_UINT256 = 2n ** 255n - 1n;
@@ -12,32 +11,22 @@ $('#connect-metamask').on('connected', async function checkAllowance(ev, {
 }: {
     address: Address
 }) {
-    const wallet = new Wallet(address);
-    const wallet_nft = new NftWallet(address);
-    const allowance = await wallet.allowance(
-        address, wallet_nft.contract.address
+    const moe_wallet = new MoeWallet(address);
+    const nft_wallet = new NftWallet(address);
+    const allowance = await moe_wallet.allowance(
+        address, nft_wallet.contract.address
     );
     const $approval = $('#burn-approval');
-    if (MID_UINT256 > allowance) {
-        $approval.prop('disabled', false);
-        $approval.show();
-    } else {
+    const approved = allowance > MID_UINT256;
+    if (approved) {
         $approval.prop('disabled', true);
         $approval.hide();
-    }
-    const $minter = $('#batch-minter');
-    if (MID_UINT256 > allowance) {
-        $minter.prop('disabled', true);
-        $minter.removeClass('full');
     } else {
-        App.onTokenChanged(function toggleMinter(
-            token: Token, { amount }: { amount: Amount }
-        ) {
-            $minter.prop('disabled', amount === 0n);
-        });
-        $minter.addClass('full');
-        const amount = await wallet.balance;
-        $minter.prop('disabled', amount === 0n);
+        $approval.prop('disabled', false);
+        $approval.show();
+    }
+    if (approved) {
+        $approval.trigger('approved');
     }
 });
 $('#burn-approval').on('click', async function increaseAllowance() {
@@ -45,13 +34,16 @@ $('#burn-approval').on('click', async function increaseAllowance() {
     if (!address) {
         throw new Error('missing selected-address');
     }
-    const wallet = new Wallet(address);
-    const wallet_nft = new NftWallet(address);
-    const old_allowance = await wallet.allowance(
-        address, wallet_nft.contract.address
+    const moe_wallet = new MoeWallet(address);
+    const nft_wallet = new NftWallet(address);
+    const old_allowance = await moe_wallet.allowance(
+        address, nft_wallet.contract.address
     );
     const $approval = $('#burn-approval');
-    if (MAX_UINT256 > old_allowance) {
+    const approved = old_allowance > MID_UINT256;
+    if (approved) {
+        $approval.trigger('approved');
+    } else {
         const on_approval: OnApproval = (
             owner, spender, value, ev
         ) => {
@@ -63,9 +55,9 @@ $('#burn-approval').on('click', async function increaseAllowance() {
         let tx: Transaction | undefined;
         try {
             $approval.trigger('approving');
-            wallet.onApproval(on_approval);
-            tx = await wallet.increaseAllowance(
-                wallet_nft.contract.address,
+            moe_wallet.onApproval(on_approval);
+            tx = await moe_wallet.increaseAllowance(
+                nft_wallet.contract.address,
                 MAX_UINT256 - old_allowance
             );
         } catch (ex) {
@@ -74,7 +66,5 @@ $('#burn-approval').on('click', async function increaseAllowance() {
             });
             console.error(ex);
         }
-    } else {
-        $approval.trigger('approved');
     }
 });

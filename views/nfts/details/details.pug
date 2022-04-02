@@ -15,7 +15,7 @@ each year in Array.from(YEARS).reverse()
         )
         img.img-fluid.nft-image(
           data-bs-toggle="tooltip" data-bs-placement="top" loading="lazy" data-id=`${nft_id}`
-          title=`Trade ${levels[index]} NFT (level ${index+1} of 9 and ID of #${nft_id})`
+          title=`Trade ${levels[index]} NFTs (level ${index+1}/9 & ID #${nft_id})`
         )
 
     div.col-sm.nft-details-rhs
@@ -23,7 +23,7 @@ each year in Array.from(YEARS).reverse()
         | Year of Issuance
       div.input-group.nft-issuance-year
         input.form-control(
-          type="text" value=`${year}` readonly
+          type="number" value=`${year}` readonly
         )
         span.input-group-text.info(
           data-bs-toggle="tooltip" data-bs-placement="top"
@@ -35,7 +35,7 @@ each year in Array.from(YEARS).reverse()
         | Personal Balance
       div.input-group.nft-balance
         input.form-control(
-          type="text" placeholder="0" readonly
+          type="number" placeholder="0" readonly
         )
         span.input-group-text.info(
           data-bs-toggle="tooltip" data-bs-placement="top"
@@ -47,7 +47,7 @@ each year in Array.from(YEARS).reverse()
         | Total Supply
       div.input-group.nft-total-supply
         input.form-control(
-          type="text" placeholder="0" readonly
+          type="number" placeholder="0" readonly
         )
         span.input-group-text.info(
           data-bs-toggle="tooltip" data-bs-placement="top"
@@ -103,7 +103,7 @@ each year in Array.from(YEARS).reverse()
           include ../../../public/images/pug/info-circle-fill.svg.pug
 
       div.btn-group.nft-sender.d-none.d-sm-flex(
-        role="group" data-level=`${levels[index]}`
+        role="group" data-id=`${nft_id}` data-level=`${levels[index]}`
       )
         button.btn.btn-outline-warning.toggle-old.no-ellipsis(
           type="button" data-bs-toggle="tooltip" data-bs-placement="top"

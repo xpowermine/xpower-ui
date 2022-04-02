@@ -11,6 +11,7 @@ import { Tokens } from './tokens';
 
 export type State = {
     nfts: Nfts,
+    ppts: Nfts,
     nonces: Nonces,
     refresh: Refresh,
     tokens: Tokens

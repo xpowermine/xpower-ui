@@ -13,7 +13,7 @@ import { IntervalManager } from '../../../source/managers';
 import { Address } from '../../../source/redux/types';
 import { BlockHash } from '../../../source/redux/types';
 import { OnInit } from '../../../source/wallet';
-import { Wallet } from '../../../source/wallet';
+import { MoeWallet } from '../../../source/wallet';
 
 $(window).on('load', async function refreshBlockHash() {
     if (Blockchain.isInstalled()) {
@@ -25,7 +25,7 @@ $(window).on('load', async function refreshBlockHash() {
                     slot: suffix
                 });
             };
-            const wallet = new Wallet(address);
+            const wallet = new MoeWallet(address);
             wallet.onInit(on_init);
         });
     }
@@ -89,9 +89,9 @@ $('#toggle-mining').on('click', async function toggleMining() {
     }) => {
         mine(address, block_hash);
     });
-    const wallet = new Wallet(address);
+    const moe_wallet = new MoeWallet(address);
     try {
-        const init = await wallet.init();
+        const init = await moe_wallet.init();
         console.debug('[init]', init);
     } catch (ex) {
         HashManager.me.removeAllListeners('block-hash');

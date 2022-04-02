@@ -2,6 +2,8 @@ import './nfts.scss';
 
 import './list/list';
 import './details/details';
+import './minter/allowance';
+import './minter/approving';
 import './minter/minter';
 
 import { App } from '../../source/app';
