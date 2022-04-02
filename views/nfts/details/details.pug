@@ -1,5 +1,5 @@
 each year in Array.from(YEARS).reverse()
-
+  - let nft_id = 100 * year + 3 * index
   div.row.year(
     data-year=`${year}` style=`display:${
       YEARS[YEARS.length-1] - year ? 'none' : 'flex'
@@ -14,8 +14,8 @@ each year in Array.from(YEARS).reverse()
           role="status"
         )
         img.img-fluid.nft-image(
-          data-bs-toggle="tooltip" data-bs-placement="top" loading="lazy"
-          title=`${levels[index]} NFT (level ${index+1} out of 9 with an ID of #${100*year+3*index})`
+          data-bs-toggle="tooltip" data-bs-placement="top" loading="lazy" data-id=`${nft_id}`
+          title=`Trade ${levels[index]} NFT (level ${index+1} of 9 and ID of #${nft_id})`
         )
 
     div.col-sm.nft-details-rhs

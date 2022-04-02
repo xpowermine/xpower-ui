@@ -64,9 +64,28 @@ $('.nft-minter').on('expanded', async function setImage(
         }
     }
 });
-$('.nft-image').on('load', function clearImageSpinner(ev) {
+$('.nft-image').on('load', async function clearImageSpinner(ev) {
     const $image = $(ev.target);
     $image.siblings('.spinner').hide();
+});
+$('.nft-image').on('click', async function openCollection(ev) {
+    const address = await Blockchain.selectedAddress;
+    if (!address) {
+        throw new Error('missing selected-address');
+    }
+    const $image = $(ev.target);
+    const nft_id = $image.data('id');
+    const nft_wallet = new NftWallet(address);
+    const supply = await nft_wallet.totalSupply(nft_id);
+    if (supply > 0) {
+        $image.css('cursor', 'pointer');
+    } else {
+        $image.css('cursor', 'not-allowed');
+    }
+    if (supply > 0) {
+        const market = 'https://nftrade.com/assets/avalanche';
+        open(`${market}/${nft_wallet.contract.address}/${nft_id}`);
+    }
 });
 $('.nft-balance>input').on(
     'change', enableTransferToAndAmount
