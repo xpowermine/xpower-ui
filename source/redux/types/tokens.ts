@@ -1,9 +1,9 @@
 import { Address, Amount, Supply } from './base';
 
 export enum Token {
-    QRSH = 'QRSH',
-    AQCH = 'AQCH',
-    PARA = 'PARA'
+    ODIN = 'ODIN',
+    LOKI = 'LOKI',
+    THOR = 'THOR'
 }
 export function* Tokens() {
     for (const t in Token) {

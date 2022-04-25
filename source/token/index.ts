@@ -1,19 +1,19 @@
 import { Amount, Token } from '../redux/types';
 
 enum TokenSuffix {
-    QRSH = 'qrsh',
-    AQCH = 'aqch',
-    PARA = 'para',
+    ODIN = 'odin',
+    LOKI = 'loki',
+    THOR = 'thor',
 }
 enum TokenSymbol {
-    QRSH = 'QRSH',
-    AQCH = 'AQCH',
-    PARA = 'PARA',
+    ODIN = 'ODIN',
+    LOKI = 'LOKI',
+    THOR = 'THOR',
 }
 enum TokenSymbolAlt {
-    QRSH = 'QRSH',
-    AQCH = 'AQCH',
-    PARA = 'PARA',
+    ODIN = 'ODIN',
+    LOKI = 'LOKI',
+    THOR = 'THOR',
 }
 export class Tokenizer {
     public static token(value: string | null): Token {
@@ -21,55 +21,55 @@ export class Tokenizer {
             const suffix = value.match(/^xpow[._]/i)
                 ? value.replace('.', '_').split('_')[1] : value;
             switch (suffix.toLowerCase()) {
-                case 'qrsh':
-                    return Token.QRSH;
-                case 'aqch':
-                    return Token.AQCH;
-                case 'para':
-                    return Token.PARA;
+                case 'odin':
+                    return Token.ODIN;
+                case 'loki':
+                    return Token.LOKI;
+                case 'thor':
+                    return Token.THOR;
                 default:
-                    return Token.PARA;
+                    return Token.THOR;
             }
         }
-        return Token.PARA;
+        return Token.THOR;
     }
     public static suffix(token: Token): TokenSuffix {
         switch (token) {
-            case Token.QRSH:
-                return TokenSuffix.QRSH;
-            case Token.AQCH:
-                return TokenSuffix.AQCH;
-            case Token.PARA:
-                return TokenSuffix.PARA;
+            case Token.ODIN:
+                return TokenSuffix.ODIN;
+            case Token.LOKI:
+                return TokenSuffix.LOKI;
+            case Token.THOR:
+                return TokenSuffix.THOR;
         }
     }
     public static symbol(token: Token): TokenSymbol {
         switch (token) {
-            case Token.QRSH:
-                return TokenSymbol.QRSH;
-            case Token.AQCH:
-                return TokenSymbol.AQCH;
-            case Token.PARA:
-                return TokenSymbol.PARA;
+            case Token.ODIN:
+                return TokenSymbol.ODIN;
+            case Token.LOKI:
+                return TokenSymbol.LOKI;
+            case Token.THOR:
+                return TokenSymbol.THOR;
         }
     }
     public static symbolAlt(token: Token): TokenSymbolAlt {
         switch (token) {
-            case Token.QRSH:
-                return TokenSymbolAlt.QRSH;
-            case Token.AQCH:
-                return TokenSymbolAlt.AQCH;
-            case Token.PARA:
-                return TokenSymbolAlt.PARA;
+            case Token.ODIN:
+                return TokenSymbolAlt.ODIN;
+            case Token.LOKI:
+                return TokenSymbolAlt.LOKI;
+            case Token.THOR:
+                return TokenSymbolAlt.THOR;
         }
     }
     public static amount(token: Token, zeros: number): Amount {
         switch (token) {
-            case Token.QRSH:
+            case Token.ODIN:
                 return 16n ** BigInt(zeros) - 1n;
-            case Token.AQCH:
+            case Token.LOKI:
                 return 2n ** BigInt(zeros) - 1n;
-            case Token.PARA:
+            case Token.THOR:
                 return BigInt(zeros);
         }
     }

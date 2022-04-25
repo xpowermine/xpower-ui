@@ -1,29 +1,11 @@
 import request from 'supertest';
 import app from '../app';
 
-describe('GET /nfts', () => {
-    let get: request.Test;
-    beforeEach(() => {
-        get = request(app).get('/nfts');
-    });
-    it('should return w/an HTTP code = 200 OK', async () => {
-        await get.expect(200);
-    });
-    it('should return w/a Content-Type ~ html', async () => {
-        await get.expect('Content-Type', /html/)
-    });
-    it('should return w/a Content-Length > 0', async () => {
-        await get.expect((res) => {
-            const length = BigInt(res.headers['content-length']);
-            expect(length).toBeGreaterThan(0);
-        });
-    });
-});
-describe('GET /nfts/thor/(0*)222200.json', () => {
+describe('GET /ppts/thor/(0*)222200.json', () => {
     let get: request.Test;
     beforeEach(() => {
         get = request(app).get(
-            '/nfts/thor/222200.json'
+            '/ppts/thor/222200.json'
         );
     });
     it('should return w/an HTTP code = 200 OK', async () => {
@@ -45,22 +27,22 @@ describe('GET /nfts/thor/(0*)222200.json', () => {
                 'UNIT THOR'
             );
             expect(describe).toBe(
-                'UNIT THOR NFT'
+                'UNIT THOR PPT'
             );
             expect(image).toMatch(
                 new RegExp('^http://127.0.0.1:')
             );
             expect(image).toMatch(
-                new RegExp('/images/nft/2222/xpow.thor-unit.png$')
+                new RegExp('/images/ppt/2222/xpow.thor-unit.png$')
             );
         });
     });
 });
-describe('GET /nfts/thor/(0*)363f8.json', () => {
+describe('GET /ppts/thor/(0*)363f8.json', () => {
     let get: request.Test;
     beforeEach(() => {
         get = request(app).get(
-            '/nfts/thor/363f8.json'
+            '/ppts/thor/363f8.json'
         );
     });
     it('should return w/an HTTP code = 200 OK', async () => {
@@ -82,22 +64,22 @@ describe('GET /nfts/thor/(0*)363f8.json', () => {
                 'UNIT THOR'
             );
             expect(describe).toBe(
-                'UNIT THOR NFT'
+                'UNIT THOR PPT'
             );
             expect(image).toMatch(
                 new RegExp('^http://127.0.0.1:')
             );
             expect(image).toMatch(
-                new RegExp('/images/nft/2222/xpow.thor-unit.png$')
+                new RegExp('/images/ppt/2222/xpow.thor-unit.png$')
             );
         });
     });
 });
-describe('REDIRECT /nfts/thor/(0*)333300.json', () => {
+describe('REDIRECT /ppts/thor/(0*)333300.json', () => {
     let get: request.Test;
     beforeEach(() => {
         get = request(app).get(
-            '/nfts/thor/333300.json'
+            '/ppts/thor/333300.json'
         );
     });
     it('should return w/an HTTP code = 302 OK', async () => {
@@ -111,11 +93,11 @@ describe('REDIRECT /nfts/thor/(0*)333300.json', () => {
         });
     });
 });
-describe('REDIRECT /nfts/thor/(0*)515f4.json', () => {
+describe('REDIRECT /ppts/thor/(0*)515f4.json', () => {
     let get: request.Test;
     beforeEach(() => {
         get = request(app).get(
-            '/nfts/thor/515f4.json'
+            '/ppts/thor/515f4.json'
         );
     });
     it('should return w/an HTTP code = 302 OK', async () => {
@@ -129,11 +111,11 @@ describe('REDIRECT /nfts/thor/(0*)515f4.json', () => {
         });
     });
 });
-describe('GET /nfts/loki/(0*)202203.json', () => {
+describe('GET /ppts/loki/(0*)202203.json', () => {
     let get: request.Test;
     beforeEach(() => {
         get = request(app).get(
-            '/nfts/loki/00000000000000000000000000202203.json'
+            '/ppts/loki/00000000000000000000000000202203.json'
         );
     });
     it('should return w/an HTTP code = 200 OK', async () => {
@@ -155,22 +137,22 @@ describe('GET /nfts/loki/(0*)202203.json', () => {
                 'KILO LOKI'
             );
             expect(describe).toBe(
-                'KILO LOKI NFT'
+                'KILO LOKI PPT'
             );
             expect(image).toMatch(
                 new RegExp('^http://127.0.0.1:')
             );
             expect(image).toMatch(
-                new RegExp('/images/nft/2022/xpow.loki-kilo.png$')
+                new RegExp('/images/ppt/2022/xpow.loki-kilo.png$')
             );
         });
     });
 });
-describe('GET /nfts/loki/(0*)315db.json', () => {
+describe('GET /ppts/loki/(0*)315db.json', () => {
     let get: request.Test;
     beforeEach(() => {
         get = request(app).get(
-            '/nfts/loki/00000000000000000000000000315db.json'
+            '/ppts/loki/00000000000000000000000000315db.json'
         );
     });
     it('should return w/an HTTP code = 200 OK', async () => {
@@ -192,22 +174,22 @@ describe('GET /nfts/loki/(0*)315db.json', () => {
                 'KILO LOKI'
             );
             expect(describe).toBe(
-                'KILO LOKI NFT'
+                'KILO LOKI PPT'
             );
             expect(image).toMatch(
                 new RegExp('^http://127.0.0.1:')
             );
             expect(image).toMatch(
-                new RegExp('/images/nft/2022/xpow.loki-kilo.png$')
+                new RegExp('/images/ppt/2022/xpow.loki-kilo.png$')
             );
         });
     });
 });
-describe('REDIRECT /nfts/loki/(0*)333303.json', () => {
+describe('REDIRECT /ppts/loki/(0*)333303.json', () => {
     let get: request.Test;
     beforeEach(() => {
         get = request(app).get(
-            '/nfts/loki/333303.json'
+            '/ppts/loki/333303.json'
         );
     });
     it('should return w/an HTTP code = 302 OK', async () => {
@@ -221,11 +203,11 @@ describe('REDIRECT /nfts/loki/(0*)333303.json', () => {
         });
     });
 });
-describe('REDIRECT /nfts/loki/(0*)515f7.json', () => {
+describe('REDIRECT /ppts/loki/(0*)515f7.json', () => {
     let get: request.Test;
     beforeEach(() => {
         get = request(app).get(
-            '/nfts/loki/515f7.json'
+            '/ppts/loki/515f7.json'
         );
     });
     it('should return w/an HTTP code = 302 OK', async () => {
@@ -239,11 +221,11 @@ describe('REDIRECT /nfts/loki/(0*)515f7.json', () => {
         });
     });
 });
-describe('GET /nfts/odin/(0*)202306.json', () => {
+describe('GET /ppts/odin/(0*)202306.json', () => {
     let get: request.Test;
     beforeEach(() => {
         get = request(app).get(
-            '/nfts/odin/0000000000000000000000000000000000000000000000000000000000202306.json'
+            '/ppts/odin/0000000000000000000000000000000000000000000000000000000000202306.json'
         );
     });
     it('should return w/an HTTP code = 200 OK', async () => {
@@ -265,22 +247,22 @@ describe('GET /nfts/odin/(0*)202306.json', () => {
                 'MEGA ODIN'
             );
             expect(describe).toBe(
-                'MEGA ODIN NFT'
+                'MEGA ODIN PPT'
             );
             expect(image).toMatch(
                 new RegExp('^http://127.0.0.1:')
             );
             expect(image).toMatch(
-                new RegExp('/images/nft/2023/xpow.odin-mega.png$')
+                new RegExp('/images/ppt/2023/xpow.odin-mega.png$')
             );
         });
     });
 });
-describe('GET /nfts/odin/(0*)31642.json', () => {
+describe('GET /ppts/odin/(0*)31642.json', () => {
     let get: request.Test;
     beforeEach(() => {
         get = request(app).get(
-            '/nfts/odin/000000000000000000000000000000000000000000000000000000000031642.json'
+            '/ppts/odin/000000000000000000000000000000000000000000000000000000000031642.json'
         );
     });
     it('should return w/an HTTP code = 200 OK', async () => {
@@ -302,22 +284,22 @@ describe('GET /nfts/odin/(0*)31642.json', () => {
                 'MEGA ODIN'
             );
             expect(describe).toBe(
-                'MEGA ODIN NFT'
+                'MEGA ODIN PPT'
             );
             expect(image).toMatch(
                 new RegExp('^http://127.0.0.1:')
             );
             expect(image).toMatch(
-                new RegExp('/images/nft/2023/xpow.odin-mega.png$')
+                new RegExp('/images/ppt/2023/xpow.odin-mega.png$')
             );
         });
     });
 });
-describe('REDIRECT /nfts/odin/(0*)333306.json', () => {
+describe('REDIRECT /ppts/odin/(0*)333306.json', () => {
     let get: request.Test;
     beforeEach(() => {
         get = request(app).get(
-            '/nfts/odin/333306.json'
+            '/ppts/odin/333306.json'
         );
     });
     it('should return w/an HTTP code = 302 OK', async () => {
@@ -331,11 +313,11 @@ describe('REDIRECT /nfts/odin/(0*)333306.json', () => {
         });
     });
 });
-describe('REDIRECT /nfts/odin/(0*)515fa.json', () => {
+describe('REDIRECT /ppts/odin/(0*)515fa.json', () => {
     let get: request.Test;
     beforeEach(() => {
         get = request(app).get(
-            '/nfts/odin/515fa.json'
+            '/ppts/odin/515fa.json'
         );
     });
     it('should return w/an HTTP code = 302 OK', async () => {

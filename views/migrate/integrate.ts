@@ -5,10 +5,10 @@ import { ChainId } from '../../source/blockchain';
 import { Token } from '../../source/redux/types';
 import { Tokenizer } from '../../source/token';
 
-$('button.add-xpow.para').on('click', async () => {
+$('button.add-xpow.thor').on('click', async () => {
     if (Blockchain.isInstalled()) {
         if (await Blockchain.isAvalanche()) {
-            const token = Tokenizer.symbolAlt(Token.PARA);
+            const token = Tokenizer.symbolAlt(Token.THOR);
             const address = $(`#g-${token}_MOE_v4a`).data('value');
             const symbol = $(`#g-${token}_SYMBOL_v4a`).data('value');
             const decimals = $(`#g-${token}_DECIMALS_v4a`).data('value');
@@ -23,10 +23,10 @@ $('button.add-xpow.para').on('click', async () => {
         open('https://metamask.io/download.html');
     }
 });
-$('button.add-xpow.aqch').on('click', async () => {
+$('button.add-xpow.loki').on('click', async () => {
     if (Blockchain.isInstalled()) {
         if (await Blockchain.isAvalanche()) {
-            const token = Tokenizer.symbolAlt(Token.AQCH);
+            const token = Tokenizer.symbolAlt(Token.LOKI);
             const address = $(`#g-${token}_MOE_v4a`).data('value');
             const symbol = $(`#g-${token}_SYMBOL_v4a`).data('value');
             const decimals = $(`#g-${token}_DECIMALS_v4a`).data('value');
@@ -41,10 +41,10 @@ $('button.add-xpow.aqch').on('click', async () => {
         open('https://metamask.io/download.html');
     }
 });
-$('button.add-xpow.qrsh').on('click', async () => {
+$('button.add-xpow.odin').on('click', async () => {
     if (Blockchain.isInstalled()) {
         if (await Blockchain.isAvalanche()) {
-            const token = Tokenizer.symbolAlt(Token.QRSH);
+            const token = Tokenizer.symbolAlt(Token.ODIN);
             const address = $(`#g-${token}_MOE_v4a`).data('value');
             const symbol = $(`#g-${token}_SYMBOL_v4a`).data('value');
             const decimals = $(`#g-${token}_DECIMALS_v4a`).data('value');

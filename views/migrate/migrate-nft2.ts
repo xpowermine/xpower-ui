@@ -18,19 +18,19 @@ $(window).on('load', function enableAllowanceButton() {
 });
 $('button.approve-allowance-nft2').on('click', async function approveTokens(ev) {
     const $approve = $(ev.target);
-    if ($approve.hasClass('para')) {
-        await approve(Token.PARA, {
-            $approve, $execute: $('.execute-migration-nft2.para')
+    if ($approve.hasClass('thor')) {
+        await approve(Token.THOR, {
+            $approve, $execute: $('.execute-migration-nft2.thor')
         });
     }
-    if ($approve.hasClass('aqch')) {
-        await approve(Token.AQCH, {
-            $approve, $execute: $('.execute-migration-nft2.aqch')
+    if ($approve.hasClass('loki')) {
+        await approve(Token.LOKI, {
+            $approve, $execute: $('.execute-migration-nft2.loki')
         });
     }
-    if ($approve.hasClass('qrsh')) {
-        await approve(Token.QRSH, {
-            $approve, $execute: $('.execute-migration-nft2.qrsh')
+    if ($approve.hasClass('odin')) {
+        await approve(Token.ODIN, {
+            $approve, $execute: $('.execute-migration-nft2.odin')
         });
     }
 });
@@ -78,14 +78,14 @@ async function approve(token: Token, { $approve, $execute }: {
 }
 $('button.execute-migration-nft2').on('click', async function migrateTokens(ev) {
     const $execute = $(ev.target);
-    if ($execute.hasClass('para')) {
-        await migrate(Token.PARA, { $execute });
+    if ($execute.hasClass('thor')) {
+        await migrate(Token.THOR, { $execute });
     }
-    if ($execute.hasClass('aqch')) {
-        await migrate(Token.AQCH, { $execute });
+    if ($execute.hasClass('loki')) {
+        await migrate(Token.LOKI, { $execute });
     }
-    if ($execute.hasClass('qrsh')) {
-        await migrate(Token.QRSH, { $execute });
+    if ($execute.hasClass('odin')) {
+        await migrate(Token.ODIN, { $execute });
     }
 });
 async function migrate(token: Token, { $execute }: {
@@ -152,14 +152,14 @@ async function migrate(token: Token, { $execute }: {
 }
 $('button.burn-empty-nft2').on('click', async function burnEmpty(ev) {
     const $burn = $(ev.target);
-    if ($burn.hasClass('para')) {
-        await burn(Token.PARA, { $burn });
+    if ($burn.hasClass('thor')) {
+        await burn(Token.THOR, { $burn });
     }
-    if ($burn.hasClass('aqch')) {
-        await burn(Token.AQCH, { $burn });
+    if ($burn.hasClass('loki')) {
+        await burn(Token.LOKI, { $burn });
     }
-    if ($burn.hasClass('qrsh')) {
-        await burn(Token.QRSH, { $burn });
+    if ($burn.hasClass('odin')) {
+        await burn(Token.ODIN, { $burn });
     }
 });
 async function burn(token: Token, { $burn }: {

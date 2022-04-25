@@ -10,7 +10,7 @@ import { addToken, removeToken } from '../actions';
 import { onTokenAdded, onTokenRemoved } from '.';
 
 describe('onTokenAdded', () => {
-    const token = Token.PARA;
+    const token = Token.THOR;
     it('should invoke handler (for addToken)', () => {
         const reducer = combineReducers({
             nfts: nftReducer,
@@ -21,7 +21,7 @@ describe('onTokenAdded', () => {
         });
         const store = createStore(reducer);
         onTokenAdded(store, (t, i) => {
-            expect(t).toEqual(Token.PARA);
+            expect(t).toEqual(Token.THOR);
             expect(i.amount).toEqual(1n);
             expect(i.supply).toEqual(2n);
         });
@@ -31,7 +31,7 @@ describe('onTokenAdded', () => {
     });
 });
 describe('onTokenRemoved', () => {
-    const token = Token.AQCH
+    const token = Token.LOKI;
     it('should invoke handler (for removeToken)', () => {
         const reducer = combineReducers({
             nfts: nftReducer,
@@ -42,7 +42,7 @@ describe('onTokenRemoved', () => {
         });
         const store = createStore(reducer);
         onTokenRemoved(store, (t, i) => {
-            expect(t).toEqual(Token.AQCH);
+            expect(t).toEqual(Token.LOKI);
             expect(i.amount).toEqual(1n);
             expect(i.supply).toEqual(3n);
         });

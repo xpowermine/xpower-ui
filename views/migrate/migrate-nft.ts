@@ -18,19 +18,19 @@ $(window).on('load', function enableAllowanceButton() {
 });
 $('button.approve-allowance-nft').on('click', async function approveTokens(ev) {
     const $approve = $(ev.target);
-    if ($approve.hasClass('para')) {
-        await approve(Token.PARA, {
-            $approve, $execute: $('.execute-migration-nft.para')
+    if ($approve.hasClass('thor')) {
+        await approve(Token.THOR, {
+            $approve, $execute: $('.execute-migration-nft.thor')
         });
     }
-    if ($approve.hasClass('aqch')) {
-        await approve(Token.AQCH, {
-            $approve, $execute: $('.execute-migration-nft.aqch')
+    if ($approve.hasClass('loki')) {
+        await approve(Token.LOKI, {
+            $approve, $execute: $('.execute-migration-nft.loki')
         });
     }
-    if ($approve.hasClass('qrsh')) {
-        await approve(Token.QRSH, {
-            $approve, $execute: $('.execute-migration-nft.qrsh')
+    if ($approve.hasClass('odin')) {
+        await approve(Token.ODIN, {
+            $approve, $execute: $('.execute-migration-nft.odin')
         });
     }
 });
@@ -78,14 +78,14 @@ async function approve(token: Token, { $approve, $execute }: {
 }
 $('button.execute-migration-nft').on('click', async function migrateTokens(ev) {
     const $execute = $(ev.target);
-    if ($execute.hasClass('para')) {
-        await migrate(Token.PARA, { $execute });
+    if ($execute.hasClass('thor')) {
+        await migrate(Token.THOR, { $execute });
     }
-    if ($execute.hasClass('aqch')) {
-        await migrate(Token.AQCH, { $execute });
+    if ($execute.hasClass('loki')) {
+        await migrate(Token.LOKI, { $execute });
     }
-    if ($execute.hasClass('qrsh')) {
-        await migrate(Token.QRSH, { $execute });
+    if ($execute.hasClass('odin')) {
+        await migrate(Token.ODIN, { $execute });
     }
 });
 async function migrate(token: Token, { $execute }: {

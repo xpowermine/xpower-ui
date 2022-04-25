@@ -64,38 +64,38 @@ clear-all | boolean | false | flag to clear all persistence slots
 logger | boolean | false | flag to log nonces to console
 min-level | number | 5 | threshold of nonces with lower corresponding amounts to be ignored
 max-level | number | 64 | threshold of nonces with higher corresponding amounts to be ignored
-persist | number | 0 | flag to persist nonces; each non-zero value is a separate persistence slot
+persist | number | 0 | flag to persist nonces; each non-zero value is a sethorte persistence slot
 speed | number | 50 | speed percentage (w.r.t a single browser tab) between 0 and 100
 
 ### Examples
 
-To ignore (frequent & low-value) nonces with an amount less than 5 PARA tokens and mine with a speed of 100% use:
+To ignore (frequent & low-value) nonces with an amount less than 5 THOR tokens and mine with a speed of 100% use:
 
-```
+```txt
 http://localhost:3000?min-level=5&speed=100
 ```
 
 To persist nonces between reloads at 1st slot use (may impact mining performance):
 
-```
+```txt
 http://localhost:3000?persist=1
 ```
 
 To clear (i.e. forget) persisted nonces at 1st slot use:
 
-```
+```txt
 http://localhost:3000?persist=1&clear=true
 ```
 
 To clear (i.e. forget) all persisted nonces use:
 
-```
+```txt
 http://localhost:3000?clear-all=true
 ```
 
 To log nonces to console use (may impact mining performance):
 
-```
+```txt
 http://localhost:3000?logger=true
 ```
 
@@ -103,4 +103,4 @@ http://localhost:3000?logger=true
 
 ## Copyright
 
- © 2021 [XPowerMine.com](https://www.xpowermine.com)
+ © 2022 [XPowerMine.com](https://www.xpowermine.com)

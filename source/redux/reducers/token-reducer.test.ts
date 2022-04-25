@@ -7,7 +7,7 @@ import { removeToken } from '../actions';
 import { Token, Tokens, Empty } from '../types';
 
 describe('Store w/tokenReducer (set)', () => {
-    const t = Token.PARA;
+    const t = Token.THOR;
     it('should set 1 token', () => {
         const state_0 = Empty<Tokens>();
         const state_1 = tokenReducer(state_0, setToken(t, {
@@ -32,7 +32,7 @@ describe('Store w/tokenReducer (set)', () => {
     });
 });
 describe('Store w/tokenReducer (add)', () => {
-    const t = Token.AQCH;
+    const t = Token.LOKI;
     it('should add 1 token (w/rel. supply)', () => {
         const state_0 = Empty<Tokens>();
         const state_1 = tokenReducer(state_0, addToken(t, {
@@ -145,7 +145,7 @@ describe('Store w/tokenReducer (add)', () => {
     });
 });
 describe('Store w/tokenReducer (decrease)', () => {
-    const t = Token.QRSH;
+    const t = Token.ODIN;
     it('should remove 1 token (w/rel. supply)', () => {
         const state_0 = Empty<Tokens>();
         const state_1 = tokenReducer(state_0, addToken(t, {

@@ -228,7 +228,7 @@ function amount(
         n_level > n_difficulty + 1n
             ? n_level : n_difficulty + 1n;
     switch (token) {
-        case Token.QRSH:
+        case Token.ODIN:
             return (hash: string) => {
                 const lhs_zeros = zeros(hash);
                 if (lhs_zeros >= n_threshold) {
@@ -236,7 +236,7 @@ function amount(
                 }
                 return 0n;
             };
-        case Token.AQCH:
+        case Token.LOKI:
             return (hash: string) => {
                 const lhs_zeros = zeros(hash);
                 if (lhs_zeros >= n_threshold) {
@@ -244,7 +244,7 @@ function amount(
                 }
                 return 0n;
             };
-        case Token.PARA:
+        case Token.THOR:
             return (hash: string) => {
                 const lhs_zeros = zeros(hash);
                 if (lhs_zeros >= n_threshold) {

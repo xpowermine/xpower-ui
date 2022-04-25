@@ -9,7 +9,7 @@ import { addPpt, removePpt } from '../actions';
 import { onPptAdded, onPptRemoved } from '.';
 
 describe('onNftAdded', () => {
-    const id = 'PARA:202103';
+    const id = 'THOR:202103';
     it('should invoke handler (for addNft)', () => {
         const reducer = combineReducers({
             nfts: nftReducer,
@@ -22,7 +22,7 @@ describe('onNftAdded', () => {
         onPptAdded(store, (id, i, {
             amount: t_amount, supply: t_supply
         }) => {
-            expect(id).toEqual('PARA:202103');
+            expect(id).toEqual('THOR:202103');
             expect(i.amount).toEqual(1n);
             expect(i.supply).toEqual(2n);
             expect(t_amount).toEqual(1n);
@@ -34,7 +34,7 @@ describe('onNftAdded', () => {
     });
 });
 describe('onNftRemoved', () => {
-    const id = 'AQCH:202206';
+    const id = 'LOKI:202206';
     it('should invoke handler (for removeNft)', () => {
         const reducer = combineReducers({
             nfts: nftReducer,
@@ -47,7 +47,7 @@ describe('onNftRemoved', () => {
         onPptRemoved(store, (id, i, {
             amount: t_amount, supply: t_supply
         }) => {
-            expect(id).toEqual('AQCH:202206');
+            expect(id).toEqual('LOKI:202206');
             expect(i.amount).toEqual(1n);
             expect(i.supply).toEqual(2n);
             expect(t_amount).toEqual(1n);

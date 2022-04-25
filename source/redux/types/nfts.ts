@@ -4,12 +4,12 @@ export class Nft {
     static token(id: string): NftToken {
         const [prefix] = id.split(':');
         switch (prefix.toLowerCase()) {
-            case 'qrsh':
-                return NftToken.QRSH;
-            case 'para':
-                return NftToken.PARA;
-            case 'aqch':
-                return NftToken.AQCH;
+            case 'odin':
+                return NftToken.ODIN;
+            case 'thor':
+                return NftToken.THOR;
+            case 'loki':
+                return NftToken.LOKI;
         }
         throw new Error(`unknown token for "${id}"`);
     }
@@ -112,9 +112,9 @@ export type NftFullId = `${NftToken}:${NftCoreId}`;
 export type NftCoreId = `${NftIssue}${NftLevel}`;
 export type NftIssue = number;
 export enum NftToken {
-    QRSH = 'QRSH',
-    PARA = 'PARA',
-    AQCH = 'AQCH'
+    ODIN = 'ODIN',
+    THOR = 'THOR',
+    LOKI = 'LOKI'
 }
 export type NftTokens = keyof typeof NftToken;
 export function* NftTokens() {

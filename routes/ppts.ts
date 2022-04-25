@@ -1,15 +1,11 @@
 import { Nft, NftLevel, NftToken } from '../source/redux/types';
-import { env_of, host } from './functions';
+import { host } from './functions';
 
 import env from '../env';
 import express from 'express';
 const router = express.Router();
 
-/** GET nfts page. */
-router.get('/', (req, res) => {
-  res.render('nfts/nfts.pig', env_of(req));
-});
-/** GET nfts/{token}/{id}.json metadata. */
+/** GET ppts/{token}/{id}.json metadata. */
 router.get('/:token/:id.json', (req, res) => {
   const { token, id } = req.params;
   const nft = {
@@ -17,7 +13,7 @@ router.get('/:token/:id.json', (req, res) => {
     level: Nft.level(id),
     token: Nft.token(token)
   };
-  const location = env.NFT_URI[
+  const location = env.PPT_URI[
     `${token}/${Nft.coreId(nft)}.json`
   ];
   if (typeof location === 'string') {
@@ -28,8 +24,8 @@ router.get('/:token/:id.json', (req, res) => {
   const level = LEVEL.toLowerCase();
   res.send({
     name: `${LEVEL} ${TOKEN}`,
-    describe: `${LEVEL} ${TOKEN} NFT`,
-    image: `${host(req)}/images/nft/${nft.issue}/xpow.${token}-${level}.png`,
+    describe: `${LEVEL} ${TOKEN} PPT`,
+    image: `${host(req)}/images/ppt/${nft.issue}/xpow.${token}-${level}.png`,
     properties: {
       issue: `${nft.issue}`,
       label: LEVEL,
@@ -37,5 +33,5 @@ router.get('/:token/:id.json', (req, res) => {
       token: `${TOKEN}`
     }
   });
-});
+})
 export default router;
