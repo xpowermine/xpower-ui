@@ -14,22 +14,28 @@ export class PptWallet extends ERC1155Wallet {
     async idBy(
         year: Year, level: NftLevel
     ): Promise<NftCoreId> {
-        const id: BigNumber = await this.contract.idBy(year, level);
+        const id: BigNumber = await this.contract.then((c) => {
+            return c?.idBy(year, level);
+        });
         return id.toString() as NftCoreId;
     }
     async year(
         delta_years: number
     ): Promise<Year> {
-        const year: BigNumber = await this.contract.year();
+        const year: BigNumber = await this.contract.then((c) => {
+            return c?.year();
+        });
         return year.sub(delta_years).toBigInt();
     }
-    get contract(): Contract {
+    get contract(): Promise<Contract> {
         if (this._contract === undefined) {
-            this._contract = XPowerPptFactory({
+            return XPowerPptFactory({
                 token: this._token
+            }).then((c) => {
+                return this._contract = c;
             });
         }
-        return this._contract;
+        return Promise.resolve(this._contract);
     }
     protected readonly _token?: Token;
 }
@@ -39,13 +45,15 @@ export class PptWalletMock extends PptWallet {
     ) {
         super(address, token);
     }
-    get contract(): Contract {
+    get contract(): Promise<Contract> {
         if (this._contract === undefined) {
-            this._contract = XPowerPptMockFactory({
+            return XPowerPptMockFactory({
                 token: this._token
+            }).then((c) => {
+                return this._contract = c;
             });
         }
-        return this._contract;
+        return Promise.resolve(this._contract);
     }
 }
 export default PptWallet;

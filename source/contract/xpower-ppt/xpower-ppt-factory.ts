@@ -10,19 +10,19 @@ import { Tokenizer } from '../../token';
 import { XPowerPpt } from './xpower-ppt';
 import { address } from '../address';
 
-export function XPowerPptFactory({
+export async function XPowerPptFactory({
     version, token
 }: {
     version?: typeof App.version, token?: Token
-} = {}): Contract {
+} = {}): Promise<Contract> {
     const contract = new XPowerPpt(address({
         infix: 'PPT', version, token
     }));
-    return global.XPOWER_PPT = contract.connect();
+    return global.XPOWER_PPT = await contract.connect();
 }
-export function XPowerPptMockFactory({ token }: {
+export async function XPowerPptMockFactory({ token }: {
     token?: Token
-} = {}): Contract {
+} = {}): Promise<Contract> {
     const suffix = Tokenizer.suffix(token ?? App.token);
     const mock = {
         year: () => {

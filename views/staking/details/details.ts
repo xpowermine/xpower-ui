@@ -6,7 +6,7 @@ import { App } from '../../../source/app';
 import { Blockchain } from '../../../source/blockchain';
 import { MoeTreasuryFactory, OnClaim } from '../../../source/contract';
 import { Transaction } from 'ethers';
-import { x40 } from '../../../source/functions';
+import { alert, Alert, x40 } from '../../../source/functions';
 import { Amount, NftCoreId, Supply } from '../../../source/redux/types';
 import { Nft, NftFullId } from '../../../source/redux/types';
 import { NftLevel } from '../../../source/redux/types';
@@ -42,15 +42,15 @@ App.onPptChanged(async function setLevelDetails(
         level: Nft.level(id)
     });
     const $claimed = $row.find('.nft-claimed>input');
-    const claimed = await moe_treasury.claimedFor(
+    const claimed = await moe_treasury.then((c) => c?.claimedFor(
         x40(address), nft_id
-    );
+    ));
     $claimed.val(claimed.toString());
     $claimed.trigger('change');
     const $claimable = $row.find('.nft-claimable>input');
-    const claimable = await moe_treasury.claimableFor(
+    const claimable = await moe_treasury.then((c) => c?.claimableFor(
         x40(address), nft_id
-    );
+    ));
     $claimable.val(claimable.toString());
     $claimable.trigger('change');
 });
@@ -102,7 +102,8 @@ $('.nft-image').on('click', async function openCollection(ev) {
     }
     if (supply > 0) {
         const market = 'https://nftrade.com/assets/avalanche';
-        open(`${market}/${nft_wallet.contract.address}/${nft_id}`);
+        const nft_contract = await nft_wallet.contract.then((c) => c);
+        open(`${market}/${nft_contract.address}/${nft_id}`);
     }
 });
 $('.nft-claimer>.claimer').on('click', async function claimRewards(ev) {
@@ -124,15 +125,32 @@ $('.nft-claimer>.claimer').on('click', async function claimRewards(ev) {
     };
     let tx: Transaction | undefined;
     try {
+        $('.alert').remove();
         $claimer.trigger('claiming', { id });
-        moe_treasury.on('Claim', on_claim_tx);
+        moe_treasury.then((c) => c?.on('Claim', on_claim_tx));
         const contract = await OtfWallet.connect(
-            moe_treasury
+            await moe_treasury
         );
         tx = await contract.claimFor(
             x40(address), id
         );
-    } catch (ex) {
+    } catch (ex: any) {
+        /* eslint no-ex-assign: [off] */
+        if (ex.error) {
+            ex = ex.error;
+        }
+        if (ex.message) {
+            if (ex.data && ex.data.message) {
+                const message = `${ex.message} [${ex.data.message}]`;
+                const $alert = $(alert(message, Alert.warning));
+                $alert.insertAfter($claimer.parents('.row'));
+                $alert.find('.alert').css('margin-top', '0.5em');
+            } else {
+                const $alert = $(alert(ex.message, Alert.warning));
+                $alert.insertAfter($claimer.parents('.row'));
+                $alert.find('.alert').css('margin-top', '0.5em');
+            }
+        }
         $claimer.trigger('error', {
             id, error: ex
         });
@@ -145,16 +163,26 @@ $('.nft-claimable>input').on('change', function toggleClaimer(ev) {
     const claimable = BigInt($claimable.val() as string);
     const $nft_claimer = $nft_claimable.next('.nft-claimer');
     const $claimer = $nft_claimer.find('.claimer');
-    $claimer.prop('disabled', claimable === 0n);
+    const claiming = $claimer.data('state') === 'claiming';
+    $claimer.prop('disabled', claiming || claimable === 0n);
 });
 $(window).on('load', async function toggleClaimer() {
-    const claimer = $('.nft-claimer>.claimer');
-    claimer.on('claiming', disableClaimer);
-    claimer.on('claimed', disableClaimer);
-    claimer.on('claimed', refreshClaimed);
-    claimer.on('claimed', refreshClaimable);
-    claimer.on('refresh', refreshClaimable);
-    claimer.on('error', enableClaimer);
+    const $claimer = $('.nft-claimer>.claimer');
+    $claimer.on('claiming', (ev) => {
+        $(ev.target).data('state', 'claiming');
+    });
+    $claimer.on('claimed', (ev) => {
+        $(ev.target).data('state', 'claimed');
+    });
+    $claimer.on('error', (ev) => {
+        $(ev.target).data('state', 'error');
+    });
+    $claimer.on('claiming', disableClaimer);
+    $claimer.on('claimed', disableClaimer);
+    $claimer.on('claimed', refreshClaimed);
+    $claimer.on('claimed', refreshClaimable);
+    $claimer.on('refresh', refreshClaimable);
+    $claimer.on('error', enableClaimer);
     function enableClaimer(
         ev: JQuery.TriggeredEvent
     ) {
@@ -179,9 +207,9 @@ $(window).on('load', async function toggleClaimer() {
         const $claimer = $(ev.target);
         const $nft_claimer = $claimer.parents('.nft-claimer');
         const moe_treasury = MoeTreasuryFactory();
-        const claimed = await moe_treasury.claimedFor(
+        const claimed = await moe_treasury.then((c) => c?.claimedFor(
             x40(address), id
-        );
+        ));
         const $nft_claimed = $nft_claimer.siblings('.nft-claimed');
         const $claimed = $nft_claimed.find('>input');
         $claimed.val(claimed.toString());
@@ -199,9 +227,9 @@ $(window).on('load', async function toggleClaimer() {
         const $claimer = $(ev.target);
         const $nft_claimer = $claimer.parents('.nft-claimer');
         const moe_treasury = MoeTreasuryFactory();
-        const claimable = await moe_treasury.claimableFor(
+        const claimable = await moe_treasury.then((c) => c?.claimableFor(
             x40(address), id
-        );
+        ));
         const $nft_claimable = $nft_claimer.siblings('.nft-claimable');
         const $claimable = $nft_claimable.find('>input');
         $claimable.val(claimable.toString());
@@ -230,7 +258,7 @@ $('#connect-metamask').on('connected', async function updateClaimable() {
         });
     };
     const moe_treasury = MoeTreasuryFactory();
-    moe_treasury.provider?.on('block', on_block);
+    moe_treasury.then((c) => c?.provider?.on('block', on_block));
 });
 $(window).on('load', function toggleClaimerSpinner() {
     const claimer = $('.nft-claimer>.claimer');

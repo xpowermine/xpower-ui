@@ -21,7 +21,7 @@ export class MoeWallet extends ERC20Wallet {
     }
     async init(): Promise<Transaction> {
         const contract = await OtfWallet.connect(
-            this.contract
+            await this.contract
         );
         return contract.init();
     }
@@ -29,7 +29,7 @@ export class MoeWallet extends ERC20Wallet {
         block_hash: BlockHash, nonce: Nonce
     ): Promise<Transaction> {
         const contract = await OtfWallet.connect(
-            this.contract
+            await this.contract
         );
         return contract.mint(
             this._address, x64(block_hash), x64(nonce)
@@ -44,7 +44,7 @@ export class MoeWallet extends ERC20Wallet {
             handler(BigInt(block_hash), timestamp.toBigInt(), ev);
         };
         const contract = await OtfWallet.connect(
-            this.contract
+            await this.contract
         );
         if (once) {
             contract.once('Init', on_init);
@@ -53,15 +53,17 @@ export class MoeWallet extends ERC20Wallet {
         }
     }
     offInit(handler: OnInit) {
-        this.contract.off('Init', handler);
+        this.contract.then((c) => c?.off('Init', handler));
     }
-    get contract(): Contract {
+    get contract(): Promise<Contract> {
         if (this._contract === undefined) {
-            this._contract = XPowerFactory({
+            return XPowerFactory({
                 token: this._token
+            }).then((c) => {
+                return this._contract = c;
             });
         }
-        return this._contract;
+        return Promise.resolve(this._contract);
     }
     protected readonly _token?: Token;
 }

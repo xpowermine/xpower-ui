@@ -1,0 +1,34 @@
+//- [v4a]
+form#moe-integration
+  label.form-label
+    | Wallet Integration [v4]
+  div.btn-group.add-xpow.thor(role="group")
+    button.add-xpow.thor.btn.btn-outline-warning(
+      type="button" data-target="v4a"
+    )
+      | Add THOR to Metamask <img class="float-end" height=20 width=20 src="{{THOR_IMAGE}}">
+    button.btn.btn-outline-warning.info(
+      type="button" data-bs-toggle="tooltip" data-bs-placement="top"
+      title="Add the new THOR token to Metamask"
+    )
+      include ../../public/images/pug/info-circle-fill.svg.pug
+  div.btn-group.add-xpow.loki(role="group")
+    button.add-xpow.loki.btn.btn-outline-warning(
+      type="button" data-target="v4a"
+    )
+      | Add LOKI to Metamask <img class="float-end" height=20 width=20 src="{{LOKI_IMAGE}}">
+    button.btn.btn-outline-warning.info(
+      type="button" data-bs-toggle="tooltip" data-bs-placement="top"
+      title="Add the new LOKI token to Metamask"
+    )
+      include ../../public/images/pug/info-circle-fill.svg.pug
+  div.btn-group.add-xpow.odin(role="group")
+    button.add-xpow.odin.btn.btn-outline-warning(
+      type="button" data-target="v4a"
+    )
+      | Add ODIN to Metamask <img class="float-end" height=20 width=20 src="{{ODIN_IMAGE}}">
+    button.btn.btn-outline-warning.info(
+      type="button" data-bs-toggle="tooltip" data-bs-placement="top"
+      title="Add the new ODIN token to Metamask"
+    )
+      include ../../public/images/pug/info-circle-fill.svg.pug

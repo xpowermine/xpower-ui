@@ -49,9 +49,8 @@ export abstract class ERC1155Wallet {
     async balance(
         id: NftCoreId
     ): Promise<Balance> {
-        const balance: BigNumber = await this.contract.balanceOf(
-            this._address, id
-        );
+        const balance: BigNumber = await this.contract
+            .then((c) => c?.balanceOf(this._address, id));
         return balance.toBigInt();
     }
     async balances({ issues, levels }: {
@@ -59,9 +58,8 @@ export abstract class ERC1155Wallet {
     }): Promise<Balance[]> {
         const ids = Nft.coreIds({ issues, levels });
         const addresses = ids.map(() => this._address);
-        const balances: BigNumber[] = await this.contract.balanceOfBatch(
-            addresses, ids
-        );
+        const balances: BigNumber[] = await this.contract
+            .then((c) => c?.balanceOfBatch(addresses, ids));
         return balances.map((b) => b.toBigInt());
     }
     async isApprovedForAll(
@@ -70,9 +68,9 @@ export abstract class ERC1155Wallet {
         if (typeof operator === 'bigint') {
             operator = x40(operator);
         }
-        return this.contract.isApprovedForAll(
+        return this.contract.then((c) => c?.isApprovedForAll(
             this._address, operator
-        );
+        ));
     }
     async setApprovalForAll(
         operator: Address | string, approved: boolean
@@ -80,9 +78,9 @@ export abstract class ERC1155Wallet {
         if (typeof operator === 'bigint') {
             operator = x40(operator);
         }
-        return this.contract.setApprovalForAll(
+        return this.contract.then((c) => c?.setApprovalForAll(
             operator, approved
-        );
+        ));
     }
     onApprovalForAll(
         handler: OnApprovalForAll, { once } = { once: false }
@@ -97,9 +95,9 @@ export abstract class ERC1155Wallet {
             }
         };
         if (once) {
-            this.contract.once('ApprovalForAll', on_approval);
+            this.contract.then((c) => c?.once('ApprovalForAll', on_approval));
         } else {
-            this.contract.on('ApprovalForAll', on_approval);
+            this.contract.then((c) => c?.on('ApprovalForAll', on_approval));
         }
     }
     safeTransfer(
@@ -108,9 +106,9 @@ export abstract class ERC1155Wallet {
         if (typeof to === 'bigint') {
             to = x40(to);
         }
-        return this.contract.safeTransferFrom(
+        return this.contract.then((c) => c?.safeTransferFrom(
             this._address, to, id, amount, []
-        );
+        ));
     }
     onTransferSingle(
         handler: OnTransferSingle, { once } = { once: false }
@@ -129,9 +127,9 @@ export abstract class ERC1155Wallet {
             }
         };
         if (once) {
-            this.contract.once('TransferSingle', on_transfer);
+            this.contract.then((c) => c?.once('TransferSingle', on_transfer));
         } else {
-            this.contract.on('TransferSingle', on_transfer);
+            this.contract.then((c) => c?.on('TransferSingle', on_transfer));
         }
     }
     safeBatchTransfer(
@@ -140,9 +138,9 @@ export abstract class ERC1155Wallet {
         if (typeof to === 'bigint') {
             to = x40(to);
         }
-        return this.contract.safeBatchTransferFrom(
+        return this.contract.then((c) => c?.safeBatchTransferFrom(
             this._address, to, ids, amounts, []
-        );
+        ));
     }
     onTransferBatch(
         handler: OnTransferBatch, { once } = { once: false }
@@ -161,9 +159,9 @@ export abstract class ERC1155Wallet {
             }
         };
         if (once) {
-            this.contract.once('TransferBatch', on_transfer);
+            this.contract.then((c) => c?.once('TransferBatch', on_transfer));
         } else {
-            this.contract.on('TransferBatch', on_transfer);
+            this.contract.then((c) => c?.on('TransferBatch', on_transfer));
         }
     }
     async meta(
@@ -171,7 +169,7 @@ export abstract class ERC1155Wallet {
     ): Promise<Meta> {
         let meta = this._meta[id.toString()];
         if (typeof meta === 'undefined') {
-            const nft_uri = await this.contract.uri(id);
+            const nft_uri = await this.contract.then((c) => c?.uri(id));
             const uri = nft_uri.replace(/{id}/g, id);
             meta = await fetch(uri).then((res) => res.json());
             this._meta[id.toString()] = meta;
@@ -181,7 +179,8 @@ export abstract class ERC1155Wallet {
     async totalSupply(
         id: NftCoreId
     ): Promise<Supply> {
-        const supply: BigNumber = await this.contract.totalSupply(id);
+        const supply: BigNumber = await this.contract
+            .then((c) => c?.totalSupply(id));
         return supply.toBigInt();
     }
     totalSupplies({ issues, levels }: {
@@ -195,21 +194,21 @@ export abstract class ERC1155Wallet {
     get address(): Address {
         return BigInt(this._address);
     }
-    abstract get contract(): Contract;
+    abstract get contract(): Promise<Contract>;
     protected readonly _address: string;
     protected _contract: Contract | undefined;
     protected _meta: Record<string, Meta> = {};
 }
 function* totalSupplies(
-    nft: Contract, { issues, levels }: {
+    nft: Promise<Contract>, { issues, levels }: {
         issues: NftIssue[], levels: NftLevel[]
     }
 ): Generator<Promise<Supply>> {
     const ids = Nft.coreIds({ issues, levels });
     for (const id of ids) {
-        const supply = nft.totalSupply(id).then(
-            (s: BigNumber) => s.toBigInt()
-        );
+        const supply = nft
+            .then((c) => c?.totalSupply(id))
+            .then((s: BigNumber) => s.toBigInt());
         yield supply as Promise<Supply>;
     }
 }

@@ -167,7 +167,7 @@ async function depositOtf() {
         throw new Error('missing selected-address');
     }
     const unit = parseUnits('1.0');
-    const provider = new Web3Provider(Blockchain.provider);
+    const provider = new Web3Provider(await Blockchain.provider);
     const mmw_signer = provider.getSigner(x40(address));
     const mmw_balance = await mmw_signer.getBalance();
     const gas_limit = await mmw_signer.estimateGas({

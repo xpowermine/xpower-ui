@@ -1,5 +1,4 @@
 import './index.scss';
-import './migrate';
-import './migrate-nft';
-import './migrate-nft2';
-import './integrate';
+import './moe-migrate';
+import './moe-integrate';
+import './nft-migrate';

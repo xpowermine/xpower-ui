@@ -1,5 +1,7 @@
+/* eslint @typescript-eslint/no-explicit-any: [off] */
 import { Blockchain } from '../../../source/blockchain';
 import { Transaction } from 'ethers';
+import { alert, Alert } from '../../../source/functions';
 import { Amount } from '../../../source/redux/types';
 import { NftLevel, NftLevels } from '../../../source/redux/types';
 import { NftWallet, OnTransferBatch } from '../../../source/wallet';
@@ -47,10 +49,27 @@ $('#batch-minter').on('click', async function batchMintNfts() {
     const nft_wallet = new NftWallet(address);
     let tx: Transaction | undefined;
     try {
+        $('.alert').remove();
         $minter.trigger('minting');
         nft_wallet.onTransferBatch(on_batch_tx);
         tx = await nft_wallet.mintBatch(levels, amounts);
-    } catch (ex) {
+    } catch (ex: any) {
+        /* eslint no-ex-assign: [off] */
+        if (ex.error) {
+            ex = ex.error;
+        }
+        if (ex.message) {
+            if (ex.data && ex.data.message) {
+                const message = `${ex.message} [${ex.data.message}]`;
+                const $alert = $(alert(message, Alert.warning));
+                $alert.insertAfter($minter.parents('div'));
+                $alert.find('.alert').css('margin-bottom', '1em');
+            } else {
+                const $alert = $(alert(ex.message, Alert.warning));
+                $alert.insertAfter($minter.parents('div'));
+                $alert.find('.alert').css('margin-bottom', '1em');
+            }
+        }
         $minter.trigger('error', {
             error: ex
         });

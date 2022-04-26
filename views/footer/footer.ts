@@ -11,7 +11,7 @@ $(window).on('load', function setContractAddress() {
     $link.attr('href', `https://snowtrace.io/address/${address}`);
 });
 $('a.add-token').on('click', async function addToken() {
-    if (Blockchain.isInstalled()) {
+    if (await Blockchain.isInstalled()) {
         if (await Blockchain.isAvalanche()) {
             const version = App.version;
             const alt = Tokenizer.symbolAlt(App.token);

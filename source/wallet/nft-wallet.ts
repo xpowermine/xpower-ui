@@ -17,7 +17,7 @@ export class NftWallet extends ERC1155Wallet {
         level: NftLevel, amount: Amount
     ): Promise<Transaction> {
         const contract = await OtfWallet.connect(
-            this.contract
+            await this.contract
         );
         return contract.mint(
             this._address, level, amount
@@ -27,7 +27,7 @@ export class NftWallet extends ERC1155Wallet {
         levels: NftLevel[], amounts: Amount[]
     ): Promise<Transaction> {
         const contract = await OtfWallet.connect(
-            this.contract
+            await this.contract
         );
         return contract.mintBatch(
             this._address, levels, amounts
@@ -36,22 +36,28 @@ export class NftWallet extends ERC1155Wallet {
     async idBy(
         year: Year, level: NftLevel
     ): Promise<NftCoreId> {
-        const id: BigNumber = await this.contract.idBy(year, level);
+        const id: BigNumber = await this.contract.then((c) => {
+            return c?.idBy(year, level);
+        });
         return id.toString() as NftCoreId;
     }
     async year(
         delta_years: number
     ): Promise<Year> {
-        const year: BigNumber = await this.contract.year();
+        const year: BigNumber = await this.contract.then((c) => {
+            return c?.year();
+        });
         return year.sub(delta_years).toBigInt();
     }
-    get contract(): Contract {
+    get contract(): Promise<Contract> {
         if (this._contract === undefined) {
-            this._contract = XPowerNftFactory({
+            return XPowerNftFactory({
                 token: this._token
+            }).then((c) => {
+                return this._contract = c;
             });
         }
-        return this._contract;
+        return Promise.resolve(this._contract);
     }
     protected readonly _token?: Token;
 }
@@ -61,13 +67,15 @@ export class NftWalletMock extends NftWallet {
     ) {
         super(address, token);
     }
-    get contract(): Contract {
+    get contract(): Promise<Contract> {
         if (this._contract === undefined) {
-            this._contract = XPowerNftMockFactory({
+            return XPowerNftMockFactory({
                 token: this._token
+            }).then((c) => {
+                return this._contract = c;
             });
         }
-        return this._contract;
+        return Promise.resolve(this._contract);
     }
 }
 export default NftWallet;

@@ -5,6 +5,7 @@ declare const global: Global;
 import { App } from '../../../source/app';
 import { Blockchain } from '../../../source/blockchain';
 import { Transaction } from 'ethers';
+import { alert, Alert, x40 } from '../../../source/functions';
 import { Amount, NftCoreId, Supply } from '../../../source/redux/types';
 import { Nft, NftFullId } from '../../../source/redux/types';
 import { NftLevel, NftLevels } from '../../../source/redux/types';
@@ -84,7 +85,8 @@ $('.nft-image').on('click', async function openCollection(ev) {
     }
     if (supply > 0) {
         const market = 'https://nftrade.com/assets/avalanche';
-        open(`${market}/${nft_wallet.contract.address}/${nft_id}`);
+        const nft_contract = await nft_wallet.contract.then((c) => c);
+        open(`${market}/${nft_contract.address}/${nft_id}`);
     }
 });
 $('.nft-balance>input').on(
@@ -111,7 +113,11 @@ $('.nft-transfer-to>input').on(
 $('.nft-transfer-to>input').on(
     'input', validateTransferTo
 );
-function validateTransferTo(ev: JQuery.TriggeredEvent) {
+async function validateTransferTo(ev: JQuery.TriggeredEvent) {
+    const address = await Blockchain.selectedAddress;
+    if (!address) {
+        throw new Error('missing selected-address');
+    }
     // get tx-address:
     const $transfer_to = $(ev.target).parents('.nft-transfer-to');
     const $address_to = $transfer_to.find('>input');
@@ -120,7 +126,10 @@ function validateTransferTo(ev: JQuery.TriggeredEvent) {
     if (!address_to) {
         $address_to.removeClass('is-valid');
         $address_to.removeClass('is-invalid');
-    } else if (address_to.match(/^0x([0-9a-f]{40})/i)) {
+    } else if (
+        address_to.match(/^0x([0-9a-f]{40})/i) &&
+        !address_to.match(new RegExp(x40(address), 'i'))
+    ) {
         $address_to.addClass('is-valid');
         $address_to.removeClass('is-invalid');
     } else {
@@ -241,12 +250,29 @@ $('.nft-sender>.sender').on('click', async function transferNft(ev) {
     };
     let tx: Transaction | undefined;
     try {
+        $('.alert').remove();
         $sender.trigger('sending', { level, id });
         nft_wallet.onTransferSingle(on_single_tx);
         tx = await nft_wallet.safeTransfer(
             address_to, id, amount
         );
-    } catch (ex) {
+    } catch (ex: any) {
+        /* eslint no-ex-assign: [off] */
+        if (ex.error) {
+            ex = ex.error;
+        }
+        if (ex.message) {
+            if (ex.data && ex.data.message) {
+                const message = `${ex.message} [${ex.data.message}]`;
+                const $alert = $(alert(message, Alert.warning));
+                $alert.insertAfter($sender.parents('.row'));
+                $alert.find('.alert').css('margin-top', '0.5em');
+            } else {
+                const $alert = $(alert(ex.message, Alert.warning));
+                $alert.insertAfter($sender.parents('.row'));
+                $alert.find('.alert').css('margin-top', '0.5em');
+            }
+        }
         $sender.trigger('error', {
             level, id, error: ex
         });
@@ -255,6 +281,15 @@ $('.nft-sender>.sender').on('click', async function transferNft(ev) {
 });
 $(window).on('load', function toggleSender() {
     const $sender = $('.nft-sender>.sender');
+    $sender.on('sending', (ev) => {
+        $(ev.target).data('state', 'sending');
+    });
+    $sender.on('sent', (ev) => {
+        $(ev.target).data('state', 'sent');
+    });
+    $sender.on('error', (ev) => {
+        $(ev.target).data('state', 'error');
+    });
     $sender.on('sending', disableSender);
     $sender.on('sent', disableSender);
     $sender.on('sent', resetAmount);

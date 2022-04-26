@@ -6,12 +6,13 @@ import { App } from '../../source/app';
 import { Blockchain } from '../../source/blockchain';
 import { ChainId } from '../../source/blockchain';
 import { delayed } from '../../source/functions';
+
 const { Tooltip } = global.bootstrap as any;
 
-$(window).on('load', delayed(async function check() {
+$(window).on('load', delayed(async function connect() {
     const $connect = $('#connect-metamask');
-    if (Blockchain.isInstalled()) {
-        if (Blockchain.isConnected()) {
+    if (await Blockchain.isInstalled()) {
+        if (await Blockchain.isConnected()) {
             if (await Blockchain.isAvalanche()) {
                 $connect.trigger('connecting');
                 try {
@@ -34,38 +35,58 @@ $(window).on('load', delayed(async function check() {
         $connect.text('Install Metamask');
         $connect.prop('disabled', false);
     }
-    if (Blockchain.isInstalled() === false) {
+    if (await Blockchain.isInstalled() === false) {
         const $info = $connect.siblings('.info');
         $info.attr('title', 'Install Metamask (and reload)');
         Tooltip.getInstance($info).dispose();
         Tooltip.getOrCreateInstance($info);
     }
-}, 600));
-$('#connect-metamask').on('click', async function connect() {
-    const $connect = $('#connect-metamask');
-    if (Blockchain.isInstalled()) {
-        if (await Blockchain.isAvalanche()) {
-            $connect.trigger('connecting');
-            try {
-                const address = await Blockchain.connect();
-                $connect.trigger('connected', {
-                    ok: true, address
-                });
-            } catch (ex) {
-                $connect.trigger('connected', {
-                    ok: false, error: ex
-                });
+}, ms()));
+function ms(fallback?: number) {
+    if (typeof fallback === 'undefined') {
+        if (navigator.userAgent.match(/mobi/i)) {
+            fallback = 600;
+        } else {
+            fallback = 200;
+        }
+    }
+    const ms = Number(
+        App.params.get('ms') ?? fallback
+    );
+    return !isNaN(ms) ? ms : fallback;
+}
+$('#connect-metamask').on('click', async function reconnect() {
+    if (await Blockchain.isInstalled()) {
+        if (await Blockchain.isConnected()) {
+            if (await Blockchain.isAvalanche()) {
+                // pass
+            } else {
+                await Blockchain.switchTo(
+                    ChainId.AVALANCHE_MAINNET
+                );
+                location.reload();
             }
         } else {
-            await Blockchain.switchTo(
-                ChainId.AVALANCHE_MAINNET
-            );
-            location.reload();
+            reload(600);
         }
     } else {
         open('https://metamask.io/download.html');
     }
 });
+function reload(delta_ms: number) {
+    if (location.search) {
+        const match = location.search.match(/ms=([0-9]+)/);
+        if (match && match.length > 1) {
+            location.search = location.search.replace(
+                /ms=([0-9]+)/, `ms=${delta_ms + Number(match[1])}`
+            );
+        } else {
+            location.search += `&ms=${delta_ms}`;
+        }
+    } else {
+        location.search = `?ms=${delta_ms}`;
+    }
+}
 $(window).on('load', function refresh() {
     const $connect = $('#connect-metamask');
     $connect.on('connected', () => {

@@ -27,7 +27,7 @@ export class OtfWallet {
             value = btoa(JSON.stringify(Object.values(randomBytes(32))));
             localStorage.setItem(key, value);
         }
-        const provider = new Web3Provider(Blockchain.provider);
+        const provider = new Web3Provider(await Blockchain.provider);
         const wallet = new Wallet(JSON.parse(atob(value)), provider);
         return this._wallet = global.OTF_WALLET = new NonceManager(wallet);
     }

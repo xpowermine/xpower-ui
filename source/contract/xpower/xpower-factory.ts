@@ -7,14 +7,14 @@ import { Token } from '../../redux/types';
 import { XPower } from './xpower';
 import { address } from '../address';
 
-export function XPowerFactory({
+export async function XPowerFactory({
     version, token
 }: {
     version?: typeof App.version, token?: Token
-} = {}): Contract {
+} = {}): Promise<Contract> {
     const contract = new XPower(address({
         infix: 'MOE', version, token
     }));
-    return global.XPOWER = contract.connect();
+    return global.XPOWER = await contract.connect();
 }
 export default XPowerFactory;

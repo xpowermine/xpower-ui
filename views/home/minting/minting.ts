@@ -82,15 +82,15 @@ $('.mint>button.minter').on('click', async function mint(
         App.removeNonce(nonce, {
             address, block_hash
         });
-    } catch (e: any) {
+    } catch (ex: any) {
         /* eslint no-ex-assign: [off] */
-        if (e.error) {
-            e = e.error;
+        if (ex.error) {
+            ex = ex.error;
         }
-        if (e.message && e.message.match(
+        if (ex.message && ex.message.match(
             /internal JSON-RPC error/i
         )) {
-            if (e.data && e.data.message && e.data.message.match(
+            if (ex.data && ex.data.message && ex.data.message.match(
                 /gas required exceeds allowance/i
             )) {
                 if (OtfWallet.enabled) {
@@ -98,7 +98,7 @@ $('.mint>button.minter').on('click', async function mint(
                     if (miner.running) miner.pause();
                 }
             }
-            if (e.data && e.data.message && e.data.message.match(
+            if (ex.data && ex.data.message && ex.data.message.match(
                 /empty nonce-hash/i
             )) {
                 App.removeNonce(nonce, {
@@ -106,22 +106,21 @@ $('.mint>button.minter').on('click', async function mint(
                 });
             }
         }
-        if (e.message) {
-            if (e.data && e.data.message) {
-                const message = `${e.message} [${e.data.message}]`;
-                $(alert(message, Alert.warning, {
+        if (ex.message) {
+            if (ex.data && ex.data.message) {
+                const message = `${ex.message} [${ex.data.message}]`;
+                const $alert = $(alert(message, Alert.warning, {
                     id: `${nonce}`
-                })).insertAfter(
-                    $mint
-                );
+                }));
+                $alert.insertAfter($mint);
             } else {
-                $(alert(e.message, Alert.warning, {
+                const $alert = $(alert(ex.message, Alert.warning, {
                     id: `${nonce}`
-                })).insertAfter(
-                    $mint
-                );
+                }));
+                $alert.insertAfter($mint);
             }
         }
+        console.error(ex);
     }
 });
 function increaseTxCounter($mint: JQuery<HTMLElement>) {
@@ -164,8 +163,8 @@ $('#connect-metamask').on('connected', function autoMint(
         }
     }
 });
-$(window).on('load', function forgetNonces() {
-    if (Blockchain.isInstalled()) {
+$(window).on('load', async function forgetNonces() {
+    if (await Blockchain.isInstalled()) {
         const im = new IntervalManager({ start: true });
         Blockchain.onceConnect(() => {
             im.on('tick', () => App.removeNonces());

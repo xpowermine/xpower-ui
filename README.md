@@ -64,15 +64,15 @@ clear-all | boolean | false | flag to clear all persistence slots
 logger | boolean | false | flag to log nonces to console
 min-level | number | 5 | threshold of nonces with lower corresponding amounts to be ignored
 max-level | number | 64 | threshold of nonces with higher corresponding amounts to be ignored
-persist | number | 0 | flag to persist nonces; each non-zero value is a sethorte persistence slot
+persist | number | 0 | flag to persist nonces; each non-zero value is a persistence slot
 speed | number | 50 | speed percentage (w.r.t a single browser tab) between 0 and 100
 
 ### Examples
 
-To ignore (frequent & low-value) nonces with an amount less than 5 THOR tokens and mine with a speed of 100% use:
+To ignore (frequent & low-value) nonces with an amount less than 7 THOR tokens and mine with a speed of 100% use:
 
 ```txt
-http://localhost:3000?min-level=5&speed=100
+http://localhost:3000?min-level=7&speed=100
 ```
 
 To persist nonces between reloads at 1st slot use (may impact mining performance):

@@ -4,6 +4,7 @@ export * from './buffered';
 export * from './delayed';
 export * from './ellipse';
 export * from './message';
+export * from './mobile';
 export * from './queued';
 export * from './random';
 export * from './range';

@@ -12,7 +12,7 @@ $('#connect-metamask').on('connected', async function isApproved(ev, {
     const ppt_treasury = PptTreasuryFactory();
     const nft_wallet = new NftWallet(address);
     const approved = await nft_wallet.isApprovedForAll(
-        ppt_treasury.address
+        await ppt_treasury.then((c) => c?.address)
     );
     const $approval = $('#burn-approval');
     if (approved) {
@@ -53,7 +53,8 @@ $('#burn-approval').on('click', async function setApproval() {
             $approval.trigger('approving');
             nft_wallet.onApprovalForAll(on_approval);
             tx = await nft_wallet.setApprovalForAll(
-                ppt_treasury.address, true
+                await ppt_treasury.then((c) => c?.address),
+                true
             );
         } catch (ex) {
             $approval.trigger('error', {

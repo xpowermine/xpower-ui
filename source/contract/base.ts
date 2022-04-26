@@ -15,9 +15,9 @@ export class Base {
         }
         this._abi = abi;
     }
-    public connect(pos?: Web3Provider | Signer): Contract {
+    public async connect(pos?: Web3Provider | Signer): Promise<Contract> {
         if (pos == undefined) {
-            pos = new Web3Provider(Blockchain.provider);
+            pos = new Web3Provider(await Blockchain.provider);
             return this.contract.connect(pos.getSigner());
         }
         return this.contract.connect(pos);

@@ -1,8 +1,9 @@
+/* eslint @typescript-eslint/no-explicit-any: [off] */
 import { App } from '../../../source/app';
 import { Blockchain } from '../../../source/blockchain';
 import { OnStakeBatch, PptTreasuryFactory } from '../../../source/contract';
 import { Transaction } from 'ethers';
-import { x40 } from '../../../source/functions';
+import { alert, Alert, x40 } from '../../../source/functions';
 import { Amount, NftCoreId } from '../../../source/redux/types';
 import { Nft, NftLevel, NftLevels } from '../../../source/redux/types';
 import { OtfWallet } from '../../../source/wallet';
@@ -74,15 +75,30 @@ $('#batch-minter').on('click', async function batchMintPpts() {
     const ppt_treasury = PptTreasuryFactory();
     let tx: Transaction | undefined;
     try {
+        $('.alert').remove();
         $minter.trigger('minting');
-        ppt_treasury.on('StakeBatch', on_stake_batch);
-        const contract = await OtfWallet.connect(
-            ppt_treasury
-        );
+        ppt_treasury.then((c) => c?.on('StakeBatch', on_stake_batch));
+        const contract = await OtfWallet.connect(await ppt_treasury);
         tx = await contract.stakeBatch(
             x40(address), ppt_ids, amounts
         );
-    } catch (ex) {
+    } catch (ex: any) {
+        /* eslint no-ex-assign: [off] */
+        if (ex.error) {
+            ex = ex.error;
+        }
+        if (ex.message) {
+            if (ex.data && ex.data.message) {
+                const message = `${ex.message} [${ex.data.message}]`;
+                const $alert = $(alert(message, Alert.warning));
+                $alert.insertAfter($minter.parents('div'));
+                $alert.find('.alert').css('margin-bottom', '1em');
+            } else {
+                const $alert = $(alert(ex.message, Alert.warning));
+                $alert.insertAfter($minter.parents('div'));
+                $alert.find('.alert').css('margin-bottom', '1em');
+            }
+        }
         $minter.trigger('error', {
             error: ex
         });

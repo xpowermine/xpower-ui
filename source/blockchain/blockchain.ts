@@ -1,9 +1,8 @@
 /* eslint @typescript-eslint/no-explicit-any: [off] */
 /* eslint no-async-promise-executor: [off] */
 import { Chain, ChainId } from './chain';
-import { Global } from '../types';
-declare const global: Global;
 
+import detectProvider from '@metamask/detect-provider';
 import { Address, TokenInfo } from '../redux/types';
 import { EventEmitter } from 'events';
 
@@ -23,40 +22,47 @@ export class Blockchain extends EventEmitter {
     private constructor() {
         super();
         if (this.provider) {
-            this.provider.on('chainChanged', () => {
+            this.provider.then((p) => p?.on('chainChanged', () => {
                 window.location.reload();
-            });
-            this.provider.on('accountsChanged', () => {
+            }));
+            this.provider.then((p) => p?.on('accountsChanged', () => {
                 window.location.reload();
-            });
+            }));
         }
         this.setMaxListeners(20);
     }
-    public static get provider(): any {
+    public static get provider(): Promise<any> {
         return this.me.provider;
     }
-    public get provider(): any {
-        return global.ethereum;
+    public get provider(): Promise<any> {
+        if (!this._provider) {
+            return detectProvider({
+                timeout: 600
+            }).then((p) => {
+                return this._provider = p;
+            });
+        }
+        return Promise.resolve(this._provider);
     }
-    public static isInstalled(): boolean {
+    public static isInstalled(): Promise<boolean> {
         return this.me.isInstalled();
     }
-    public isInstalled(): boolean {
-        return typeof this.provider !== 'undefined';
+    public isInstalled(): Promise<boolean> {
+        return this.provider.then((p) => Boolean(p));
     }
-    public static isConnected(): boolean {
+    public static isConnected(): Promise<boolean> {
         return this.me.isConnected();
     }
-    public isConnected(): boolean {
-        return this.provider.isConnected();
+    public isConnected(): Promise<boolean> {
+        return this.provider.then((p) => Boolean(p?.isConnected()));
     }
     public static async connect(): Promise<Address> {
         return this.me.connect();
     }
     public async connect(): Promise<Address> {
-        const accounts = await this.provider.request({
+        const accounts = await this.provider.then((p) => p?.request({
             method: 'eth_requestAccounts'
-        });
+        }));
         if (!accounts?.length) {
             throw new Error('missing accounts');
         }
@@ -80,9 +86,9 @@ export class Blockchain extends EventEmitter {
     }
     public get selectedAddress(): Promise<Address | undefined> {
         if (this.provider) {
-            const req = this.provider.request({
+            const req = this.provider.then((p) => p?.request({
                 method: 'eth_accounts'
-            });
+            }));
             return req.then((a: string[]) =>
                 a.length > 0 ? BigInt(a[0]) : undefined
             );
@@ -110,7 +116,7 @@ export class Blockchain extends EventEmitter {
     }
     public async switchTo(id: ChainId): Promise<void> {
         const chain = new Chain(id);
-        await this.provider.request({
+        await this.provider.then((p) => p?.request({
             method: 'wallet_addEthereumChain',
             params: [{
                 chainId: chain.id,
@@ -119,18 +125,18 @@ export class Blockchain extends EventEmitter {
                 rpcUrls: chain.rpcUrls,
                 blockExplorerUrls: chain.explorerUrls
             }]
-        });
+        }));
     }
     public static async addToken(info: TokenInfo): Promise<boolean> {
         return this.me.addToken(info);
     }
     public async addToken(info: TokenInfo): Promise<boolean> {
         try {
-            return await this.provider.request({
+            return await this.provider.then((p) => p?.request({
                 method: 'wallet_watchAsset', params: {
                     type: 'ERC20', options: info
                 }
-            });
+            }));
         } catch (ex) {
             console.error(ex);
         }
@@ -159,9 +165,9 @@ export class Blockchain extends EventEmitter {
     private get chainId() {
         return new Promise<string | undefined>(async (resolve) => {
             if (this.provider) try {
-                const chain_id = await this.provider.request({
+                const chain_id = await this.provider.then((p) => p?.request({
                     method: 'eth_chainId'
-                });
+                }));
                 if (chain_id && chain_id.length) {
                     resolve(`0x${Number(chain_id).toString(16)}`);
                 } else {
@@ -181,6 +187,7 @@ export class Blockchain extends EventEmitter {
         this._connect_emitted = value;
     }
     private _connect_emitted: boolean | undefined;
+    private _provider: any | null;
     private static _me: any;
 }
 export default Blockchain;

@@ -1,3 +1,4 @@
+/* eslint @typescript-eslint/no-explicit-any: [off] */
 import { Global } from '../../../source/types';
 declare const global: Global;
 import './mining-speed';
@@ -7,7 +8,7 @@ import { Tokenizer } from '../../../source/token';
 import { Blockchain } from '../../../source/blockchain';
 import { Connect } from '../../../source/blockchain';
 import { Reconnect } from '../../../source/blockchain';
-import { x64 } from '../../../source/functions';
+import { alert, Alert, x64 } from '../../../source/functions';
 import { HashManager } from '../../../source/managers';
 import { IntervalManager } from '../../../source/managers';
 import { Address } from '../../../source/redux/types';
@@ -16,7 +17,7 @@ import { OnInit } from '../../../source/wallet';
 import { MoeWallet } from '../../../source/wallet';
 
 $(window).on('load', async function refreshBlockHash() {
-    if (Blockchain.isInstalled()) {
+    if (await Blockchain.isInstalled()) {
         Blockchain.onceConnect(({ address }) => {
             const on_init: OnInit = (block_hash, timestamp) => {
                 console.debug('[on:init]', x64(block_hash), timestamp);
@@ -30,8 +31,8 @@ $(window).on('load', async function refreshBlockHash() {
         });
     }
 });
-$(window).on('load', function restartMining() {
-    if (Blockchain.isInstalled()) {
+$(window).on('load', async function restartMining() {
+    if (await Blockchain.isInstalled()) {
         const im = new IntervalManager({ start: true });
         Blockchain.onceConnect(({ address }: Connect) => {
             im.on('tick', async () => {
@@ -93,7 +94,23 @@ $('#toggle-mining').on('click', async function toggleMining() {
     try {
         const init = await moe_wallet.init();
         console.debug('[init]', init);
-    } catch (ex) {
+    } catch (ex: any) {
+        /* eslint no-ex-assign: [off] */
+        if (ex.error) {
+            ex = ex.error;
+        }
+        if (ex.message) {
+            if (ex.data && ex.data.message) {
+                const message = `${ex.message} [${ex.data.message}]`;
+                const $alert = $(alert(message, Alert.warning));
+                $alert.insertAfter($('#toggle-mining').parent('div'));
+                $alert.find('.alert').css('margin', '1em 0 0');
+            } else {
+                const $alert = $(alert(ex.message, Alert.warning));
+                $alert.insertAfter($('#toggle-mining').parent('div'));
+                $alert.find('.alert').css('margin', '1em 0 0');
+            }
+        }
         HashManager.me.removeAllListeners('block-hash');
         miner.emit('initialized', { block_hash: null });
         console.error(ex);
@@ -115,8 +132,8 @@ $('#toggle-mining').on('click', async function toggleMining() {
         });
     }
 });
-$(window).on('load', function resetMiningToggle() {
-    if (Blockchain.isInstalled()) {
+$(window).on('load', async function resetMiningToggle() {
+    if (await Blockchain.isInstalled()) {
         Blockchain.onConnect(reset);
         Blockchain.onReconnect(({ address }: Reconnect) => {
             const miner = App.miner(address);

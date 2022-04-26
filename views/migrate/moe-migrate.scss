@@ -1,4 +1,4 @@
-form#allowance {
+form.moe-allowance {
   div.approve-allowance {
     button.approve-allowance {
       width: calc(100% - 42px);
@@ -12,7 +12,7 @@ form#allowance {
     width: 100%;
   }
 }
-form#migration {
+form.moe-migration {
   div.execute-migration {
     button.execute-migration {
       text-align: center;

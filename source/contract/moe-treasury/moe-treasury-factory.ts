@@ -7,14 +7,14 @@ import { Token } from '../../redux/types';
 import { MoeTreasury } from './moe-treasury';
 import { address } from '../address';
 
-export function MoeTreasuryFactory({
+export async function MoeTreasuryFactory({
     version, token
 }: {
     version?: typeof App.version, token?: Token
-} = {}): Contract {
+} = {}): Promise<Contract> {
     const contract = new MoeTreasury(address({
         infix: 'MOE_TREASURY', version, token
     }));
-    return global.MOE_TREASURY = contract.connect();
+    return global.MOE_TREASURY = await contract.connect();
 }
 export default MoeTreasuryFactory;

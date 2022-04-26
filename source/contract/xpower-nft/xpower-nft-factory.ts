@@ -10,19 +10,19 @@ import { Tokenizer } from '../../token';
 import { XPowerNft } from './xpower-nft';
 import { address } from '../address';
 
-export function XPowerNftFactory({
+export async function XPowerNftFactory({
     version, token
 }: {
     version?: typeof App.version, token?: Token
-} = {}): Contract {
+} = {}): Promise<Contract> {
     const contract = new XPowerNft(address({
         infix: 'NFT', version, token
     }));
-    return global.XPOWER_NFT = contract.connect();
+    return global.XPOWER_NFT = await contract.connect();
 }
-export function XPowerNftMockFactory({ token }: {
+export async function XPowerNftMockFactory({ token }: {
     token?: Token
-} = {}): Contract {
+} = {}): Promise<Contract> {
     const suffix = Tokenizer.suffix(token ?? App.token);
     const mock = {
         year: () => {

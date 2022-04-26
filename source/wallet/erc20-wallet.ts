@@ -36,9 +36,9 @@ export abstract class ERC20Wallet {
         if (typeof spender_address === 'bigint') {
             spender_address = x40(spender_address);
         }
-        const allowance: BigNumber = await this.contract.allowance(
+        const allowance: BigNumber = await this.contract.then((c) => c?.allowance(
             address, spender_address
-        );
+        ));
         return allowance.toBigInt();
     }
     increaseAllowance(
@@ -47,9 +47,9 @@ export abstract class ERC20Wallet {
         if (typeof spender_address === 'bigint') {
             spender_address = x40(spender_address);
         }
-        return this.contract.increaseAllowance(
+        return this.contract.then((c) => c?.increaseAllowance(
             spender_address, allowance
-        );
+        ));
     }
     onApproval(
         handler: OnApproval, { once } = { once: false }
@@ -60,13 +60,13 @@ export abstract class ERC20Wallet {
             handler(BigInt(owner), BigInt(spender), value.toBigInt(), ev);
         };
         if (once) {
-            this.contract.once('Approval', on_approval);
+            this.contract.then((c) => c?.once('Approval', on_approval));
         } else {
-            this.contract.on('Approval', on_approval);
+            this.contract.then((c) => c?.on('Approval', on_approval));
         }
     }
     offApproval(handler: OnApproval) {
-        this.contract.off('Approval', handler);
+        this.contract.then((c) => c?.off('Approval', handler));
     }
     onTransfer(
         handler: OnTransfer, { once } = { once: false }
@@ -81,26 +81,26 @@ export abstract class ERC20Wallet {
             }
         };
         if (once) {
-            this.contract.once('Transfer', on_transfer);
+            this.contract.then((c) => c?.once('Transfer', on_transfer));
         } else {
-            this.contract.on('Transfer', on_transfer);
+            this.contract.then((c) => c?.on('Transfer', on_transfer));
         }
     }
     offTransfer(handler: OnTransfer) {
-        this.contract.off('Transfer', handler);
+        this.contract.then((c) => c?.off('Transfer', handler));
     }
     get address(): Address {
         return BigInt(this._address);
     }
     get balance(): Promise<Balance> {
-        const balance = this.contract.balanceOf(this._address);
+        const balance = this.contract.then((c) => c?.balanceOf(this._address));
         return balance.then((b: BigNumber) => b.toBigInt());
     }
     get supply(): Promise<Supply> {
-        const supply = this.contract.totalSupply();
+        const supply = this.contract.then((c) => c?.totalSupply());
         return supply.then((s: BigNumber) => s.toBigInt());
     }
-    abstract get contract(): Contract;
+    abstract get contract(): Promise<Contract>;
     protected readonly _address: string;
     protected _contract: Contract | undefined;
 }
