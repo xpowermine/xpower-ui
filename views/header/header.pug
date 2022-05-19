@@ -4,9 +4,7 @@ header
             class=`${PAGE === 'home' ? 'active' : ''}`
             href="/home?token={{TOKEN}}"
         )
-            img.float-sm-start(
-                class="{{token}}" src=`/images/svg/{{token}}-black.svg`
-            )
+            i.bi-lightning-charge-fill.float-sm-start
             span.d-none.d-sm-inline: | XPower
         a.flex-sm-fill.text-sm-center.nav-link.nfts(
             class=`${PAGE === 'nfts' ? 'active' : ''}`

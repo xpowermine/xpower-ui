@@ -28,6 +28,7 @@ const configuration = (options) => ({
             './views/theme/theme.ts',
             './views/tooltips/tooltips.ts',
             './views/wallet/wallet.ts',
+            './views/selector/selector.ts',
             './views/home/home.ts',
             './views/footer/footer.ts',
             './views/connector/connector.ts',

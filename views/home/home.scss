@@ -2,5 +2,10 @@
 @import "../header/header.scss";
 @import "../connector/connector.scss";
 @import "../footer/footer.scss";
+
+form#selector {
+    margin-top: 1em;
+}
+
 @import "./mining/mining.scss";
 @import "./minting/minting.scss";

@@ -4,16 +4,25 @@ form#selector
   )
     a.btn.btn-outline-warning.selector-thor(
       type="button" data-bs-toggle="tooltip" data-bs-placement="top"
-      href=`?token=THOR` title="Use THOR tokens"
+      href=`?token=THOR` title="THOR tokens"
     )
-      | THOR
+      img.float-sm-start(
+          class="{{token}}" src=`/images/svg/thor-black.svg`
+      )
+      span.d-none.d-sm-inline: | THOR
     a.btn.btn-outline-warning.selector-loki(
       type="button" data-bs-toggle="tooltip" data-bs-placement="top"
-      href="?token=LOKI" title="Use LOKI tokens"
+      href="?token=LOKI" title="LOKI tokens"
     )
-      | LOKI
+      img.float-sm-start(
+          class="{{token}}" src=`/images/svg/loki-black.svg`
+      )
+      span.d-none.d-sm-inline: | LOKI
     a.btn.btn-outline-warning.selector-odin(
       type="button" data-bs-toggle="tooltip" data-bs-placement="top"
-      href="?token=ODIN" title="Use ODIN tokens"
+      href="?token=ODIN" title="ODIN tokens"
     )
-      | ODIN
+      img.float-sm-start(
+          class="{{token}}" src=`/images/svg/odin-black.svg`
+      )
+      span.d-none.d-sm-inline: | ODIN

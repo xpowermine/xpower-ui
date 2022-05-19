@@ -8,22 +8,6 @@ form#mining
       )
       span.text: | Start Mining
 
-    span(
-      data-bs-toggle="tooltip" data-bs-placement="top"
-      title="Select from one of three XPower tokens to mine"
-    )
-      button.btn.btn-outline-warning#select-token.dropdown-toggle(
-        type="button" data-bs-toggle="dropdown"
-      )
-        | {{TOKEN_SUFFIX}}
-      ul.dropdown-menu
-        li: a.dropdown-item(href="?token=THOR")
-          | THOR: tokens by the god of thunder
-        li: a.dropdown-item(href="?token=LOKI")
-          | LOKI: tokens by the god of mischieve
-        li: a.dropdown-item(href="?token=ODIN")
-          | ODIN: tokens by the god of wisdom
-
     button.btn.btn-outline-warning.info(
       type="button" data-bs-toggle="tooltip" data-bs-placement="top"
       title="Toggle mining for XPower tokens (w/o minting them)"

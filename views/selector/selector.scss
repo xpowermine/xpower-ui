@@ -2,7 +2,7 @@ form#selector {
   margin-bottom: 0.5em;
 }
 form#selector {
-    div.selectors {
+  div.selectors {
     a.active,
     a:hover {
       background-color: var(--xp-powered);
@@ -16,5 +16,26 @@ form#selector {
       color: var(--xp-powered);
     }
     width: 100%;
+  }
+}
+form#selector {
+  div.selectors {
+    a:not(.active):not(:hover) {
+      img.thor {
+        filter: invert(90%) sepia(94%) saturate(2464%) hue-rotate(357deg) brightness(106%) contrast(101%);
+      }
+      img.loki {
+        filter: invert(52%) sepia(64%) saturate(2114%) hue-rotate(82deg) brightness(116%) contrast(125%);
+      }
+      img.odin {
+        filter: invert(88%) sepia(53%) saturate(3730%) hue-rotate(104deg) brightness(106%) contrast(105%);
+      }
+    }
+    a {
+      img {
+        max-height: 24px;
+        max-width: 24px;
+      }
+    }
   }
 }
