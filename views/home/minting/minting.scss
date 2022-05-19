@@ -6,23 +6,13 @@ form#minting {
     button.minter {
       width: calc(100% - 147px);
     }
-    button.counters {
-      span.badge {
-        background-color: var(--xp-powered);
-        border: 1px solid var(--xp-dimgray);
-        color: var(--xp-dimgray);
-        margin: 2px 1px 0 1px;
-      }
-      span.badge.nn-counter {
-        float: right;
-        right: 50%;
-      }
-      span.badge.tx-counter {
-        float: left;
-        left: 50%;
-      }
+    button.nn-counter {
       cursor: default;
-      width: 105px;
+      width: 52px;
+    }
+    button.tx-counter {
+      cursor: default;
+      width: 52px;
     }
     button.forget {
       width: 42px;

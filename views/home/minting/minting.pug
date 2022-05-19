@@ -18,17 +18,25 @@ form#minting
         | Mint {{LEVEL_#{level}}} <span class="d-none d-sm-inline">{{TOKEN}}</span>
       span.d-inline-block(
         tabindex=0 data-bs-toggle="tooltip" data-bs-placement="left"
-        title=`Number of {{LEVEL_${level}}} {{TOKEN_SUFFIX}} tokens mined & minted`
+        title=`Number of level {{LEVEL_${level}}} {{TOKEN_SUFFIX}} tokens mined`
       )
-        button.btn.btn-outline-warning.counters(
+        button.btn.btn-outline-warning.nn-counter(
           style="border-radius: 0"
           type="button" disabled
         )
-          span.badge.nn-counter: | 0
-          span.badge.tx-counter: | 0
+          | 0
+      span.d-inline-block(
+        tabindex=0 data-bs-toggle="tooltip" data-bs-placement="left"
+        title=`Number of level {{LEVEL_${level}}} {{TOKEN_SUFFIX}} tokens minted`
+      )
+        button.btn.btn-outline-warning.tx-counter(
+          style="border-radius: 0"
+          type="button" disabled
+        )
+          | 0
       span.d-inline-block(
         tabindex=0 data-bs-toggle="tooltip" data-bs-placement="top"
-        title=`Forget the tokens mined so far (w/o minting them)`
+        title=`Forget the tokens mined so far (without minting them)`
       )
         button.btn.btn-outline-warning.forget(
           style="border-radius: 0 4px 4px 0; border-left: none"
