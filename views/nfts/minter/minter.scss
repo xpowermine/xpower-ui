@@ -16,7 +16,9 @@ form#batch-minting {
         height: 1em;
         width: 1em;
       }
-      width: 100%;
+      border-left: none;
+      border-right: none;
+      width: calc(100% - 84px);
     }
     #batch-minter {
       span.spinner {
@@ -26,8 +28,10 @@ form#batch-minting {
         height: 1em;
         width: 1em;
       }
+      border-left: none;
+      border-right: none;
       display: none;
-      width: 100%;
+      width: calc(100% - 84px);
     }
     #batch-minter.show {
       display: inline-block;

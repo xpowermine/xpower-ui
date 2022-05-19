@@ -13,6 +13,9 @@ header {
             border-start-start-radius: 0;
             border-end-start-radius: 0;
         }
+        a:not(:last-of-type) {
+            border-right: none;
+        }
         a.active, a:hover {
             background-color: var(--xp-powered);
             color: var(--xp-dimgray);

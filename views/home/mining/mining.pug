@@ -31,10 +31,10 @@ form#mining
       include ../../../public/images/pug/info-circle-fill.svg.pug
 
   div.btn-group.tweak-mining(role="group")
-    div.btn-group.decelerator(role="group")
-      button.btn.btn-outline-warning#decelerate(
+    div.btn-group.decreaser(role="group")
+      button.btn.btn-outline-warning#decrease(
         type="button" data-bs-toggle="tooltip" data-bs-placement="top"
-        title="Decelerate mining speed" disabled
+        title="Decrease mining speed" disabled
       )
         include ../../../public/images/pug/dash-circle-fill.svg.pug
     div.btn-group.progressor(
@@ -44,9 +44,9 @@ form#mining
       div.progress: div#speed.progress-bar.with-indicator(
         role="progressbar" style=`width: ${UI_MINING_SPEED}%`
       )
-    div.btn-group.accelerator(role="group")
-      button.btn.btn-outline-warning#accelerate(
+    div.btn-group.increaser(role="group")
+      button.btn.btn-outline-warning#increase(
         type="button" data-bs-toggle="tooltip" data-bs-placement="top"
-        title="Accelerate mining speed" disabled
+        title="Increase mining speed" disabled
       )
         include ../../../public/images/pug/plus-circle-fill.svg.pug

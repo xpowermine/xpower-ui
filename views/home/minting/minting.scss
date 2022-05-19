@@ -4,18 +4,21 @@ form#minting {
   }
   div.btn-group.mint {
     button.minter {
-      width: calc(100% - 147px);
+      border-right: none;
+      width: calc(100% - 150px);
     }
     button.nn-counter {
+      border-right: none;
       cursor: default;
-      width: 52px;
+      width: 53.75px;
     }
     button.tx-counter {
+      border-right: none;
       cursor: default;
-      width: 52px;
+      width: 53.75px;
     }
     button.forget {
-      width: 42px;
+      width: 42.5px;
     }
     margin-bottom: 1em;
     width: 100%;

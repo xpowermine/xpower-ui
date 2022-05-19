@@ -12,24 +12,25 @@ form#mining {
         height: 1em;
         width: 1em;
       }
-      width: calc(100% - 147px);
+      border-right: none;
+      width: calc(100% - 150px);
     }
     button#select-token {
       border-right: none;
       border-radius: 0;
-      width: 105px;
+      width: 108px;
     }
     width: 100%;
   }
   div.tweak-mining {
-    div.accelerator,
-    div.decelerator {
-      button#accelerate,
-      button#decelerate  {
-        width: 43px;
+    div.increaser,
+    div.decreaser {
+      button#increase,
+      button#decrease  {
+        width: 42.5px;
       }
-      button#accelerate > svg,
-      button#decelerate > svg {
+      button#increase > svg,
+      button#decrease > svg {
         position: relative;
         top: -1px;
       }
@@ -48,7 +49,7 @@ form#mining {
       }
       border-top: 1px solid var(--xp-powered);
       border-bottom: 1px solid var(--xp-powered);
-      width: calc(100% - 82.5px);
+      width: calc(100% - 82px);
     }
     margin-top: 1em;
     width: 100%;

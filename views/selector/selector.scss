@@ -8,6 +8,9 @@ form#selector {
       background-color: var(--xp-powered);
       color: var(--xp-dimgray);
     }
+    a:not(:last-of-type) {
+      border-right: none;
+    }
     a {
       border: 1px solid var(--xp-powered);
       color: var(--xp-powered);

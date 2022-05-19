@@ -25,63 +25,63 @@ $(window).on('load', function init() {
     $('#speed').trigger('change', {
         speed: App.speed
     });
-    const $acc = $('#accelerate');
-    $acc.prop('disabled', App.speed > 0.999);
-    const $dec = $('#decelerate');
+    const $inc = $('#increase');
+    $inc.prop('disabled', App.speed > 0.999);
+    const $dec = $('#decrease');
     $dec.prop('disabled', App.speed < 0.001);
 });
 $(window).on('load', function tooltips() {
     if (document.body.clientWidth <= 576) {
-        const $acc = $('#accelerate');
-        Tooltip.getInstance($acc)?.disable();
-        const $dec = $('#decelerate');
+        const $inc = $('#increase');
+        Tooltip.getInstance($inc)?.disable();
+        const $dec = $('#decrease');
         Tooltip.getInstance($dec)?.disable();
     }
 });
-$('#accelerate').on('click', async function accelerate() {
+$('#increase').on('click', async function increase() {
     const address = await Blockchain.selectedAddress;
     if (!address) {
         throw new Error('missing selected-address');
     }
-    App.miner(address).accelerate();
+    App.miner(address).increase();
 });
-$('#decelerate').on('click', async function decelerate() {
+$('#decrease').on('click', async function decrease() {
     const address = await Blockchain.selectedAddress;
     if (!address) {
         throw new Error('missing selected-address');
     }
-    App.miner(address).decelerate();
+    App.miner(address).decrease();
 });
 $('#connect-metamask').on('connected', function handlers(
     ev, { address }: Connect
 ) {
     const miner = App.miner(address);
-    const $acc = $('#accelerate');
-    const $dec = $('#decelerate');
+    const $inc = $('#increase');
+    const $dec = $('#decrease');
     miner.on('accelerated', () => {
-        Tooltip.getInstance($acc)?.hide();
+        Tooltip.getInstance($inc)?.hide();
         Tooltip.getInstance($dec)?.hide();
     });
     miner.on('decelerated', () => {
-        Tooltip.getInstance($acc)?.hide();
+        Tooltip.getInstance($inc)?.hide();
         Tooltip.getInstance($dec)?.hide();
     });
     miner.on('accelerated', (ev) => {
         const speed = ev.speed as number;
-        $acc.prop('disabled', speed > 0.999);
+        $inc.prop('disabled', speed > 0.999);
         $dec.prop('disabled', speed < 0.001);
     });
     miner.on('decelerated', (ev) => {
         const speed = ev.speed as number;
-        $acc.prop('disabled', speed > 0.999);
+        $inc.prop('disabled', speed > 0.999);
         $dec.prop('disabled', speed < 0.001);
     });
     miner.on('starting', () => {
-        $acc.prop('disabled', true);
+        $inc.prop('disabled', true);
         $dec.prop('disabled', true);
     });
     miner.on('stopped', () => {
-        $acc.prop('disabled', false);
+        $inc.prop('disabled', false);
         $dec.prop('disabled', false);
     });
     miner.on('accelerated', (ev) => {

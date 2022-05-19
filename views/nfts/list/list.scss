@@ -5,7 +5,7 @@ form#single-minting {
   .nft-minter {
     .btn-group {
       .toggle {
-        width: 43px;
+        width: 42.5px;
       }
       .toggle > i {
         position: relative;
@@ -13,24 +13,33 @@ form#single-minting {
       }
       .increase,
       .decrease {
-        width: 43px;
+        width: 42.5px;
       }
       .increase > svg,
       .decrease > svg {
         position: relative;
         top: -1px;
       }
+      .increase {
+        border-left: none;
+      }
+      .decrease {
+        border-left: none;
+        border-right: none;
+      }
     }
     .minter {
-      width: calc(50% - 126px);
+      border-left: none;
+      border-right: none;
+      width: calc(50% - 125px);
     }
     .balance {
       font-size: smaller;
-      width: calc(25% - 126px);
+      width: calc(25% - 125px);
     }
     .amount {
       font-size: smaller;
-      width: calc(25% - 126px);
+      width: calc(25% - 125px);
     }
     margin-bottom: 1em;
     width: 100%;

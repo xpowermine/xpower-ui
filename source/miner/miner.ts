@@ -95,7 +95,7 @@ export class Miner extends EventEmitter {
         });
         this._paused = false;
     }
-    public accelerate(by = 1 / Miner.WORKERS_MAX): number {
+    public increase(by = 1 / Miner.WORKERS_MAX): number {
         const old_speed = this.speed;
         this.speed += by;
         const new_value = this.speed;
@@ -106,7 +106,7 @@ export class Miner extends EventEmitter {
         }
         return new_value;
     }
-    public decelerate(by = 1 / Miner.WORKERS_MAX): number {
+    public decrease(by = 1 / Miner.WORKERS_MAX): number {
         const old_speed = this.speed;
         this.speed -= by;
         const new_value = this.speed;
