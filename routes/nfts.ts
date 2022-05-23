@@ -1,5 +1,6 @@
 import { Nft, NftLevel, NftToken } from '../source/redux/types';
-import { env_of, host } from './functions';
+import { capitalize, env_of, host } from './functions';
+import { join } from 'path';
 
 import env from '../env';
 import express from 'express';
@@ -17,19 +18,21 @@ router.get('/:token/:id.json', (req, res) => {
     level: Nft.level(id),
     token: Nft.token(token)
   };
-  const location = env.NFT_URI[
-    `${token}/${Nft.coreId(nft)}.json`
-  ];
+  const key = `${token}/${Nft.coreId(nft)}.json`;
+  const location = env.NFT_URI[key];
   if (typeof location === 'string') {
     return res.redirect(location);
   }
-  const TOKEN = NftToken[nft.token].toUpperCase();
   const LEVEL = NftLevel[nft.level].toUpperCase();
-  const level = LEVEL.toLowerCase();
+  const order = 1 + nft.level / 3; // 1, 2, 3, ...
+  const TOKEN = NftToken[nft.token].toUpperCase();
+  const Token = capitalize(TOKEN.toLowerCase());
   res.send({
     name: `${LEVEL} ${TOKEN}`,
     describe: `${LEVEL} ${TOKEN} NFT`,
-    image: `${host(req)}/images/nft/${nft.issue}/xpow.${token}-${level}.png`,
+    image: host(req) + join(env.NFT_URI[token],
+      `${nft.issue}`, Token, `${order}-${Token}_${LEVEL}.png`
+    ),
     properties: {
       issue: `${nft.issue}`,
       label: LEVEL,

@@ -90,7 +90,7 @@ export class Blockchain extends EventEmitter {
                 method: 'eth_accounts'
             }));
             return req.then((a: string[]) =>
-                a.length > 0 ? BigInt(a[0]) : undefined
+                a?.length > 0 ? BigInt(a[0]) : undefined
             );
         }
         return Promise.resolve(undefined);

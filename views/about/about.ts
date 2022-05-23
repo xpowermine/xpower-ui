@@ -5,6 +5,7 @@ declare const global: Global;
 import './about.scss';
 
 import { Tokenizer } from '../../source/token';
+import { capitalize } from '../../routes/functions';
 
 const markdownit = global.markdownit as (options: any) => {
     use: (plugin: any, options?: any) => void,
@@ -45,7 +46,9 @@ $(window).on('load', async function renderMarkdown() {
             .replace(/{{TOKEN}}/g, symbol.toUpperCase())
             .replace(/{{TOKEN_SUFFIX}}/g, suffix.toUpperCase())
             .replace(/{{token}}/g, symbol.toLowerCase())
-            .replace(/{{token_suffix}}/g, suffix.toLowerCase());
+            .replace(/{{token_suffix}}/g, suffix.toLowerCase())
+            .replace(/{{Token}}/g, capitalize(symbol.toLowerCase()))
+            .replace(/{{Token_suffix}}/g, capitalize(suffix.toLowerCase()));
     }
     $('content').html(html).trigger('ready');
 });

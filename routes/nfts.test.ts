@@ -48,10 +48,10 @@ describe('GET /nfts/thor/(0*)222200.json', () => {
                 'UNIT THOR NFT'
             );
             expect(image).toMatch(
-                new RegExp('^http://127.0.0.1:')
+                new RegExp('^http://127.0.0.1:([0-9]+)/ipfs/')
             );
             expect(image).toMatch(
-                new RegExp('/images/nft/2222/xpow.thor-unit.png$')
+                new RegExp('/nfts/320x427/2222/Thor/1-Thor_UNIT.png$')
             );
         });
     });
@@ -85,10 +85,10 @@ describe('GET /nfts/thor/(0*)363f8.json', () => {
                 'UNIT THOR NFT'
             );
             expect(image).toMatch(
-                new RegExp('^http://127.0.0.1:')
+                new RegExp('^http://127.0.0.1:([0-9]+)/ipfs/')
             );
             expect(image).toMatch(
-                new RegExp('/images/nft/2222/xpow.thor-unit.png$')
+                new RegExp('/nfts/320x427/2222/Thor/1-Thor_UNIT.png$')
             );
         });
     });
@@ -158,10 +158,10 @@ describe('GET /nfts/loki/(0*)202203.json', () => {
                 'KILO LOKI NFT'
             );
             expect(image).toMatch(
-                new RegExp('^http://127.0.0.1:')
+                new RegExp('^http://127.0.0.1:([0-9]+)/ipfs/')
             );
             expect(image).toMatch(
-                new RegExp('/images/nft/2022/xpow.loki-kilo.png$')
+                new RegExp('/nfts/320x427/2022/Loki/2-Loki_KILO.png$')
             );
         });
     });
@@ -195,10 +195,10 @@ describe('GET /nfts/loki/(0*)315db.json', () => {
                 'KILO LOKI NFT'
             );
             expect(image).toMatch(
-                new RegExp('^http://127.0.0.1:')
+                new RegExp('^http://127.0.0.1:([0-9]+)/ipfs/')
             );
             expect(image).toMatch(
-                new RegExp('/images/nft/2022/xpow.loki-kilo.png$')
+                new RegExp('/nfts/320x427/2022/Loki/2-Loki_KILO.png$')
             );
         });
     });
@@ -268,10 +268,10 @@ describe('GET /nfts/odin/(0*)202306.json', () => {
                 'MEGA ODIN NFT'
             );
             expect(image).toMatch(
-                new RegExp('^http://127.0.0.1:')
+                new RegExp('^http://127.0.0.1:([0-9]+)/ipfs/')
             );
             expect(image).toMatch(
-                new RegExp('/images/nft/2023/xpow.odin-mega.png$')
+                new RegExp('/nfts/320x427/2023/Odin/3-Odin_MEGA.png$')
             );
         });
     });
@@ -305,10 +305,10 @@ describe('GET /nfts/odin/(0*)31642.json', () => {
                 'MEGA ODIN NFT'
             );
             expect(image).toMatch(
-                new RegExp('^http://127.0.0.1:')
+                new RegExp('^http://127.0.0.1:([0-9]+)/ipfs/')
             );
             expect(image).toMatch(
-                new RegExp('/images/nft/2023/xpow.odin-mega.png$')
+                new RegExp('/nfts/320x427/2023/Odin/3-Odin_MEGA.png$')
             );
         });
     });
