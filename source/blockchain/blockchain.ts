@@ -20,16 +20,7 @@ export class Blockchain extends EventEmitter {
         return this._me;
     }
     private constructor() {
-        super();
-        if (this.provider) {
-            this.provider.then((p) => p?.on('chainChanged', () => {
-                window.location.reload();
-            }));
-            this.provider.then((p) => p?.on('accountsChanged', () => {
-                window.location.reload();
-            }));
-        }
-        this.setMaxListeners(20);
+        super(); this.setMaxListeners(20);
     }
     public static get provider(): Promise<any> {
         return this.me.provider;

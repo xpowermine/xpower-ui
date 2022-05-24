@@ -59,7 +59,7 @@ $('#connect-metamask').on('click', async function reconnect() {
     if (await Blockchain.isInstalled()) {
         if (await Blockchain.isConnected()) {
             if (await Blockchain.isAvalanche()) {
-                // pass
+                // pass: already connected
             } else {
                 await Blockchain.switchTo(
                     ChainId.AVALANCHE_MAINNET
@@ -139,4 +139,12 @@ $(window).on('load', function toggleConnectSpinner() {
         $spinner.css('visibility', 'hidden');
         $spinner.removeClass('spinner-grow');
     });
+});
+$(window).on('load', function reloader() {
+    const $connect = $('#connect-metamask');
+    $connect.one('connected', delayed(async () => {
+        const p = await Blockchain.provider;
+        p.on('chainChanged', () => location.reload());
+        p.on('accountsChanged', () => location.reload());
+    }, 600));
 });
