@@ -10,13 +10,14 @@ each year in Array.from(YEARS).reverse()
   )
     div.col-sm.nft-details-lhs
       div.nft-image-wrap
-        span.spinner.spinner-border(
-          role="status"
-        )
-        img.img-fluid.nft-image(
-          data-bs-toggle="tooltip" data-bs-placement="top" loading="lazy" data-id=`${nft_id}`
-          title=`Trade ${levels[index]} NFTs (level ${index+1}/9 & ID #${nft_id})`
-        )
+        a(target="_blank")
+          span.spinner.spinner-border(
+            role="status"
+          )
+          img.img-fluid.nft-image(
+            data-bs-toggle="tooltip" data-bs-placement="top" loading="lazy" data-id=`${nft_id}`
+            title=`Trade ${levels[index]} NFTs (level ${index+1}/9 & ID #${nft_id})`
+          )
 
     div.col-sm.nft-details-rhs
       label.form-label

@@ -86,24 +86,27 @@ $('.nft-image').on('load', async function clearImageSpinner(ev) {
     const $image = $(ev.target);
     $image.siblings('.spinner').hide();
 });
-$('.nft-image').on('click', async function openCollection(ev) {
-    const address = await Blockchain.selectedAddress;
-    if (!address) {
-        throw new Error('missing selected-address');
-    }
+$('.nft-image').on('load', async function setCollectionUrl(ev) {
     const $image = $(ev.target);
     const nft_id = $image.data('id');
-    const nft_wallet = new PptWallet(address);
-    const supply = await nft_wallet.totalSupply(nft_id);
-    if (supply > 0) {
+    const url = await href(nft_id);
+    if (url) {
+        $image.parent('a').attr('href', url.toString());
         $image.css('cursor', 'pointer');
-    } else {
-        $image.css('cursor', 'not-allowed');
     }
-    if (supply > 0) {
-        const market = 'https://nftrade.com/assets/avalanche';
-        const nft_contract = await nft_wallet.contract.then((c) => c);
-        open(`${market}/${nft_contract.address}/${nft_id}`);
+    async function href(nft_id: NftCoreId): Promise<URL | null> {
+        const address = await Blockchain.selectedAddress;
+        if (!address) {
+            throw new Error('missing selected-address');
+        }
+        const nft_wallet = new PptWallet(address);
+        const supply = await nft_wallet.totalSupply(nft_id);
+        if (supply > 0) {
+            const market = 'https://nftrade.com/assets/avalanche';
+            const nft_contract = await nft_wallet.contract.then((c) => c);
+            return new URL(`${market}/${nft_contract.address}/${nft_id}`);
+        }
+        return null;
     }
 });
 $('.nft-claimer>.claimer').on('click', async function claimRewards(ev) {
