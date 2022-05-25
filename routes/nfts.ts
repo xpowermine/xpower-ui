@@ -13,6 +13,7 @@ router.get('/', (req, res) => {
 /** GET nfts/{token}/{id}.json metadata. */
 router.get('/:token/:id.json', (req, res) => {
   const { token, id } = req.params;
+  const { resolution } = req.query;
   const nft = {
     issue: Nft.issue(id),
     level: Nft.level(id),
@@ -30,7 +31,8 @@ router.get('/:token/:id.json', (req, res) => {
   res.send({
     name: `${LEVEL} ${TOKEN}`,
     describe: `${LEVEL} ${TOKEN} NFT`,
-    image: host(req) + join(env.NFT_URI[token],
+    image: host(req) + join(
+      env.NFT_URI[token], resolution as string ?? '320x427',
       `${nft.issue}`, Token, `${order}-${Token}_${LEVEL}.png`
     ),
     properties: {

@@ -136,18 +136,18 @@ const ODIN_MOE_TREASURY_V4a = process.env.ODIN_MOE_TREASURY_V4a ?? '0x8C1568BeE3
 assert(ODIN_MOE_TREASURY_V4a, 'missing ODIN_MOE_TREASURY_V4a env variable');
 // NFT contract URIs
 const NFT_URI = JSON.parse(process.env.NFT_URI ?? `{
-    "thor":"/ipfs/QmcMVdnJV6VaicjukafsTK1pX4Zthx6JbRvC9igLScrAjD/nfts/320x427",
-    "loki":"/ipfs/QmcMVdnJV6VaicjukafsTK1pX4Zthx6JbRvC9igLScrAjD/nfts/320x427",
-    "odin":"/ipfs/QmcMVdnJV6VaicjukafsTK1pX4Zthx6JbRvC9igLScrAjD/nfts/320x427",
-    "hela":"/ipfs/QmcMVdnJV6VaicjukafsTK1pX4Zthx6JbRvC9igLScrAjD/nfts/320x427"
+    "thor":"/ipfs/QmcMVdnJV6VaicjukafsTK1pX4Zthx6JbRvC9igLScrAjD/nfts",
+    "loki":"/ipfs/QmcMVdnJV6VaicjukafsTK1pX4Zthx6JbRvC9igLScrAjD/nfts",
+    "odin":"/ipfs/QmcMVdnJV6VaicjukafsTK1pX4Zthx6JbRvC9igLScrAjD/nfts",
+    "hela":"/ipfs/QmcMVdnJV6VaicjukafsTK1pX4Zthx6JbRvC9igLScrAjD/nfts"
 }`);
 assert(NFT_URI, 'missing NFT_URI env variable');
 // PPT contract URIs
 const PPT_URI = JSON.parse(process.env.PPT_URI ?? `{
-    "thor":"/ipfs/QmcMVdnJV6VaicjukafsTK1pX4Zthx6JbRvC9igLScrAjD/ppts/320x427",
-    "loki":"/ipfs/QmcMVdnJV6VaicjukafsTK1pX4Zthx6JbRvC9igLScrAjD/ppts/320x427",
-    "odin":"/ipfs/QmcMVdnJV6VaicjukafsTK1pX4Zthx6JbRvC9igLScrAjD/ppts/320x427",
-    "hela":"/ipfs/QmcMVdnJV6VaicjukafsTK1pX4Zthx6JbRvC9igLScrAjD/ppts/320x427"
+    "thor":"/ipfs/QmcMVdnJV6VaicjukafsTK1pX4Zthx6JbRvC9igLScrAjD/ppts",
+    "loki":"/ipfs/QmcMVdnJV6VaicjukafsTK1pX4Zthx6JbRvC9igLScrAjD/ppts",
+    "odin":"/ipfs/QmcMVdnJV6VaicjukafsTK1pX4Zthx6JbRvC9igLScrAjD/ppts",
+    "hela":"/ipfs/QmcMVdnJV6VaicjukafsTK1pX4Zthx6JbRvC9igLScrAjD/ppts"
 }`);
 assert(PPT_URI, 'missing PPT_URI env variable');
 
