@@ -1,9 +1,10 @@
 import { Address, Amount, Supply } from './base';
 
 export enum Token {
-    ODIN = 'ODIN',
+    THOR = 'THOR',
     LOKI = 'LOKI',
-    THOR = 'THOR'
+    ODIN = 'ODIN',
+    HELA = 'HELA',
 }
 export function* Tokens() {
     for (const t in Token) {

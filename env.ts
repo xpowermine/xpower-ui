@@ -139,6 +139,7 @@ const NFT_URI = JSON.parse(process.env.NFT_URI ?? `{
     "thor":"/ipfs/QmcMVdnJV6VaicjukafsTK1pX4Zthx6JbRvC9igLScrAjD/nfts/320x427",
     "loki":"/ipfs/QmcMVdnJV6VaicjukafsTK1pX4Zthx6JbRvC9igLScrAjD/nfts/320x427",
     "odin":"/ipfs/QmcMVdnJV6VaicjukafsTK1pX4Zthx6JbRvC9igLScrAjD/nfts/320x427",
+    "hela":"/ipfs/QmcMVdnJV6VaicjukafsTK1pX4Zthx6JbRvC9igLScrAjD/nfts/320x427"
 }`);
 assert(NFT_URI, 'missing NFT_URI env variable');
 // PPT contract URIs
@@ -146,6 +147,7 @@ const PPT_URI = JSON.parse(process.env.PPT_URI ?? `{
     "thor":"/ipfs/QmcMVdnJV6VaicjukafsTK1pX4Zthx6JbRvC9igLScrAjD/ppts/320x427",
     "loki":"/ipfs/QmcMVdnJV6VaicjukafsTK1pX4Zthx6JbRvC9igLScrAjD/ppts/320x427",
     "odin":"/ipfs/QmcMVdnJV6VaicjukafsTK1pX4Zthx6JbRvC9igLScrAjD/ppts/320x427",
+    "hela":"/ipfs/QmcMVdnJV6VaicjukafsTK1pX4Zthx6JbRvC9igLScrAjD/ppts/320x427"
 }`);
 assert(PPT_URI, 'missing PPT_URI env variable');
 
