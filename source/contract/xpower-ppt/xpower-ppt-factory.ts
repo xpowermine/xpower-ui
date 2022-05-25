@@ -38,7 +38,7 @@ export async function XPowerPptMockFactory({ token }: {
             if (!BigNumber.isBigNumber(id)) {
                 id = BigNumber.from(id);
             }
-            return `/nfts/${suffix}/${id.toNumber()}-ppt.json`;
+            return `/ppts/${suffix}/${id.toNumber()}.json`;
         }
 
     };
