@@ -84,6 +84,7 @@ $('#connect-metamask').on('connected', function handlers(
     ev, { address }: Connect
 ) {
     const miner = App.miner(address);
+    const $tog = $('#toggle-mining');
     const $inc = $('#increase');
     const $dec = $('#decrease');
     miner.on('increased', () => {
@@ -103,6 +104,14 @@ $('#connect-metamask').on('connected', function handlers(
         const speed = ev.speed as number;
         $inc.prop('disabled', speed > 0.999);
         $dec.prop('disabled', speed < 0.001);
+    });
+    miner.on('increased', (ev) => {
+        const speed = ev.speed as number;
+        $tog.prop('disabled', speed < 0.001);
+    });
+    miner.on('decreased', (ev) => {
+        const speed = ev.speed as number;
+        $tog.prop('disabled', speed < 0.001);
     });
     miner.on('starting', () => {
         $inc.prop('disabled', true);
