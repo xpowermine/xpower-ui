@@ -45,6 +45,20 @@ $('#increase').on('click', async function increase() {
     }
     App.miner(address).increase();
 });
+$('.progressor')[0].addEventListener(
+    'wheel', function increaseByWheel(ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        if (ev.deltaY < 0) {
+            const $increase = $('#increase');
+            const disabled = $increase.prop('disabled');
+            if (!disabled) $increase.trigger('click');
+        }
+        return false;
+    }, {
+        passive: false
+    }
+);
 $('#decrease').on('click', async function decrease() {
     const address = await Blockchain.selectedAddress;
     if (!address) {
@@ -52,26 +66,40 @@ $('#decrease').on('click', async function decrease() {
     }
     App.miner(address).decrease();
 });
+$('.progressor')[0].addEventListener(
+    'wheel', function decreaseByWheel(ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        if (ev.deltaY > 0) {
+            const $increase = $('#decrease');
+            const disabled = $increase.prop('disabled');
+            if (!disabled) $increase.trigger('click');
+        }
+        return false;
+    }, {
+        passive: false
+    }
+);
 $('#connect-metamask').on('connected', function handlers(
     ev, { address }: Connect
 ) {
     const miner = App.miner(address);
     const $inc = $('#increase');
     const $dec = $('#decrease');
-    miner.on('accelerated', () => {
+    miner.on('increased', () => {
         Tooltip.getInstance($inc)?.hide();
         Tooltip.getInstance($dec)?.hide();
     });
-    miner.on('decelerated', () => {
+    miner.on('decreased', () => {
         Tooltip.getInstance($inc)?.hide();
         Tooltip.getInstance($dec)?.hide();
     });
-    miner.on('accelerated', (ev) => {
+    miner.on('increased', (ev) => {
         const speed = ev.speed as number;
         $inc.prop('disabled', speed > 0.999);
         $dec.prop('disabled', speed < 0.001);
     });
-    miner.on('decelerated', (ev) => {
+    miner.on('decreased', (ev) => {
         const speed = ev.speed as number;
         $inc.prop('disabled', speed > 0.999);
         $dec.prop('disabled', speed < 0.001);
@@ -84,12 +112,12 @@ $('#connect-metamask').on('connected', function handlers(
         $inc.prop('disabled', false);
         $dec.prop('disabled', false);
     });
-    miner.on('accelerated', (ev) => {
+    miner.on('increased', (ev) => {
         $('#speed').trigger('change', {
             speed: ev.speed as number
         });
     });
-    miner.on('decelerated', (ev) => {
+    miner.on('decreased', (ev) => {
         $('#speed').trigger('change', {
             speed: ev.speed as number
         });

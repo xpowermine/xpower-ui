@@ -100,7 +100,7 @@ export class Miner extends EventEmitter {
         this.speed += by;
         const new_value = this.speed;
         if (new_value !== old_speed) {
-            this.emit('accelerated', {
+            this.emit('increased', {
                 speed: new_value
             });
         }
@@ -111,7 +111,7 @@ export class Miner extends EventEmitter {
         this.speed -= by;
         const new_value = this.speed;
         if (new_value !== old_speed) {
-            this.emit('decelerated', {
+            this.emit('decreased', {
                 speed: new_value
             });
         }
