@@ -97,7 +97,7 @@ function stopIncreaseAmount() {
     }
     return false;
 }
-function increaseAmount(ev: JQuery.TriggeredEvent) {
+function increaseAmount(ev: JQuery.TriggeredEvent | WheelEvent) {
     const delta = BigInt(ev.ctrlKey ? 100 : ev.shiftKey ? 10 : 1);
     const $nft_minter = $(ev.target).parents('.nft-minter');
     const $amount = $nft_minter.find('.amount');
@@ -111,6 +111,18 @@ function increaseAmount(ev: JQuery.TriggeredEvent) {
         });
     }
 }
+$('.amount').map((_, el) => el.addEventListener(
+    'wheel', function increaseByWheel(ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        if (ev.deltaY < 0) {
+            increaseAmount(ev);
+        }
+        return false;
+    }, {
+        passive: false
+    }
+));
 $('.decrease')
     .on('mousedown', startDecreaseAmount)
     .on('touchstart', startDecreaseAmount);
@@ -146,7 +158,7 @@ function stopDecreaseAmount() {
     }
     return false;
 }
-function decreaseAmount(ev: JQuery.TriggeredEvent) {
+function decreaseAmount(ev: JQuery.TriggeredEvent | WheelEvent) {
     const delta = BigInt(ev.ctrlKey ? 100 : ev.shiftKey ? 10 : 1);
     const $nft_minter = $(ev.target).parents('.nft-minter');
     const $amount = $nft_minter.find('.amount');
@@ -160,6 +172,18 @@ function decreaseAmount(ev: JQuery.TriggeredEvent) {
         });
     }
 }
+$('.amount').map((_, el) => el.addEventListener(
+    'wheel', function decreaseByWheel(ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        if (ev.deltaY > 0) {
+            decreaseAmount(ev);
+        }
+        return false;
+    }, {
+        passive: false
+    }
+));
 $('.amount').on('click', function toggleAmount(ev) {
     const $nft_minter = $(ev.target).parents('.nft-minter');
     const $amount = $nft_minter.find('.amount');
