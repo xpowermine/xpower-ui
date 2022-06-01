@@ -21,9 +21,9 @@ $(window).on('load', async function refreshBlockHash() {
         Blockchain.onceConnect(({ address }) => {
             const on_init: OnInit = (block_hash, timestamp) => {
                 console.debug('[on:init]', x64(block_hash), timestamp);
-                const suffix = Tokenizer.suffix(App.token);
+                const token_lc = Tokenizer.lower(App.token);
                 HashManager.set(block_hash, timestamp, {
-                    slot: suffix
+                    slot: token_lc
                 });
             };
             const wallet = new MoeWallet(address);
@@ -63,13 +63,13 @@ $('#toggle-mining').on('click', async function toggleMining() {
     //
     // if: recent(block-hash?) => mine
     //
-    const suffix = Tokenizer.suffix(App.token);
+    const token_lc = Tokenizer.lower(App.token);
     const block_hash = HashManager.latestHash({
-        slot: suffix
+        slot: token_lc
     });
     if (block_hash !== null) {
         const timestamp = HashManager.get(block_hash, {
-            slot: suffix
+            slot: token_lc
         });
         if (timestamp !== null) {
             const interval = IntervalManager.intervalFrom(

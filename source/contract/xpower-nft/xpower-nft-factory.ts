@@ -23,7 +23,7 @@ export async function XPowerNftFactory({
 export async function XPowerNftMockFactory({ token }: {
     token?: Token
 } = {}): Promise<Contract> {
-    const suffix = Tokenizer.suffix(token ?? App.token);
+    const token_lc = Tokenizer.lower(token ?? App.token);
     const mock = {
         year: () => {
             return BigNumber.from(MAX_YEAR());
@@ -38,7 +38,7 @@ export async function XPowerNftMockFactory({ token }: {
             if (!BigNumber.isBigNumber(id)) {
                 id = BigNumber.from(id);
             }
-            return `/nfts/${suffix}/${id.toNumber()}.json`;
+            return `/nfts/${token_lc}/${id.toNumber()}.json`;
         }
 
     };

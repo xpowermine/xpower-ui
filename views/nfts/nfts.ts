@@ -8,12 +8,9 @@ import './minter/minter';
 
 import { App } from '../../source/app';
 import { Years } from '../../source/years';
-import { Tokenizer } from '../../source/token';
-
 import { x40 } from '../../source/functions';
 import { Address } from '../../source/redux/types';
 import { Nft, NftLevels } from '../../source/redux/types';
-
 import { NftWallet } from '../../source/wallet';
 import { OnTransferBatch } from '../../source/wallet';
 import { OnTransferSingle } from '../../source/wallet';
@@ -29,15 +26,15 @@ $('#connect-metamask').on('connected', async function setNfts(ev, {
     const wallet = new NftWallet(address);
     const balances = await wallet.balances({ issues, levels });
     const supplies = wallet.totalSupplies({ issues, levels });
-    const token = Nft.token(
-        Tokenizer.suffix(App.token)
+    const nft_token = Nft.token(
+        App.token
     );
     for (const issue of issues) {
         for (const level of levels) {
             const amount = balances[index];
             const supply = await supplies[index];
             App.setNft({
-                token, issue, level
+                token: nft_token, issue, level
             }, {
                 amount, supply
             });
@@ -58,7 +55,7 @@ $('#connect-metamask').on('connected', async function onBatchTransfers(ev, {
             ids, values, ev
         );
         const nft_token = Nft.token(
-            Tokenizer.suffix(App.token)
+            App.token
         );
         for (let i = 0; i < ids.length; i++) {
             const nft_id = Nft.fullId({
@@ -90,7 +87,7 @@ $('#connect-metamask').on('connected', async function onSingleTransfers(ev, {
             id, value, ev
         );
         const nft_token = Nft.token(
-            Tokenizer.suffix(App.token)
+            App.token
         );
         const nft_id = Nft.fullId({
             issue: Nft.issue(id),

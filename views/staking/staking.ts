@@ -9,12 +9,9 @@ import './minter/burner';
 
 import { App } from '../../source/app';
 import { Years } from '../../source/years';
-import { Tokenizer } from '../../source/token';
-
 import { x40 } from '../../source/functions';
 import { Address } from '../../source/redux/types';
 import { Nft, NftLevels } from '../../source/redux/types';
-
 import { NftWallet, PptWallet } from '../../source/wallet';
 import { OnTransferBatch } from '../../source/wallet';
 import { OnTransferSingle } from '../../source/wallet';
@@ -30,15 +27,15 @@ $('#connect-metamask').on('connected', async function setNfts(ev, {
     const wallet = new NftWallet(address);
     const balances = await wallet.balances({ issues, levels });
     const supplies = wallet.totalSupplies({ issues, levels });
-    const token = Nft.token(
-        Tokenizer.suffix(App.token)
+    const nft_token = Nft.token(
+        App.token
     );
     for (const issue of issues) {
         for (const level of levels) {
             const amount = balances[index];
             const supply = await supplies[index];
             App.setNft({
-                token, issue, level
+                token: nft_token, issue, level
             }, {
                 amount, supply
             });
@@ -57,15 +54,15 @@ $('#connect-metamask').on('connected', async function setPpts(ev, {
     const wallet = new PptWallet(address);
     const balances = await wallet.balances({ issues, levels });
     const supplies = wallet.totalSupplies({ issues, levels });
-    const token = Nft.token(
-        Tokenizer.suffix(App.token)
+    const nft_token = Nft.token(
+        App.token
     );
     for (const issue of issues) {
         for (const level of levels) {
             const amount = balances[index];
             const supply = await supplies[index];
             App.setPpt({
-                token, issue, level
+                token: nft_token, issue, level
             }, {
                 amount, supply
             });
@@ -86,7 +83,7 @@ $('#connect-metamask').on('connected', async function onNftBatchTransfers(ev, {
             ids, values, ev
         );
         const nft_token = Nft.token(
-            Tokenizer.suffix(App.token)
+            App.token
         );
         for (let i = 0; i < ids.length; i++) {
             const nft_id = Nft.fullId({
@@ -117,14 +114,14 @@ $('#connect-metamask').on('connected', async function onPptBatchTransfers(ev, {
             x40(op), x40(from), x40(to),
             ids, values, ev
         );
-        const ppt_token = Nft.token(
-            Tokenizer.suffix(App.token)
+        const nft_token = Nft.token(
+            App.token
         );
         for (let i = 0; i < ids.length; i++) {
             const ppt_id = Nft.fullId({
                 issue: Nft.issue(ids[i]),
                 level: Nft.level(ids[i]),
-                token: ppt_token
+                token: nft_token
             });
             if (address === from) {
                 App.removePpt(ppt_id, { amount: values[i] });
@@ -150,7 +147,7 @@ $('#connect-metamask').on('connected', async function onNftSingleTransfers(ev, {
             id, value, ev
         );
         const nft_token = Nft.token(
-            Tokenizer.suffix(App.token)
+            App.token
         );
         const nft_id = Nft.fullId({
             issue: Nft.issue(id),
@@ -179,19 +176,19 @@ $('#connect-metamask').on('connected', async function onPptSingleTransfers(ev, {
             x40(op), x40(from), x40(to),
             id, value, ev
         );
-        const ppt_token = Nft.token(
-            Tokenizer.suffix(App.token)
+        const nft_token = Nft.token(
+            App.token
         );
-        const ppt_id = Nft.fullId({
+        const nft_id = Nft.fullId({
             issue: Nft.issue(id),
             level: Nft.level(id),
-            token: ppt_token
+            token: nft_token
         });
         if (address === from) {
-            App.removePpt(ppt_id, { amount: value });
+            App.removePpt(nft_id, { amount: value });
         }
         if (address === to) {
-            App.addPpt(ppt_id, { amount: value });
+            App.addPpt(nft_id, { amount: value });
         }
     };
     const wallet = new PptWallet(address);

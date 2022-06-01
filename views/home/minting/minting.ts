@@ -28,11 +28,11 @@ $('#connect-metamask').on('connected', function updateMinters(
 ) {
     const update_total = (token: Token) => {
         const amount_min = Tokenizer.amount(token, App.level.min);
-        const suffix = Tokenizer.suffix(token);
+        const token_lc = Tokenizer.lower(token);
         return (
             nonce: Nonce, { amount }: { amount: Amount }, total: Amount
         ) => {
-            const $mint = $(`.mint[data-amount-${suffix}=${amount}]`);
+            const $mint = $(`.mint[data-amount-${token_lc}=${amount}]`);
             $mint.find(`.nn-counter`).text(`${total / amount}`);
             $mint.find(`button`).prop('disabled', !total);
             if (total || amount === amount_min) {
@@ -56,9 +56,9 @@ $('.mint>button.minter').on('click', async function mint(
     const $mint = $(ev.target).parent('.mint');
     const level = Number($mint.data('level'));
     const amount = Tokenizer.amount(App.token, level);
-    const suffix = Tokenizer.suffix(App.token);
+    const token_lc = Tokenizer.lower(App.token);
     const block_hash = HashManager.latestHash({
-        slot: suffix
+        slot: token_lc
     });
     if (!block_hash) {
         throw new Error('missing block-hash');
@@ -178,13 +178,13 @@ $('.mint button.forget').on('click', async function forgetNonces(
     const $mint = $forget.parents('.mint');
     const level = Number($mint.data('level'));
     const amount = Tokenizer.amount(App.token, level);
-    const suffix = Tokenizer.suffix(App.token);
+    const token_lc = Tokenizer.lower(App.token);
     const address = await Blockchain.selectedAddress;
     if (!address) {
         throw new Error('missing selected-address');
     }
     const block_hash = HashManager.latestHash({
-        slot: suffix
+        slot: token_lc
     });
     if (!block_hash) {
         throw new Error('missing block-hash');

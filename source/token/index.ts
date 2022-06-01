@@ -1,22 +1,10 @@
 import { Amount, Token } from '../redux/types';
 
-enum TokenSuffix {
+enum TokenLower {
     THOR = 'thor',
     LOKI = 'loki',
     ODIN = 'odin',
     HELA = 'hela',
-}
-enum TokenSymbol {
-    THOR = 'THOR',
-    LOKI = 'LOKI',
-    ODIN = 'ODIN',
-    HELA = 'HELA',
-}
-enum TokenSymbolAlt {
-    THOR = 'THOR',
-    LOKI = 'LOKI',
-    ODIN = 'ODIN',
-    HELA = 'HELA',
 }
 export class Tokenizer {
     public static token(value: string | null): Token {
@@ -36,40 +24,16 @@ export class Tokenizer {
         }
         return Token.THOR;
     }
-    public static suffix(token: Token): TokenSuffix {
+    public static lower(token: Token): TokenLower {
         switch (token) {
             case Token.THOR:
-                return TokenSuffix.THOR;
+                return TokenLower.THOR;
             case Token.LOKI:
-                return TokenSuffix.LOKI;
+                return TokenLower.LOKI;
             case Token.ODIN:
-                return TokenSuffix.ODIN;
+                return TokenLower.ODIN;
             case Token.HELA:
-                return TokenSuffix.HELA;
-        }
-    }
-    public static symbol(token: Token): TokenSymbol {
-        switch (token) {
-            case Token.THOR:
-                return TokenSymbol.THOR;
-            case Token.LOKI:
-                return TokenSymbol.LOKI;
-            case Token.ODIN:
-                return TokenSymbol.ODIN;
-            case Token.HELA:
-                return TokenSymbol.HELA;
-        }
-    }
-    public static symbolAlt(token: Token): TokenSymbolAlt {
-        switch (token) {
-            case Token.THOR:
-                return TokenSymbolAlt.THOR;
-            case Token.LOKI:
-                return TokenSymbolAlt.LOKI;
-            case Token.ODIN:
-                return TokenSymbolAlt.ODIN;
-            case Token.HELA:
-                return TokenSymbolAlt.HELA;
+                return TokenLower.HELA;
         }
     }
     public static amount(token: Token, zeros: number): Amount {

@@ -9,7 +9,6 @@ import { App } from '../../../source/app';
 import { NftLevel, NftLevels } from '../../../source/redux/types';
 import { Nft, NftFullId } from '../../../source/redux/types';
 import { Amount, Supply } from '../../../source/redux/types';
-import { Tokenizer } from '../../../source/token';
 
 const { Tooltip } = global.bootstrap as any;
 
@@ -82,8 +81,8 @@ $('#toggle-all').on('click', function toggleList() {
     if (state === 'off') {
         $('.nft-minter').show();
     } else {
-        const token = Nft.token(
-            Tokenizer.suffix(App.token)
+        const nft_token = Nft.token(
+            App.token
         );
         $('.nft-minter').each((i, el) => {
             const $nft_minter = $(el);
@@ -92,7 +91,7 @@ $('#toggle-all').on('click', function toggleList() {
             if (amount === 0n) {
                 const level = $nft_minter.data('level') as NftLevels;
                 const { amount: balance } = App.getPptTotalBy({
-                    level: NftLevel[level], token
+                    level: NftLevel[level], token: nft_token
                 });
                 if (balance === 0n) {
                     $nft_minter.hide();

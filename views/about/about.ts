@@ -40,15 +40,11 @@ $(window).on('load', async function renderMarkdown() {
     function add_token(content: string) {
         const params = new URLSearchParams(location.search);
         const token = Tokenizer.token(params.get('token'));
-        const symbol = Tokenizer.symbol(token);
-        const suffix = Tokenizer.suffix(token);
+        const token_lc = Tokenizer.lower(token);
         return content
-            .replace(/{{TOKEN}}/g, symbol.toUpperCase())
-            .replace(/{{TOKEN_SUFFIX}}/g, suffix.toUpperCase())
-            .replace(/{{token}}/g, symbol.toLowerCase())
-            .replace(/{{token_suffix}}/g, suffix.toLowerCase())
-            .replace(/{{Token}}/g, capitalize(symbol.toLowerCase()))
-            .replace(/{{Token_suffix}}/g, capitalize(suffix.toLowerCase()));
+            .replace(/{{TOKEN}}/g, token)
+            .replace(/{{token}}/g, token_lc)
+            .replace(/{{Token}}/g, capitalize(token_lc));
     }
     $('content').html(html).trigger('ready');
 });

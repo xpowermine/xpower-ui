@@ -7,15 +7,11 @@ import { Request } from 'express';
 export const env_of = (req: Request): Record<string, string> => {
   const params = new URLSearchParams(req.query as any);
   const token = Tokenizer.token(params.get('token'));
-  const symbol = Tokenizer.symbol(token);
-  const suffix = Tokenizer.suffix(token);
+  const token_lc = Tokenizer.lower(token);
   return {
-    Token_suffix: capitalize(suffix.toLowerCase()),
-    Token: capitalize(symbol.toLowerCase()),
-    token_suffix: suffix.toLowerCase(),
-    token: symbol.toLowerCase(),
-    TOKEN_SUFFIX: suffix.toUpperCase(),
-    TOKEN: symbol.toUpperCase(),
+    TOKEN: token,
+    token: token_lc,
+    Token: capitalize(token_lc),
     ...theme(token)
   };
 }

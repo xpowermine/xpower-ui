@@ -9,13 +9,10 @@ describe('env_of', () => {
         };
         expect(env_of(req as any)).toEqual({
             'TOKEN': 'THOR',
-            'TOKEN_SUFFIX': 'THOR',
+            'token': 'thor',
             'Token': 'Thor',
-            'Token_suffix': 'Thor',
             'XP_POWERED': '--xp-yellow',
             'XP_POWERED_DARK': '--xp-yellow-dark',
-            'token': 'thor',
-            'token_suffix': 'thor'
         });
     });
 });
