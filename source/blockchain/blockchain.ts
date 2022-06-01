@@ -1,16 +1,15 @@
 /* eslint @typescript-eslint/no-explicit-any: [off] */
 /* eslint no-async-promise-executor: [off] */
+
+import { App } from '../app';
 import { Chain, ChainId } from './chain';
+import { Address, Token, TokenInfo, Tokens } from '../redux/types';
 
 import detectProvider from '@metamask/detect-provider';
-import { Address, TokenInfo } from '../redux/types';
 import { EventEmitter } from 'events';
 
 export type Connect = {
-    chainId: ChainId, address: Address
-};
-export type Reconnect = {
-    chainId: ChainId, address: Address
+    address: Address, chainId: ChainId, token: Token
 };
 export class Blockchain extends EventEmitter {
     private static get me(): Blockchain {
@@ -20,7 +19,7 @@ export class Blockchain extends EventEmitter {
         return this._me;
     }
     private constructor() {
-        super(); this.setMaxListeners(20);
+        super(); this.setMaxListeners(200);
     }
     public static get provider(): Promise<any> {
         return this.me.provider;
@@ -61,15 +60,9 @@ export class Blockchain extends EventEmitter {
         if (!address) {
             throw new Error('missing selected-address');
         }
-        if (this.connect_emitted === undefined) {
-            this.connect_emitted = this.emit('connect', {
-                chainId: await this.chainId, address
-            } as Connect);
-        } else {
-            this.connect_emitted = this.emit('reconnect', {
-                chainId: await this.chainId, address
-            } as Reconnect);
-        }
+        setTimeout(async () => this.emit('connect', {
+            address, chainId: await this.chainId, token: App.token
+        }));
         return address;
     }
     public static get selectedAddress(): Promise<Address | undefined> {
@@ -102,10 +95,10 @@ export class Blockchain extends EventEmitter {
         }
         return false;
     }
-    public static async switchTo(id: ChainId): Promise<void> {
-        return this.me.switchTo(id);
+    public static async switchTo(id: ChainId) {
+        await this.me.switchTo(id);
     }
-    public async switchTo(id: ChainId): Promise<void> {
+    public async switchTo(id: ChainId) {
         const chain = new Chain(id);
         await this.provider.then((p) => p?.request({
             method: 'wallet_addEthereumChain',
@@ -131,27 +124,48 @@ export class Blockchain extends EventEmitter {
         } catch (ex) {
             console.error(ex);
         }
-        return false;
+        return Promise.resolve(false);
     }
     public static onConnect(
         listener: (options: Connect) => void
     ) {
-        return this.me.on('connect', listener);
+        this.me.onConnect(listener);
+        return this;
     }
-    public static onceConnect(
+    public onConnect(
         listener: (options: Connect) => void
     ) {
-        return this.me.once('connect', listener);
+        return this.on('connect', listener);
     }
-    public static onReconnect(
-        listener: (options: Reconnect) => void
+    public static onceConnect(
+        listener: (options: Connect) => void, context?: {
+            per: () => Token, tokens?: Set<Token>
+        }
     ) {
-        return this.me.on('reconnect', listener);
+        this.me.onceConnect(listener, context);
+        return this;
     }
-    public static onceReconnect(
-        listener: (options: Reconnect) => void
+    public onceConnect(
+        listener: (options: Connect) => void, context?: {
+            per: () => Token, tokens?: Set<Token>
+        }
     ) {
-        return this.me.once('reconnect', listener);
+        if (context === undefined) {
+            return this.once('connect', listener);
+        }
+        if (context.tokens === undefined) {
+            context.tokens = new Set(Tokens());
+        }
+        for (const token of context.tokens) {
+            const handler = (options: Connect) => {
+                if (token === context.per()) {
+                    this.off('connect', handler);
+                    listener(options);
+                }
+            };
+            this.on('connect', handler);
+        }
+        return this;
     }
     private get chainId() {
         return new Promise<string | undefined>(async (resolve) => {
@@ -171,13 +185,6 @@ export class Blockchain extends EventEmitter {
             }
         });
     }
-    private get connect_emitted(): boolean | undefined {
-        return this._connect_emitted;
-    }
-    private set connect_emitted(value: boolean | undefined) {
-        this._connect_emitted = value;
-    }
-    private _connect_emitted: boolean | undefined;
     private _provider: any | null;
     private static _me: any;
 }

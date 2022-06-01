@@ -22,7 +22,8 @@ export function onTokenAdded(
     );
     return observer((next) => {
         const added = (token: Token) => {
-            handler(token, next.items[token]);
+            const item = next.items[token];
+            if (item) handler(token, item);
         };
         if (next.more) {
             next.more.forEach(added);
@@ -38,7 +39,8 @@ export function onTokenRemoved(
     );
     return observer((next) => {
         const removed = (token: Token) => {
-            handler(token, next.items[token]);
+            const item = next.items[token];
+            if (item) handler(token, item);
         };
         if (next.less) {
             next.less.forEach(removed);

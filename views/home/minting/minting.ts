@@ -3,44 +3,62 @@ import { Global } from '../../../source/types';
 declare const global: Global;
 
 import { App } from '../../../source/app';
+import { Blockchain } from '../../../source/blockchain';
+import { Alert, alert } from '../../../source/functions';
+import { HashManager, IntervalManager } from '../../../source/managers';
+import { Tooltip } from '../../tooltips';
 import { Tokenizer } from '../../../source/token';
-import { Blockchain, Connect } from '../../../source/blockchain';
-import { Alert } from '../../../source/functions';
-import { alert } from '../../../source/functions';
-import { HashManager } from '../../../source/managers';
-import { IntervalManager } from '../../../source/managers';
-import { Amount } from '../../../source/redux/types';
-import { Nonce } from '../../../source/redux/types';
-import { Token } from '../../../source/redux/types';
-import { OnTransfer } from '../../../source/wallet';
-import { OtfWallet, MoeWallet } from '../../../source/wallet';
-
-const { Tooltip } = global.bootstrap as any;
+import { Amount, Nonce } from '../../../source/redux/types';
+import { MoeWallet, OnTransfer, OtfWallet } from '../../../source/wallet';
 
 $(window).on('load', function initMinters() {
-    const { min, max } = App.level;
-    $(`.mint[data-level=${min}]`).show();
-    $(`.mint`).filter((i, el) => $(el).data('level') < min).remove();
-    $(`.mint`).filter((i, el) => $(el).data('level') > max).remove();
+    resetMinters(App.level);
 });
-$('#connect-metamask').on('connected', function updateMinters(
-    ev, { address }: Connect
+$('#selector').on('switch', function syncMinters() {
+    resetMinters(App.level);
+    App.removeNonces();
+});
+function resetMinters(
+    { min, max }: { min: number, max: number }
 ) {
-    const update_total = (token: Token) => {
-        const amount_min = Tokenizer.amount(token, App.level.min);
+    const $mint = $('.mint');
+    $mint.filter(`[data-level=${min}]`).show();
+    $mint.filter((_, el) => $(el).data('level') < min).remove();
+    $mint.filter((_, el) => $(el).data('level') > max).remove();
+    $mint.each((i, el) => resetMinter(i, $(el)));
+}
+function resetMinter(
+    i: number, $mint: JQuery
+) {
+    if (i > App.level.min) {
+        $mint.hide();
+    }
+    const token = App.token;
+    const level = $mint.data('level');
+    const amount = Tokenizer.amount(token, level);
+    $mint.find('.minter').html(
+        `Mine ${amount} <span class="d-none d-sm-inline">${token}</span>`
+    );
+    $mint.find('.nn-counter').html('0');
+    $mint.find('.tx-counter').html('0');
+    $mint.find('.btn').prop('disabled', true);
+}
+Blockchain.onceConnect(function syncMinters({
+    address
+}) {
+    App.onNonceChanged(address, (
+        nonce: Nonce, { amount }: { amount: Amount }, total: Amount
+    ) => {
+        const token = App.token; // *deferred*!
         const token_lc = Tokenizer.lower(token);
-        return (
-            nonce: Nonce, { amount }: { amount: Amount }, total: Amount
-        ) => {
-            const $mint = $(`.mint[data-amount-${token_lc}=${amount}]`);
-            $mint.find(`.nn-counter`).text(`${total / amount}`);
-            $mint.find(`button`).prop('disabled', !total);
-            if (total || amount === amount_min) {
-                $mint.show();
-            }
-        };
-    };
-    App.onNonceChanged(address, update_total(App.token));
+        const amount_min = Tokenizer.amount(token, App.level.min);
+        const $mint = $(`.mint[data-amount-${token_lc}=${amount}]`);
+        $mint.find(`.nn-counter`).text(`${total / amount}`);
+        $mint.find(`button`).prop('disabled', !total);
+        if (total || amount === amount_min) {
+            $mint.show();
+        }
+    });
 });
 $('.mint>button.minter').on('click', async function mint(
     ev
@@ -55,21 +73,26 @@ $('.mint>button.minter').on('click', async function mint(
     }
     const $mint = $(ev.target).parent('.mint');
     const level = Number($mint.data('level'));
-    const amount = Tokenizer.amount(App.token, level);
-    const token_lc = Tokenizer.lower(App.token);
+    const token = App.token;
+    const token_lc = Tokenizer.lower(token);
+    const amount = Tokenizer.amount(token, level);
     const block_hash = HashManager.latestHash({
         slot: token_lc
     });
     if (!block_hash) {
         throw new Error('missing block-hash');
     }
-    const nonce = App.getNonceBy({ address, block_hash, amount });
+    const nonce = App.getNonceBy({
+        address, amount, block_hash, token
+    });
     if (!nonce) {
         throw new Error(`missing nonce for amount=${amount}`);
     }
-    const moe_wallet = new MoeWallet(address);
+    const moe_wallet = new MoeWallet(address, token);
     try {
-        const on_transfer: OnTransfer = async (from, to, amount, ev) => {
+        const on_transfer: OnTransfer = async (
+            from, to, amount, ev
+        ) => {
             if (ev.transactionHash === mint.hash) {
                 moe_wallet.offTransfer(on_transfer);
                 decreaseTxCounter($mint);
@@ -80,7 +103,7 @@ $('.mint>button.minter').on('click', async function mint(
         console.debug('[mint]', mint);
         increaseTxCounter($mint);
         App.removeNonce(nonce, {
-            address, block_hash
+            address, block_hash, token
         });
     } catch (ex: any) {
         /* eslint no-ex-assign: [off] */
@@ -94,15 +117,19 @@ $('.mint>button.minter').on('click', async function mint(
                 /gas required exceeds allowance/i
             )) {
                 if (OtfWallet.enabled) {
-                    const miner = App.miner(address);
-                    if (miner.running) miner.pause();
+                    const miner = App.miner(address, {
+                        token
+                    });
+                    if (miner.running) {
+                        miner.pause();
+                    }
                 }
             }
             if (ex.data && ex.data.message && ex.data.message.match(
                 /empty nonce-hash/i
             )) {
                 App.removeNonce(nonce, {
-                    address, block_hash
+                    address, block_hash, token
                 });
             }
         }
@@ -133,10 +160,12 @@ function decreaseTxCounter($mint: JQuery<HTMLElement>) {
     $mint.find('.tx-counter').text(counter);
     $mint.data('tx-counter', counter);
 }
-$('#connect-metamask').on('connected', function autoMint(
-    ev, { address }: Connect
-) {
-    const miner = App.miner(address);
+Blockchain.onceConnect(function autoMint({
+    address, token
+}) {
+    const miner = App.miner(address, {
+        token
+    });
     miner.on('stopping', () => {
         if (global.MINTER_IID) {
             clearInterval(global.MINTER_IID);
@@ -162,14 +191,12 @@ $('#connect-metamask').on('connected', function autoMint(
             $minters.trigger('click');
         }
     }
+}, {
+    per: () => App.token
 });
-$(window).on('load', async function forgetNonces() {
-    if (await Blockchain.isInstalled()) {
-        const im = new IntervalManager({ start: true });
-        Blockchain.onceConnect(() => {
-            im.on('tick', () => App.removeNonces());
-        });
-    }
+Blockchain.onceConnect(function forgetNonces() {
+    const im = new IntervalManager({ start: true });
+    im.on('tick', () => App.removeNonces());
 });
 $('.mint button.forget').on('click', async function forgetNonces(
     ev
@@ -177,8 +204,9 @@ $('.mint button.forget').on('click', async function forgetNonces(
     const $forget = $(ev.target);
     const $mint = $forget.parents('.mint');
     const level = Number($mint.data('level'));
-    const amount = Tokenizer.amount(App.token, level);
-    const token_lc = Tokenizer.lower(App.token);
+    const token = App.token;
+    const token_lc = Tokenizer.lower(token);
+    const amount = Tokenizer.amount(token, level);
     const address = await Blockchain.selectedAddress;
     if (!address) {
         throw new Error('missing selected-address');
@@ -190,7 +218,8 @@ $('.mint button.forget').on('click', async function forgetNonces(
         throw new Error('missing block-hash');
     }
     App.removeNonceByAmount({
-        address, block_hash, amount
+        address, block_hash, amount, token
     });
-    Tooltip.getInstance($forget.parent('span')).hide();
+    const [tip] = $forget.parent('span');
+    Tooltip.getInstance(tip)?.hide();
 });

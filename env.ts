@@ -2,6 +2,7 @@ import assert from 'assert';
 import dotenv from 'dotenv';
 dotenv.config();
 
+// App settings
 const IPFS_GATEWAY = process.env.IPFS_GATEWAY ?? 'https://dweb.link';
 assert(IPFS_GATEWAY, 'missing IPFS_GATEWAY env variable');
 const MD_ABOUT_URL = process.env.MD_ABOUT_URL ?? '/content/about.md';

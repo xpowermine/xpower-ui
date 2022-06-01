@@ -8,13 +8,9 @@ import { Nft, NftLevels, Token } from '../../source/redux/types';
 import { XPowerNftFactory } from '../../source/contract';
 import { Years } from '../../source/years';
 
-$(window).on('load', async function enableAllowanceButton() {
-    if (await Blockchain.isInstalled()) {
-        Blockchain.onConnect(() => {
-            const $approve = $('.approve-allowance-nft');
-            $approve.prop('disabled', false);
-        });
-    }
+Blockchain.onConnect(function enableAllowanceButton() {
+    const $approve = $('.approve-allowance-nft');
+    $approve.prop('disabled', false);
 });
 $('button.approve-allowance-nft').on('click', async function approveTokens(ev) {
     const $approve = $(ev.target);

@@ -1,7 +1,7 @@
 import { Store, Unsubscribe } from 'redux';
 import { observe } from './observe';
 
-import { Nonce, Nonces, State, Empty } from '../types';
+import { Nonce, Nonces, State, Empty, Token } from '../types';
 import { Address, Amount, BlockHash } from '../types';
 import { max, hex, x40 } from '../../functions';
 import { Action } from '../actions';
@@ -11,51 +11,63 @@ enum Sign {
     negative = -1
 }
 const TOTAL = {} as {
-    [address: string]: bigint;
+    [token: string]: { [address: string]: bigint };
 };
-const inc_total = (sign: Sign, { address, amount }: {
-    address: Address, amount: Amount
+const inc_total = (sign: Sign, { address, amount, token }: {
+    address: Address, amount: Amount, token: Token
 }) => {
+    if (TOTAL[token] === undefined) {
+        TOTAL[token] = {};
+    }
     const x_address = x40(address);
-    if (TOTAL[x_address] === undefined) {
-        TOTAL[x_address] = 0n;
+    if (TOTAL[token][x_address] === undefined) {
+        TOTAL[token][x_address] = 0n;
     }
     if (sign > 0) {
-        return max(0n, TOTAL[x_address] += amount);
+        return max(0n, TOTAL[token][x_address] += amount);
     } else {
-        return max(0n, TOTAL[x_address] -= amount);
+        return max(0n, TOTAL[token][x_address] -= amount);
     }
 };
 const TOTAL_BY = {} as {
-    [address: string]: { [amount: string]: bigint; }
+    [token: string]: { [address: string]: { [amount: string]: bigint; } }
 };
-const inc_total_by = (sign: Sign, { address, amount }: {
-    address: Address, amount: Amount
+const inc_total_by = (sign: Sign, { address, amount, token }: {
+    address: Address, amount: Amount, token: Token
 }) => {
+    if (TOTAL_BY[token] === undefined) {
+        TOTAL_BY[token] = {};
+    }
     const x_address = x40(address);
-    if (TOTAL_BY[x_address] === undefined) {
-        TOTAL_BY[x_address] = {};
+    if (TOTAL_BY[token][x_address] === undefined) {
+        TOTAL_BY[token][x_address] = {};
     }
     const x_amount = hex(amount);
-    if (TOTAL_BY[x_address][x_amount] === undefined) {
-        TOTAL_BY[x_address][x_amount] = 0n;
+    if (TOTAL_BY[token][x_address][x_amount] === undefined) {
+        TOTAL_BY[token][x_address][x_amount] = 0n;
     }
     if (sign > 0) {
-        return max(0n, TOTAL_BY[x_address][x_amount] += amount);
+        return max(0n, TOTAL_BY[token][x_address][x_amount] += amount);
     } else {
-        return max(0n, TOTAL_BY[x_address][x_amount] -= amount);
+        return max(0n, TOTAL_BY[token][x_address][x_amount] -= amount);
     }
 };
 
 export type OnNonceAdded = (
     nonce: Nonce, item: {
-        address: Address, block_hash: BlockHash, amount: Amount
+        address: Address,
+        amount: Amount,
+        block_hash: BlockHash,
+        token: Token,
     },
     total_by: Amount, total: Amount
 ) => void;
 export type OnNonceRemoved = (
     nonce: Nonce, item: {
-        address: Address, block_hash: BlockHash, amount: Amount
+        address: Address,
+        amount: Amount,
+        block_hash: BlockHash,
+        token: Token,
     },
     total_by: Amount, total: Amount
 ) => void;

@@ -1,4 +1,5 @@
 import { Address, Amount } from './base';
+import { Token } from './tokens';
 
 export type BlockHash = bigint;
 export type Interval = number;
@@ -9,8 +10,9 @@ export type Nonces = {
     items: {
         [nonce: Nonce]: {
             address: Address,
+            amount: Amount,
             block_hash: BlockHash,
-            amount: Amount
+            token: Token,
         };
     };
     /** set for added nonce(s) */

@@ -6,10 +6,25 @@ import { Transaction } from 'ethers';
 import { alert, Alert, x40 } from '../../../source/functions';
 import { Amount, NftCoreId } from '../../../source/redux/types';
 import { Nft, NftLevel, NftLevels } from '../../../source/redux/types';
-import { OtfWallet } from '../../../source/wallet';
+import { NftWallet, OtfWallet } from '../../../source/wallet';
 import { Years } from '../../../source/years';
 
-$('#connect-metamask').on('connected', function initMinter() {
+Blockchain.onConnect(async function isApproved({
+    address, token
+}) {
+    const ppt_treasury = PptTreasuryFactory({ token });
+    const nft_wallet = new NftWallet(address, token);
+    const approved = await nft_wallet.isApprovedForAll(
+        await ppt_treasury.then((c) => c?.address)
+    );
+    const $minter = $('#batch-minter');
+    if (approved) {
+        $minter.addClass('show');
+    } else {
+        $minter.removeClass('show');
+    }
+});
+Blockchain.onceConnect(function initMinter() {
     const $minter = $('#batch-minter');
     const $approval = $('#burn-approval');
     $approval.on('approved', () => {
@@ -17,12 +32,8 @@ $('#connect-metamask').on('connected', function initMinter() {
         $minter.addClass('show');
     });
     const $amounts = $('.amount');
-    $amounts.on('change', (el, { amount }) => {
-        if (amount > 0n) {
-            $minter.prop('disabled', false);
-        } else if (amount === 0n) {
-            $minter.prop('disabled', !positives($amounts));
-        }
+    $amounts.on('change', () => {
+        $minter.prop('disabled', !positives($amounts));
     });
 });
 $('#batch-minter').on('click', async function batchMintPpts() {
@@ -72,7 +83,9 @@ $('#batch-minter').on('click', async function batchMintPpts() {
         $minter.trigger('minted');
     };
     const $minter = $('#batch-minter');
-    const ppt_treasury = PptTreasuryFactory();
+    const ppt_treasury = PptTreasuryFactory({
+        token: App.token
+    });
     let tx: Transaction | undefined;
     try {
         $('.alert').remove();
@@ -105,7 +118,7 @@ $('#batch-minter').on('click', async function batchMintPpts() {
         console.error(ex);
     }
 });
-$('#connect-metamask').on('connected', function toggleMinter() {
+Blockchain.onceConnect(function toggleMinter() {
     const $minter = $('#batch-minter');
     $minter.on('minting', () => {
         $minter.prop('disabled', true);
@@ -114,24 +127,30 @@ $('#connect-metamask').on('connected', function toggleMinter() {
         $minter.prop('disabled', false);
     });
 });
-$('#connect-metamask').on('connected', function toggleMinterSpinner() {
+Blockchain.onceConnect(function toggleMinterSpinner() {
     const $minter = $('#batch-minter');
     const $text = $minter.find('.text');
     const $spinner = $minter.find('.spinner');
     $minter.on('minting', () => {
         $spinner.css('visibility', 'visible');
         $spinner.addClass('spinner-grow');
-        $text.html('Staking<span class="d-none d-sm-inline"> NFTs…</span>');
+        $text.html(
+            'Staking<span class="d-none d-sm-inline"> NFTs…</span>'
+        );
     });
     $minter.on('minted', () => {
         $spinner.css('visibility', 'hidden');
         $spinner.removeClass('spinner-grow');
-        $text.html('Stake<span class="d-none d-sm-inline"> NFTs</span>');
+        $text.html(
+            'Stake<span class="d-none d-sm-inline"> NFTs</span>'
+        );
     });
     $minter.on('error', () => {
         $spinner.css('visibility', 'hidden');
         $spinner.removeClass('spinner-grow');
-        $text.html('Stake<span class="d-none d-sm-inline"> NFTs</span>');
+        $text.html(
+            'Stake<span class="d-none d-sm-inline"> NFTs</span>'
+        );
     });
 });
 function positives($amounts: JQuery<HTMLElement>) {

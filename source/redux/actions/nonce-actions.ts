@@ -1,17 +1,23 @@
-import { Address, Amount, BlockHash, Nonce } from '../types';
+import { Address, Amount, BlockHash, Nonce, Token } from '../types';
 
 export type AddNonce = {
     type: 'nonce/add', payload: {
         nonce: Nonce, item: {
-            address: Address, block_hash: BlockHash,
-            amount: Amount, worker: number
+            address: Address,
+            amount: Amount,
+            block_hash: BlockHash,
+            token: Token,
+            worker: number,
         }
     }
 };
 export const addNonce = (
     nonce: Nonce, item: {
-        address: Address, block_hash: BlockHash,
-        amount: Amount, worker: number
+        address: Address,
+        amount: Amount,
+        block_hash: BlockHash,
+        token: Token,
+        worker: number,
     }
 ): AddNonce => ({
     type: 'nonce/add', payload: {
@@ -21,13 +27,17 @@ export const addNonce = (
 export type RemoveNonce = {
     type: 'nonce/remove', payload: {
         nonce: Nonce, item: {
-            address: Address, block_hash: BlockHash
+            address: Address,
+            block_hash: BlockHash,
+            token: Token,
         }
     }
 };
 export const removeNonce = (
     nonce: Nonce, item: {
-        address: Address, block_hash: BlockHash
+        address: Address,
+        block_hash: BlockHash,
+        token: Token,
     }
 ): RemoveNonce => ({
     type: 'nonce/remove', payload: {
@@ -37,13 +47,19 @@ export const removeNonce = (
 export type RemoveNonceByAmount = {
     type: 'nonce/remove-by-amount', payload: {
         item: {
-            address: Address, block_hash: BlockHash, amount: Amount
+            address: Address,
+            amount: Amount,
+            block_hash: BlockHash,
+            token: Token,
         }
     }
 };
 export const removeNonceByAmount = (
     item: {
-        address: Address, block_hash: BlockHash, amount: Amount
+        address: Address,
+        amount: Amount,
+        block_hash: BlockHash,
+        token: Token,
     }
 ): RemoveNonceByAmount => ({
     type: 'nonce/remove-by-amount', payload: {
@@ -53,12 +69,16 @@ export const removeNonceByAmount = (
 export type RemoveNonces = {
     type: 'nonce/remove-all', payload: {
         item: {
-            address: Address | null
+            address: Address | null,
+            token: Token | null,
         }
     }
 };
 export const removeNonces = (
-    item: { address: Address | null }
+    item: {
+        address: Address | null,
+        token: Token | null,
+    }
 ): RemoveNonces => ({
     type: 'nonce/remove-all', payload: {
         item

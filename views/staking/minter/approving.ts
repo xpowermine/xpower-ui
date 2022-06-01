@@ -1,6 +1,4 @@
-/* eslint @typescript-eslint/no-explicit-any: [off] */
-import { Global } from '../../../source/types';
-declare const global: Global;
+import { Tooltip } from "../../tooltips";
 
 $(window).on('load', function toggleApproval() {
     const $approval = $('#burn-approval');
@@ -36,12 +34,11 @@ $(window).on('load', function toggleApprovalSpinner() {
     });
 });
 $(window).on('load', function toggleApprovalTooltip() {
-    const { Tooltip } = global.bootstrap as any;
     const $approval = $('#burn-approval');
     $approval.on('approved', () => {
-        Tooltip.getInstance($approval)?.disable();
+        Tooltip.getInstance($approval[0])?.disable();
     });
     $approval.on('error', () => {
-        Tooltip.getInstance($approval)?.enable();
+        Tooltip.getInstance($approval[0])?.enable();
     });
 });

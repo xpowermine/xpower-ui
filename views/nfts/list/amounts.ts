@@ -1,25 +1,32 @@
 import { Global } from '../../../source/types';
 declare const global: Global;
 
-import { Address, Amount, Balance } from '../../../source/redux/types';
+import { App } from '../../../source/app';
+import { Blockchain } from '../../../source/blockchain';
+import { Amount, Balance } from '../../../source/redux/types';
 import { NftLevel, NftLevels } from '../../../source/redux/types';
 import { MoeWallet, OnTransfer } from '../../../source/wallet';
 
-$('#connect-metamask').on('connected', async function initAmounts(ev, {
-    address
-}: {
-    address: Address
+Blockchain.onConnect(async function initAmounts({
+    address, token
+}) {
+    const moe_wallet = new MoeWallet(address, token);
+    const balance = await moe_wallet.balance;
+    setAmounts(balance);
+});
+Blockchain.onceConnect(async function syncAmounts({
+    address, token
 }) {
     const on_transfer: OnTransfer = async () => {
         const balance = await moe_wallet.balance;
-        syncAmounts(balance);
+        setAmounts(balance);
     };
-    const moe_wallet = new MoeWallet(address);
+    const moe_wallet = new MoeWallet(address, token);
     moe_wallet.onTransfer(on_transfer);
-    const balance = await moe_wallet.balance;
-    syncAmounts(balance);
+}, {
+    per: () => App.token
 });
-async function syncAmounts(
+async function setAmounts(
     balance: Balance
 ) {
     for (const level of NftLevels()) {
@@ -34,11 +41,6 @@ async function syncAmounts(
         $nft_minter.find('.increase').prop('disabled', true);
         $nft_minter.find('.decrease').prop('disabled', amount === 0n);
         if (amount > 0) {
-            const $toggle = $nft_minter.find('.toggle');
-            if ($toggle.attr('data-state') === 'off') {
-                $toggle.attr('data-state', 'on');
-                $toggle.trigger('click');
-            }
             $nft_minter.show();
         }
         const $amount = $nft_minter.find('.amount');

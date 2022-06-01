@@ -1,6 +1,6 @@
 import { Contract, Transaction, Event } from 'ethers';
 import { OnInit as on_init } from '../contract';
-import { XPowerFactory } from '../contract';
+import { XPowerMoeFactory } from '../contract';
 import { x64 } from '../functions';
 import { Address, BlockHash, Nonce } from '../redux/types';
 import { Timestamp, Token } from '../redux/types';
@@ -14,7 +14,7 @@ export type OnInit = (
 
 export class MoeWallet extends ERC20Wallet {
     constructor(
-        address: Address | string, token?: Token
+        address: Address | string, token: Token
     ) {
         super(address);
         this._token = token;
@@ -57,7 +57,7 @@ export class MoeWallet extends ERC20Wallet {
     }
     get contract(): Promise<Contract> {
         if (this._contract === undefined) {
-            return XPowerFactory({
+            return XPowerMoeFactory({
                 token: this._token
             }).then((c) => {
                 return this._contract = c;
@@ -65,6 +65,6 @@ export class MoeWallet extends ERC20Wallet {
         }
         return Promise.resolve(this._contract);
     }
-    protected readonly _token?: Token;
+    protected readonly _token: Token;
 }
 export default MoeWallet;

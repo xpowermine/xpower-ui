@@ -1,7 +1,3 @@
-/* eslint @typescript-eslint/no-explicit-any: [off] */
-import { Global } from '../../../source/types';
-declare const global: Global;
-
 import './list.scss';
 import './amounts';
 
@@ -9,9 +5,25 @@ import { App } from '../../../source/app';
 import { NftLevel, NftLevels } from '../../../source/redux/types';
 import { Nft, NftFullId } from '../../../source/redux/types';
 import { Amount, Supply } from '../../../source/redux/types';
+import { Token } from '../../../source/redux/types';
+import { Tooltip } from '../../tooltips';
 
-const { Tooltip } = global.bootstrap as any;
-
+$('#selector').on('switch', async function relabelMinter(ev, {
+    token, old_token
+}: {
+    token: Token, old_token: Token
+}) {
+    function text(rx: RegExp, el: HTMLElement) {
+        const value = $(el).text();
+        if (value?.match(rx)) {
+            $(el).text(value.replace(rx, token));
+        }
+    }
+    const $minting = $('#single-minting');
+    const rx = new RegExp(old_token, 'g');
+    const $labels = $minting.find('label');
+    $labels.each((_, el) => text(rx, el));
+});
 App.onNftChanged(function setLevelHeader(
     id: NftFullId,
     item: { amount: Amount, supply: Supply },
@@ -63,8 +75,8 @@ $('.nft-minter .toggle').on('click', function toggleDetails(ev) {
     } else {
         $toggle.data('state', 'on');
     }
-    Tooltip.getInstance($toggle).dispose();
-    Tooltip.getOrCreateInstance($toggle);
+    Tooltip.getInstance($toggle[0])?.dispose();
+    Tooltip.getOrCreateInstance($toggle[0]);
 });
 $('#toggle-all').on('click', function toggleList() {
     const $toggle_all = $('#toggle-all');
@@ -103,6 +115,6 @@ $('#toggle-all').on('click', function toggleList() {
             }
         });
     }
-    Tooltip.getInstance($toggle_all).dispose();
-    Tooltip.getOrCreateInstance($toggle_all);
+    Tooltip.getInstance($toggle_all[0])?.dispose();
+    Tooltip.getOrCreateInstance($toggle_all[0]);
 });

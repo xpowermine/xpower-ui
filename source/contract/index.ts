@@ -1,5 +1,5 @@
-export * from './xpower/xpower';
-export * from './xpower/xpower-factory';
+export * from './xpower-moe/xpower-moe';
+export * from './xpower-moe/xpower-moe-factory';
 export * from './xpower-nft/xpower-nft';
 export * from './xpower-nft/xpower-nft-factory';
 export * from './xpower-ppt/xpower-ppt';

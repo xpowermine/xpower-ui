@@ -1,41 +1,43 @@
-/* eslint @typescript-eslint/no-explicit-any: [off] */
-import { Global } from '../../../source/types';
-declare const global: Global;
-
 import { App } from '../../../source/app';
 import { Blockchain } from '../../../source/blockchain';
-import { Connect } from '../../../source/blockchain';
+import { Tooltip } from '../../tooltips';
 
-const { Tooltip } = global.bootstrap as any;
-
-$(window).on('load', function init() {
-    $('#speed').on('change', (ev, { speed }) => {
+Blockchain.onConnect(function initSpeed({
+    address, token
+}) {
+    const miner = App.miner(address, {
+        token
+    });
+    $('#speed').trigger('change', {
+        speed: miner.speed
+    });
+    const $inc = $('#increase');
+    $inc.prop('disabled', miner.speed > 0.999);
+    const $dec = $('#decrease');
+    $dec.prop('disabled', miner.speed < 0.001);
+});
+Blockchain.onceConnect(function syncSpeed() {
+    const $speed = $('#speed');
+    $speed.on('change', (ev, { speed }) => {
         const speed_pct = `${(speed * 100).toFixed(3)}%`;
-        $('#speed').css({ 'width': speed_pct });
+        $speed.css({ 'width': speed_pct });
         if (speed >= 1) {
-            $('#speed').removeClass('with-indicator');
+            $speed.removeClass('with-indicator');
         } else {
-            $('#speed').addClass('with-indicator');
+            $speed.addClass('with-indicator');
         }
         const $progressor = $('#speed').parents('.progressor');
         $progressor.attr('title', `Mining speed: ${speed_pct}`);
-        Tooltip.getInstance($progressor).dispose();
-        Tooltip.getOrCreateInstance($progressor);
+        Tooltip.getInstance($progressor[0])?.dispose();
+        Tooltip.getOrCreateInstance($progressor[0]);
     });
-    $('#speed').trigger('change', {
-        speed: App.speed
-    });
-    const $inc = $('#increase');
-    $inc.prop('disabled', App.speed > 0.999);
-    const $dec = $('#decrease');
-    $dec.prop('disabled', App.speed < 0.001);
 });
 $(window).on('load', function tooltips() {
     if (document.body.clientWidth <= 576) {
         const $inc = $('#increase');
-        Tooltip.getInstance($inc)?.disable();
+        Tooltip.getInstance($inc[0])?.disable();
         const $dec = $('#decrease');
-        Tooltip.getInstance($dec)?.disable();
+        Tooltip.getInstance($dec[0])?.disable();
     }
 });
 $('#increase').on('click', async function increase() {
@@ -43,7 +45,10 @@ $('#increase').on('click', async function increase() {
     if (!address) {
         throw new Error('missing selected-address');
     }
-    App.miner(address).increase();
+    const miner = App.miner(address, {
+        token: App.token
+    });
+    miner.increase();
 });
 $('.progressor')[0].addEventListener(
     'wheel', function increaseByWheel(ev) {
@@ -64,7 +69,10 @@ $('#decrease').on('click', async function decrease() {
     if (!address) {
         throw new Error('missing selected-address');
     }
-    App.miner(address).decrease();
+    const miner = App.miner(address, {
+        token: App.token
+    });
+    miner.decrease();
 });
 $('.progressor')[0].addEventListener(
     'wheel', function decreaseByWheel(ev) {
@@ -80,20 +88,22 @@ $('.progressor')[0].addEventListener(
         passive: false
     }
 );
-$('#connect-metamask').on('connected', function handlers(
-    ev, { address }: Connect
-) {
-    const miner = App.miner(address);
+Blockchain.onceConnect(function speedHandlers({
+    address, token
+}) {
+    const miner = App.miner(address, {
+        token
+    });
     const $tog = $('#toggle-mining');
     const $inc = $('#increase');
     const $dec = $('#decrease');
     miner.on('increased', () => {
-        Tooltip.getInstance($inc)?.hide();
-        Tooltip.getInstance($dec)?.hide();
+        Tooltip.getInstance($inc[0])?.hide();
+        Tooltip.getInstance($dec[0])?.hide();
     });
     miner.on('decreased', () => {
-        Tooltip.getInstance($inc)?.hide();
-        Tooltip.getInstance($dec)?.hide();
+        Tooltip.getInstance($inc[0])?.hide();
+        Tooltip.getInstance($dec[0])?.hide();
     });
     miner.on('increased', (ev) => {
         const speed = ev.speed as number;
@@ -131,4 +141,6 @@ $('#connect-metamask').on('connected', function handlers(
             speed: ev.speed as number
         });
     });
+}, {
+    per: () => App.token
 });

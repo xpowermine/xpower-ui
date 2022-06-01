@@ -3,7 +3,7 @@ import { Nft, NftFullId, NftIssue, NftLevel, Nfts, NftToken } from '../types';
 import { Amount, Supply } from '../types';
 
 export function pptTotalBy(
-    nfts: Nfts, nft?: NftFullId | {
+    ppts: Nfts, ppt?: NftFullId | {
         issue?: NftIssue,
         level?: NftLevel,
         token?: NftToken,
@@ -11,13 +11,13 @@ export function pptTotalBy(
 ): {
     amount: Amount, supply: Supply
 } {
-    const issue = typeof nft === 'string'
-        ? Nft.issue(nft) : nft?.issue;
-    const level = typeof nft === 'string'
-        ? Nft.level(nft) : nft?.level;
-    const token = typeof nft === 'string'
-        ? Nft.token(nft) : nft?.token;
-    const filtered = Object.entries(nfts.items).filter(([id]) => {
+    const issue = typeof ppt === 'string'
+        ? Nft.issue(ppt) : ppt?.issue;
+    const level = typeof ppt === 'string'
+        ? Nft.level(ppt) : ppt?.level;
+    const token = typeof ppt === 'string'
+        ? Nft.token(ppt) : ppt?.token;
+    const filtered = Object.entries(ppts.items).filter(([id]) => {
         if (issue !== undefined && issue !== Nft.issue(id)) {
             return false;
         }

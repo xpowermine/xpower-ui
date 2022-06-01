@@ -1,8 +1,8 @@
 /* eslint @typescript-eslint/no-explicit-any: [off] */
+import { Version } from '../../../source/types';
 import { Global } from '../../../source/types';
 declare const global: Global;
 
-import { App } from '../../app';
 import { BigNumber, Contract } from 'ethers';
 import { NftLevel, Token } from '../../redux/types';
 import { MAX_YEAR } from '../../years';
@@ -11,19 +11,21 @@ import { XPowerPpt } from './xpower-ppt';
 import { address } from '../address';
 
 export async function XPowerPptFactory({
-    version, token
+    token, version
 }: {
-    version?: typeof App.version, token?: Token
-} = {}): Promise<Contract> {
+    token: Token, version?: Version
+}): Promise<Contract> {
     const contract = new XPowerPpt(address({
         infix: 'PPT', version, token
     }));
     return global.XPOWER_PPT = await contract.connect();
 }
-export async function XPowerPptMockFactory({ token }: {
-    token?: Token
-} = {}): Promise<Contract> {
-    const token_lc = Tokenizer.lower(token ?? App.token);
+export async function XPowerPptMockFactory({
+    token
+}: {
+    token: Token
+}): Promise<Contract> {
+    const token_lc = Tokenizer.lower(token);
     const mock = {
         year: () => {
             return BigNumber.from(MAX_YEAR());

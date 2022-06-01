@@ -21,9 +21,15 @@ export class StateDb {
             delete state.nonces.less;
             delete state.nfts.more;
             delete state.nfts.less;
+            delete state.ppts.more;
+            delete state.ppts.less;
             return state;
         }
-        return { nonces: { items: {} }, nfts: { items: {} } } as State;
+        return {
+            nonces: { items: {} },
+            nfts: { items: {} },
+            ppts: { items: {} }
+        } as State;
     }
     public save(index: number, state: State): void {
         this.storage.setItem(this.key(index), JSON.stringify(state));

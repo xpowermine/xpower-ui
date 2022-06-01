@@ -8,7 +8,7 @@ import { OtfWallet } from './otf-wallet';
 
 export class NftWallet extends ERC1155Wallet {
     constructor(
-        address: Address | string, token?: Token
+        address: Address | string, token: Token
     ) {
         super(address);
         this._token = token;
@@ -59,11 +59,11 @@ export class NftWallet extends ERC1155Wallet {
         }
         return Promise.resolve(this._contract);
     }
-    protected readonly _token?: Token;
+    protected readonly _token: Token;
 }
 export class NftWalletMock extends NftWallet {
     constructor(
-        address: Address | string = 0n, token?: Token
+        address: Address | string = 0n, token: Token
     ) {
         super(address, token);
     }

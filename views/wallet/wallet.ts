@@ -1,54 +1,78 @@
-/* eslint @typescript-eslint/no-explicit-any: [off] */
-import { Global } from '../../source/types';
-declare const global: Global;
 import './wallet.scss';
 
 import { App } from '../../source/app';
-import { Blockchain, Connect } from '../../source/blockchain';
+import { Blockchain } from '../../source/blockchain';
 import { x40 } from '../../source/functions';
-import { Tokenizer } from '../../source/token';
 import { Amount, Token } from '../../source/redux/types';
 import { MoeWallet, OnTransfer, OtfWallet } from '../../source/wallet';
 
 import { Web3Provider } from '@ethersproject/providers';
 import { formatUnits } from '@ethersproject/units';
 import { parseUnits } from '@ethersproject/units';
+import { Tooltip } from '../tooltips';
 
-const { Tooltip } = global.bootstrap as any;
-
-$('#connect-metamask').on('connected', async function initWallet(
-    ev, { address }: Connect
-) {
-    const token = Tokenizer.token(App.params.get('token'));
-    const moe_wallet = new MoeWallet(address);
+$('#selector').on('switch', async function relabelWallet(ev, {
+    token, old_token
+}: {
+    token: Token, old_token: Token
+}) {
+    function text(rx: RegExp, el: HTMLElement) {
+        const value = $(el).text();
+        if (value?.match(rx)) {
+            $(el).text(value.replace(rx, token));
+        }
+    }
+    const $wallet = $('#wallet');
+    const rx = new RegExp(old_token, 'g');
+    const $labels = $wallet.find('label');
+    $labels.each((_, el) => text(rx, el));
+});
+Blockchain.onceConnect(async function initWallet({
+    address, token
+}) {
+    const moe_wallet = new MoeWallet(address, token);
     App.setToken(token, {
         amount: await moe_wallet.balance,
         supply: await moe_wallet.supply
     });
     const $address = $('#wallet-address');
     $address.val(x40(address));
+}, {
+    per: () => App.token
 });
-$('#connect-metamask').on('connected', async function onTransfer(
-    ev, { address }: Connect
-) {
+Blockchain.onConnect(async function syncWallet({
+    token
+}) {
+    const tokens = App.getTokens(token);
+    const item = tokens.items[token];
+    if (item) App.setToken(token, item);
+});
+Blockchain.onceConnect(async function onTransfer({
+    address, token
+}) {
     const on_transfer: OnTransfer = async (from, to, amount) => {
-        console.debug('[on:transfer]', x40(from), x40(to), amount);
+        if (App.token !== token) {
+            return;
+        }
+        console.debug(
+            '[on:transfer]', x40(from), x40(to), amount
+        );
         if (address === from || address === to) {
-            App.setToken(token, {
-                amount: await moe_wallet.balance,
-                supply: await moe_wallet.supply
-            });
+            const amount = await moe_wallet.balance;
+            const supply = await moe_wallet.supply;
+            App.setToken(token, { amount, supply });
         }
     };
-    const token = Tokenizer.token(App.params.get('token'));
-    const moe_wallet = new MoeWallet(address);
+    const moe_wallet = new MoeWallet(address, token);
     moe_wallet.onTransfer(on_transfer);
+}, {
+    per: () => App.token
 });
 App.onTokenChanged(function setBalance(
-    token: Token, { amount: balance }: { amount: Amount }
+    token: Token, { amount }: { amount: Amount }
 ) {
     const $balance = $('#wallet-balance');
-    $balance.val(balance.toString());
+    $balance.val(amount.toString());
 });
 $(window).on('load', async function initOtfWalletUi() {
     if (OtfWallet.enabled) {
@@ -57,7 +81,7 @@ $(window).on('load', async function initOtfWalletUi() {
         hideOtfWallet();
     }
 });
-$('#connect-metamask').on('connected', async function initOtfWallet() {
+Blockchain.onConnect(async function initOtfWallet() {
     const otf_wallet = await OtfWallet.init();
     const $otf_address = $('#otf-wallet-address');
     const otf_address = await otf_wallet.getAddress();
@@ -66,7 +90,7 @@ $('#connect-metamask').on('connected', async function initOtfWallet() {
     const otf_balance = await otf_wallet.getBalance();
     $otf_balance.val(formatUnits(otf_balance));
 });
-$('#connect-metamask').on('connected', async function updateOtfBalance() {
+Blockchain.onceConnect(async function syncOtfBalance() {
     const on_block = async () => {
         const otf_balance = await otf_wallet.getBalance();
         $otf_balance.val(formatUnits(otf_balance));
@@ -75,15 +99,19 @@ $('#connect-metamask').on('connected', async function updateOtfBalance() {
     const otf_wallet = await OtfWallet.init();
     otf_wallet.provider?.on('block', on_block);
 });
-$('#connect-metamask').on('connected', async function resumeMiningIf(
-    ev, { address }: Connect
-) {
+Blockchain.onceConnect(async function resumeMiningIf({
+    address
+}) {
     const on_block = async () => {
         if (OtfWallet.enabled) {
             const otf_balance = await otf_wallet.getBalance();
             if (otf_balance.gt(min_balance)) {
-                const miner = App.miner(address);
-                if (miner.running) miner.resume();
+                const miner = App.miner(address, {
+                    token: App.token
+                });
+                if (miner.running) {
+                    miner.resume();
+                }
             }
         }
     };
@@ -109,8 +137,8 @@ function showOtfWallet({ animate = false } = {}) {
     }
     const $otf_toggle = $('#otf-wallet-toggle');
     $otf_toggle.attr('title', 'Disable minter wallet & hide balance of AVAX');
-    Tooltip.getInstance($otf_toggle).dispose();
-    Tooltip.getOrCreateInstance($otf_toggle);
+    Tooltip.getInstance($otf_toggle[0])?.dispose();
+    Tooltip.getOrCreateInstance($otf_toggle[0]);
     const $otf_toggle_i = $otf_toggle.find('>i');
     $otf_toggle_i.removeClass('bi-wallet');
     $otf_toggle_i.addClass('bi-wallet2');
@@ -124,13 +152,13 @@ function hideOtfWallet({ animate = false } = {}) {
     }
     const $otf_toggle = $('#otf-wallet-toggle');
     $otf_toggle.attr('title', 'Enable minter wallet & show balance of AVAX');
-    Tooltip.getInstance($otf_toggle).dispose();
-    Tooltip.getOrCreateInstance($otf_toggle);
+    Tooltip.getInstance($otf_toggle[0])?.dispose();
+    Tooltip.getOrCreateInstance($otf_toggle[0]);
     const $otf_toggle_i = $otf_toggle.find('>i');
     $otf_toggle_i.removeClass('bi-wallet2');
     $otf_toggle_i.addClass('bi-wallet');
 }
-$('#connect-metamask').on('connected', async function toggleOtfTransfer() {
+Blockchain.onceConnect(async function toggleOtfTransfer() {
     const $otf_transfer = $('#otf-wallet-transfer');
     const $otf_transfer_i = $otf_transfer.find('i');
     const on_block = async () => {
@@ -138,8 +166,9 @@ $('#connect-metamask').on('connected', async function toggleOtfTransfer() {
         if (otf_balance.gt(min_balance)) {
             $otf_transfer.removeClass('deposit');
             $otf_transfer.addClass('withdraw');
-            $otf_transfer_i.removeClass('bi-patch-plus');
-            $otf_transfer_i.addClass('bi-patch-minus');
+            $otf_transfer_i.removeClass('bi-circle');
+            $otf_transfer_i.removeClass('bi-plus-circle');
+            $otf_transfer_i.addClass('bi-dash-circle');
             $otf_transfer.attr(
                 'title', 'Withdraw AVAX from minter to wallet address'
             );
@@ -147,15 +176,16 @@ $('#connect-metamask').on('connected', async function toggleOtfTransfer() {
         } else {
             $otf_transfer.removeClass('withdraw');
             $otf_transfer.addClass('deposit');
-            $otf_transfer_i.removeClass('bi-patch-minus');
-            $otf_transfer_i.addClass('bi-patch-plus');
+            $otf_transfer_i.removeClass('bi-circle');
+            $otf_transfer_i.removeClass('bi-dash-circle');
+            $otf_transfer_i.addClass('bi-plus-circle');
             $otf_transfer.attr(
                 'title', 'Deposit AVAX from wallet to minter address'
             );
             $otf_transfer.off('click').on('click', depositOtf);
         }
-        Tooltip.getInstance($otf_transfer).dispose();
-        Tooltip.getOrCreateInstance($otf_transfer);
+        Tooltip.getInstance($otf_transfer[0])?.dispose();
+        Tooltip.getOrCreateInstance($otf_transfer[0]);
     };
     const min_balance = parseUnits('0.005');
     const otf_wallet = await OtfWallet.init();

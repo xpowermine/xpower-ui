@@ -26,16 +26,21 @@ export function onPptAdded(
     );
     return observer((next) => {
         const added = (id: NftFullId) => {
+            const prefix = id.slice(0, 4);
+            const suffix = id.slice(-2);
             const amount = Object.entries(next.items)
-                .filter(([nft_id]) => nft_id.endsWith(id.slice(-2)))
+                .filter(([nft_id]) => nft_id.startsWith(prefix))
+                .filter(([nft_id]) => nft_id.endsWith(suffix))
                 .map(([_, { amount }]) => amount)
                 .reduce((t, a) => t + a, 0n);
             const supply = Object.entries(next.items)
-                .filter(([nft_id]) => nft_id.endsWith(id.slice(-2)))
+                .filter(([nft_id]) => nft_id.startsWith(prefix))
+                .filter(([nft_id]) => nft_id.endsWith(suffix))
                 .map(([_, { supply }]) => supply)
                 .reduce((t, s) => t + s, 0n);
             handler(
-                id, next.items[id], { amount, supply });
+                id, next.items[id], { amount, supply }
+            );
         };
         if (next.more) {
             next.more.forEach(added);
@@ -51,16 +56,21 @@ export function onPptRemoved(
     );
     return observer((next) => {
         const removed = (id: NftFullId) => {
+            const prefix = id.slice(0, 4);
+            const suffix = id.slice(-2);
             const amount = Object.entries(next.items)
-                .filter(([nft_id]) => nft_id.endsWith(id.slice(-2)))
+                .filter(([nft_id]) => nft_id.startsWith(prefix))
+                .filter(([nft_id]) => nft_id.endsWith(suffix))
                 .map(([_, { amount }]) => amount)
                 .reduce((t, a) => t + a, 0n);
             const supply = Object.entries(next.items)
-                .filter(([nft_id]) => nft_id.endsWith(id.slice(-2)))
+                .filter(([nft_id]) => nft_id.startsWith(prefix))
+                .filter(([nft_id]) => nft_id.endsWith(suffix))
                 .map(([_, { supply }]) => supply)
                 .reduce((t, s) => t + s, 0n);
             handler(
-                id, next.items[id], { amount, supply });
+                id, next.items[id], { amount, supply }
+            );
         };
         if (next.less) {
             next.less.forEach(removed);

@@ -1,11 +1,25 @@
-/* eslint @typescript-eslint/no-explicit-any: [off] */
-import { Global } from '../../source/types';
-declare const global: Global;
+import { Token } from "../../source/redux/types";
+export const { Tooltip } = global.bootstrap;
 
-const { Tooltip } = global.bootstrap as any;
-
-$(window).on('load', function toggleTooltips() {
-    const $tips = $('[data-bs-toggle="tooltip"]');
+$('#selector').on('switch', async function retitleTips(ev, {
+    token, old_token
+}: {
+    token: Token, old_token: Token
+}) {
+    function title(rx: RegExp, el: HTMLElement) {
+        const value = $(el).attr('data-bs-original-title');
+        if (value?.match(rx)) {
+            $(el).attr('title', value.replace(rx, token));
+            Tooltip.getInstance(el)?.dispose();
+            Tooltip.getOrCreateInstance(el);
+        }
+    }
+    const $tips = $('[data-bs-toggle=tooltip]:not([data-bs-fixed])');
+    const rx = new RegExp(old_token, 'g');
+    $tips.each((_, el) => title(rx, el));
+});
+$(window).one('load', function toggleTooltips() {
+    const $tips = $('[data-bs-toggle=tooltip]');
     $tips.map((_, el) => Tooltip.getOrCreateInstance(el));
     $tips.on('shown.bs.tooltip', (ev) => {
         $(ev.target).one('click', hide).off('click', show);
@@ -15,12 +29,15 @@ $(window).on('load', function toggleTooltips() {
     });
 });
 function hide(ev: JQuery.ClickEvent) {
-    Tooltip.getInstance($tip($(ev.target)))?.hide();
+    const [tip] = $tip($(ev.target));
+    Tooltip.getInstance(tip)?.hide();
 }
 function show(ev: JQuery.ClickEvent) {
-    Tooltip.getInstance($tip($(ev.target)))?.show();
+    const [tip] = $tip($(ev.target));
+    Tooltip.getInstance(tip)?.show();
 }
 function $tip($el: JQuery<HTMLElement>) {
-    const $tt = $el.parents(`[data-bs-toggle="tooltip"]`);
+    const $tt = $el.parents(`[data-bs-toggle=tooltip]`);
     return $tt.length ? $tt : $el;
 }
+export default Tooltip;

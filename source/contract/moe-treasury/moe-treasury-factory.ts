@@ -1,19 +1,19 @@
+import { Version } from '../../../source/types';
 import { Global } from '../../../source/types';
 declare const global: Global;
 
-import { App } from '../../app';
 import { Contract } from 'ethers';
 import { Token } from '../../redux/types';
 import { MoeTreasury } from './moe-treasury';
 import { address } from '../address';
 
 export async function MoeTreasuryFactory({
-    version, token
+    token, version
 }: {
-    version?: typeof App.version, token?: Token
-} = {}): Promise<Contract> {
+    token: Token, version?: Version
+}): Promise<Contract> {
     const contract = new MoeTreasury(address({
-        infix: 'MOE_TREASURY', version, token
+        infix: 'MOE_TREASURY', token, version
     }));
     return global.MOE_TREASURY = await contract.connect();
 }

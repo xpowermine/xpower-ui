@@ -1,18 +1,16 @@
+import { App } from '../../../source/app';
 import { Blockchain } from '../../../source/blockchain';
 import { Transaction } from 'ethers';
-import { Address } from '../../../source/redux/types';
 import { NftWallet, OnApproval, MoeWallet } from '../../../source/wallet';
 
 export const MAX_UINT256 = 2n ** 256n - 1n;
 export const MID_UINT256 = 2n ** 255n - 1n;
 
-$('#connect-metamask').on('connected', async function checkAllowance(ev, {
-    address
-}: {
-    address: Address
+Blockchain.onConnect(async function checkAllowance({
+    address, token
 }) {
-    const moe_wallet = new MoeWallet(address);
-    const nft_wallet = new NftWallet(address);
+    const moe_wallet = new MoeWallet(address, token);
+    const nft_wallet = new NftWallet(address, token);
     const nft_contract = await nft_wallet.contract;
     const allowance = await moe_wallet.allowance(
         address, nft_contract.address
@@ -35,8 +33,9 @@ $('#burn-approval').on('click', async function increaseAllowance() {
     if (!address) {
         throw new Error('missing selected-address');
     }
-    const moe_wallet = new MoeWallet(address);
-    const nft_wallet = new NftWallet(address);
+    const token = App.token;
+    const moe_wallet = new MoeWallet(address, token);
+    const nft_wallet = new NftWallet(address, token);
     const nft_contract = await nft_wallet.contract;
     const old_allowance = await moe_wallet.allowance(
         address, nft_contract.address

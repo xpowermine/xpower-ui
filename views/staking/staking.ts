@@ -8,82 +8,103 @@ import './minter/minter';
 import './minter/burner';
 
 import { App } from '../../source/app';
-import { Years } from '../../source/years';
+import { Blockchain } from '../../source/blockchain';
 import { x40 } from '../../source/functions';
-import { Address } from '../../source/redux/types';
-import { Nft, NftLevels } from '../../source/redux/types';
+import { Nft, NftFullId, NftLevels } from '../../source/redux/types';
 import { NftWallet, PptWallet } from '../../source/wallet';
 import { OnTransferBatch } from '../../source/wallet';
 import { OnTransferSingle } from '../../source/wallet';
+import { Years } from '../../source/years';
 
-$('#connect-metamask').on('connected', async function setNfts(ev, {
-    address
-}: {
-    address: Address
+Blockchain.onceConnect(async function initNfts({
+    address, token
 }) {
     let index = 0;
     const levels = Array.from(NftLevels());
     const issues = Array.from(Years()).reverse();
-    const wallet = new NftWallet(address);
+    const wallet = new NftWallet(address, token);
     const balances = await wallet.balances({ issues, levels });
     const supplies = wallet.totalSupplies({ issues, levels });
     const nft_token = Nft.token(
-        App.token
+        token
     );
     for (const issue of issues) {
         for (const level of levels) {
             const amount = balances[index];
             const supply = await supplies[index];
             App.setNft({
-                token: nft_token, issue, level
+                issue, level, token: nft_token
             }, {
                 amount, supply
             });
             index += 1;
         }
     }
+}, {
+    per: () => App.token
 });
-$('#connect-metamask').on('connected', async function setPpts(ev, {
-    address
-}: {
-    address: Address
+Blockchain.onConnect(function syncNfts({
+    token
+}) {
+    const nfts = App.getNfts({
+        token: Nft.token(token)
+    });
+    for (const [id, nft] of Object.entries(nfts.items)) {
+        App.setNft(id as NftFullId, nft);
+    }
+});
+Blockchain.onceConnect(async function initPpts({
+    address, token
 }) {
     let index = 0;
     const levels = Array.from(NftLevels());
     const issues = Array.from(Years()).reverse();
-    const wallet = new PptWallet(address);
+    const wallet = new PptWallet(address, token);
     const balances = await wallet.balances({ issues, levels });
     const supplies = wallet.totalSupplies({ issues, levels });
-    const nft_token = Nft.token(
-        App.token
+    const ppt_token = Nft.token(
+        token
     );
     for (const issue of issues) {
         for (const level of levels) {
             const amount = balances[index];
             const supply = await supplies[index];
             App.setPpt({
-                token: nft_token, issue, level
+                issue, level, token: ppt_token
             }, {
                 amount, supply
             });
             index += 1;
         }
     }
+}, {
+    per: () => App.token
 });
-$('#connect-metamask').on('connected', async function onNftBatchTransfers(ev, {
-    address
-}: {
-    address: Address
+Blockchain.onConnect(function syncPpts({
+    token
+}) {
+    const ppts = App.getPpts({
+        token: Nft.token(token)
+    });
+    for (const [id, ppt] of Object.entries(ppts.items)) {
+        App.setPpt(id as NftFullId, ppt);
+    }
+});
+Blockchain.onceConnect(async function onNftBatchTransfers({
+    address, token
 }) {
     const on_transfer: OnTransferBatch = async (
         op, from, to, ids, values, ev
     ) => {
+        if (App.token !== token) {
+            return;
+        }
         console.debug('[on:transfer-batch]',
             x40(op), x40(from), x40(to),
             ids, values, ev
         );
         const nft_token = Nft.token(
-            App.token
+            token
         );
         for (let i = 0; i < ids.length; i++) {
             const nft_id = Nft.fullId({
@@ -99,23 +120,26 @@ $('#connect-metamask').on('connected', async function onNftBatchTransfers(ev, {
             }
         }
     };
-    const wallet = new NftWallet(address);
-    wallet.onTransferBatch(on_transfer);
+    const nft_wallet = new NftWallet(address, token);
+    nft_wallet.onTransferBatch(on_transfer);
+}, {
+    per: () => App.token
 });
-$('#connect-metamask').on('connected', async function onPptBatchTransfers(ev, {
-    address
-}: {
-    address: Address
+Blockchain.onceConnect(async function onPptBatchTransfers({
+    address, token
 }) {
     const on_transfer: OnTransferBatch = async (
         op, from, to, ids, values, ev
     ) => {
+        if (App.token !== token) {
+            return;
+        }
         console.debug('[on:transfer-batch]',
             x40(op), x40(from), x40(to),
             ids, values, ev
         );
         const nft_token = Nft.token(
-            App.token
+            token
         );
         for (let i = 0; i < ids.length; i++) {
             const ppt_id = Nft.fullId({
@@ -131,23 +155,26 @@ $('#connect-metamask').on('connected', async function onPptBatchTransfers(ev, {
             }
         }
     };
-    const wallet = new PptWallet(address);
-    wallet.onTransferBatch(on_transfer);
+    const ppt_wallet = new PptWallet(address, token);
+    ppt_wallet.onTransferBatch(on_transfer);
+}, {
+    per: () => App.token
 });
-$('#connect-metamask').on('connected', async function onNftSingleTransfers(ev, {
-    address
-}: {
-    address: Address
+Blockchain.onceConnect(async function onNftSingleTransfers({
+    address, token
 }) {
     const on_transfer: OnTransferSingle = async (
         op, from, to, id, value, ev
     ) => {
+        if (App.token !== token) {
+            return;
+        }
         console.debug('[on:transfer-single]',
             x40(op), x40(from), x40(to),
             id, value, ev
         );
         const nft_token = Nft.token(
-            App.token
+            token
         );
         const nft_id = Nft.fullId({
             issue: Nft.issue(id),
@@ -161,23 +188,26 @@ $('#connect-metamask').on('connected', async function onNftSingleTransfers(ev, {
             App.addNft(nft_id, { amount: value });
         }
     };
-    const wallet = new NftWallet(address);
-    wallet.onTransferSingle(on_transfer)
+    const nft_wallet = new NftWallet(address, token);
+    nft_wallet.onTransferSingle(on_transfer)
+}, {
+    per: () => App.token
 });
-$('#connect-metamask').on('connected', async function onPptSingleTransfers(ev, {
-    address
-}: {
-    address: Address
+Blockchain.onceConnect(async function onPptSingleTransfers({
+    address, token
 }) {
     const on_transfer: OnTransferSingle = async (
         op, from, to, id, value, ev
     ) => {
+        if (App.token !== token) {
+            return;
+        }
         console.debug('[on:transfer-single]',
             x40(op), x40(from), x40(to),
             id, value, ev
         );
         const nft_token = Nft.token(
-            App.token
+            token
         );
         const nft_id = Nft.fullId({
             issue: Nft.issue(id),
@@ -191,6 +221,8 @@ $('#connect-metamask').on('connected', async function onPptSingleTransfers(ev, {
             App.addPpt(nft_id, { amount: value });
         }
     };
-    const wallet = new PptWallet(address);
-    wallet.onTransferSingle(on_transfer)
+    const ppt_wallet = new PptWallet(address, token);
+    ppt_wallet.onTransferSingle(on_transfer)
+}, {
+    per: () => App.token
 });

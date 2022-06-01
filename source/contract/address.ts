@@ -1,15 +1,16 @@
 import { App } from '../app';
 import { Token } from '../redux/types';
+import { Version } from '../../source/types';
 
 export function address({
-    infix, version, token
+    infix, token, version
 }: {
-    infix: string, version?: typeof App.version, token?: Token
+    infix: string, token: Token, version?: Version
 }): string {
     if (version === undefined) {
         version = App.version;
     }
-    const id = `#g-${token ?? App.token}_${infix}_${version}`;
+    const id = `#g-${token}_${infix}_${version}`;
     const address = $(id).data('value');
     if (!address) {
         throw new Error(`missing ${id}`);

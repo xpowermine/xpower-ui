@@ -1,51 +1,66 @@
 /* eslint @typescript-eslint/no-explicit-any: [off] */
-import { Global } from '../../../source/types';
-declare const global: Global;
 import './mining-speed';
 
 import { App } from '../../../source/app';
 import { Tokenizer } from '../../../source/token';
 import { Blockchain } from '../../../source/blockchain';
-import { Connect } from '../../../source/blockchain';
-import { Reconnect } from '../../../source/blockchain';
 import { alert, Alert, x64 } from '../../../source/functions';
 import { HashManager } from '../../../source/managers';
 import { IntervalManager } from '../../../source/managers';
-import { Address } from '../../../source/redux/types';
+import { Address, Token, Tokens } from '../../../source/redux/types';
 import { BlockHash } from '../../../source/redux/types';
 import { OnInit } from '../../../source/wallet';
 import { MoeWallet } from '../../../source/wallet';
 
-$(window).on('load', async function refreshBlockHash() {
-    if (await Blockchain.isInstalled()) {
-        Blockchain.onceConnect(({ address }) => {
-            const on_init: OnInit = (block_hash, timestamp) => {
-                console.debug('[on:init]', x64(block_hash), timestamp);
-                const token_lc = Tokenizer.lower(App.token);
-                HashManager.set(block_hash, timestamp, {
-                    slot: token_lc
-                });
-            };
-            const wallet = new MoeWallet(address);
-            wallet.onInit(on_init);
+Blockchain.onceConnect(function refreshBlockHash({
+    address, token
+}) {
+    const on_init: OnInit = async (block_hash, timestamp, ev) => {
+        const contract = await moe_wallet.contract;
+        if (contract.address === ev.address) {
+            console.debug('[on:init]', x64(block_hash), timestamp, ev);
+        } else {
+            return;
+        }
+        const token_lc = Tokenizer.lower(token);
+        HashManager.set(block_hash, timestamp, {
+            slot: token_lc
         });
-    }
+    };
+    const moe_wallet = new MoeWallet(address, token);
+    moe_wallet.onInit(on_init);
+}, {
+    per: () => App.token
 });
-$(window).on('load', async function restartMining() {
-    if (await Blockchain.isInstalled()) {
-        const im = new IntervalManager({ start: true });
-        Blockchain.onceConnect(({ address }: Connect) => {
-            im.on('tick', async () => {
-                const miner = App.miner(address);
-                const running = miner.running;
-                if (running) {
-                    await miner.stop();
-                }
-                if (running) {
-                    $('#toggle-mining').trigger('click');
-                }
-            });
+Blockchain.onceConnect(function restartMining({
+    address, token
+}) {
+    const im = new IntervalManager({ start: true });
+    im.on('tick', async () => {
+        const miner = App.miner(address, {
+            token
         });
+        const running = miner.running;
+        if (running) {
+            await miner.stop();
+        }
+        if (running) {
+            $('#toggle-mining').trigger('click');
+        }
+    });
+});
+Blockchain.onConnect(function stopMining({
+    address
+}) {
+    for (const token of Tokens()) {
+        if (token === Token.HELA) {
+            continue;
+        }
+        const miner = App.miner(address, {
+            token
+        });
+        const running = miner.running;
+        if (running) miner.stop();
     }
 });
 $('#toggle-mining').on('click', async function toggleMining() {
@@ -53,9 +68,13 @@ $('#toggle-mining').on('click', async function toggleMining() {
     if (!address) {
         throw new Error('missing selected-address');
     }
-    const miner = App.miner(address);
+    const token = App.token;
+    const token_lc = Tokenizer.lower(token);
+    const miner = App.miner(address, {
+        token
+    });
     if (miner.running) {
-        return miner.stop();
+        return await miner.stop();
     }
     miner.emit('initializing', {
         block_hash: null
@@ -63,7 +82,6 @@ $('#toggle-mining').on('click', async function toggleMining() {
     //
     // if: recent(block-hash?) => mine
     //
-    const token_lc = Tokenizer.lower(App.token);
     const block_hash = HashManager.latestHash({
         slot: token_lc
     });
@@ -90,7 +108,7 @@ $('#toggle-mining').on('click', async function toggleMining() {
     }) => {
         mine(address, block_hash);
     });
-    const moe_wallet = new MoeWallet(address);
+    const moe_wallet = new MoeWallet(address, token);
     try {
         const init = await moe_wallet.init();
         console.debug('[init]', init);
@@ -119,28 +137,35 @@ $('#toggle-mining').on('click', async function toggleMining() {
         address: Address, block_hash: BlockHash
     ) {
         miner.emit('initialized', { block_hash });
-        const { min, max } = App.amount;
+        const { min, max } = App.range(token);
         if (miner.running) {
             await miner.stop();
         }
-        miner.start(block_hash, ({ nonce, amount, worker }) => {
-            if (amount >= min && amount <= max) {
+        miner.start(block_hash, ({
+            amount, nonce, worker
+        }) => {
+            if (amount >= min &&
+                amount <= max
+            ) {
                 App.addNonce(nonce, {
-                    address, block_hash, amount, worker
+                    address,
+                    amount,
+                    block_hash,
+                    token,
+                    worker,
                 });
             }
         });
     }
 });
-$(window).on('load', async function resetMiningToggle() {
-    if (await Blockchain.isInstalled()) {
-        Blockchain.onConnect(reset);
-        Blockchain.onReconnect(({ address }: Reconnect) => {
-            const miner = App.miner(address);
-            if (!miner.running) {
-                reset();
-            }
-        });
+Blockchain.onConnect(function resetMiningToggle({
+    address, token
+}) {
+    const miner = App.miner(address, {
+        token
+    });
+    if (!miner.running) {
+        reset();
     }
     function reset() {
         const $mine = $('#toggle-mining');
@@ -152,13 +177,15 @@ $(window).on('load', async function resetMiningToggle() {
         $text.text('Start Mining');
     }
 });
-$('#connect-metamask').on('connected', async function toggleMiningSpinner(
-    ev, { address }: Connect
-) {
+Blockchain.onceConnect(async function toggleMiningSpinner({
+    address, token
+}) {
     const $mine = $('#toggle-mining');
     const $text = $mine.find('.text');
     const $spinner = $mine.find('.spinner');
-    const miner = App.miner(address);
+    const miner = App.miner(address, {
+        token
+    });
     miner.on('initializing', () => {
         $spinner.css('visibility', 'visible');
         $spinner.addClass('spinner-grow');
@@ -195,23 +222,25 @@ $('#connect-metamask').on('connected', async function toggleMiningSpinner(
         $spinner.css('visibility', 'visible');
         $spinner.removeClass('spinner-grow');
     });
+}, {
+    per: () => App.token
 });
-$('#connect-metamask').on('connected', async function benchmarkMining(
-    ev, { address }: Connect
-) {
-    const miner = App.miner(address);
-    global.ON_STARTED = global.ON_STARTED ?? function (
+Blockchain.onceConnect(function benchmarkMining({
+    address, token
+}) {
+    const miner = App.miner(address, {
+        token
+    });
+    miner.on('started', function (
         { now: beg_ms }: { now: number; }
     ) {
-        global.OFF_STARTED = global.OFF_STARTED ?? function (
+        miner.once('stopped', function (
             { now: end_ms }: { now: number; }
         ) {
             const ms = (end_ms - beg_ms).toFixed(3);
             console.debug('[mining.duration]', ms, '[ms]');
-        };
-        miner.off('stopped', global.OFF_STARTED);
-        miner.once('stopped', global.OFF_STARTED);
-    };
-    miner.off('started', global.ON_STARTED);
-    miner.on('started', global.ON_STARTED);
+        });
+    });
+}, {
+    per: () => App.token
 });

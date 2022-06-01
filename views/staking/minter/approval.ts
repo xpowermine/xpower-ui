@@ -1,16 +1,14 @@
+import { App } from '../../../source/app';
 import { Blockchain } from '../../../source/blockchain';
 import { PptTreasuryFactory } from '../../../source/contract';
 import { Transaction } from 'ethers';
-import { Address } from '../../../source/redux/types';
 import { NftWallet, OnApprovalForAll } from '../../../source/wallet';
 
-$('#connect-metamask').on('connected', async function isApproved(ev, {
-    address
-}: {
-    address: Address
+Blockchain.onConnect(async function isApproved({
+    address, token
 }) {
-    const ppt_treasury = PptTreasuryFactory();
-    const nft_wallet = new NftWallet(address);
+    const ppt_treasury = PptTreasuryFactory({ token });
+    const nft_wallet = new NftWallet(address, token);
     const approved = await nft_wallet.isApprovedForAll(
         await ppt_treasury.then((c) => c?.address)
     );
@@ -31,8 +29,10 @@ $('#burn-approval').on('click', async function setApproval() {
     if (!address) {
         throw new Error('missing selected-address');
     }
-    const ppt_treasury = PptTreasuryFactory();
-    const nft_wallet = new NftWallet(address);
+    const ppt_treasury = PptTreasuryFactory({
+        token: App.token
+    });
+    const nft_wallet = new NftWallet(address, App.token);
     const approved = await nft_wallet.isApprovedForAll(
         address
     );
@@ -53,7 +53,7 @@ $('#burn-approval').on('click', async function setApproval() {
             $approval.trigger('approving');
             nft_wallet.onApprovalForAll(on_approval);
             tx = await nft_wallet.setApprovalForAll(
-                await ppt_treasury.then((c) => c?.address),
+                await ppt_treasury.then((c) => c.address),
                 true
             );
         } catch (ex) {

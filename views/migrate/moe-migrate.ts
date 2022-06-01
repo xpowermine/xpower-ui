@@ -4,15 +4,11 @@ import './moe-migrate.scss';
 import { Blockchain } from '../../source/blockchain';
 import { alert, Alert, x40 } from '../../source/functions';
 import { Token } from '../../source/redux/types';
-import { XPowerFactory } from '../../source/contract';
+import { XPowerMoeFactory } from '../../source/contract';
 
-$(window).on('load', async function enableAllowanceButton() {
-    if (await Blockchain.isInstalled()) {
-        Blockchain.onConnect(() => {
-            const $approve = $('.approve-allowance');
-            $approve.prop('disabled', false);
-        });
-    }
+Blockchain.onConnect(function enableAllowanceButton() {
+    const $approve = $('.approve-allowance');
+    $approve.prop('disabled', false);
 });
 $('button.approve-allowance').on(
     'click', async function approveTokens(ev) {
@@ -47,7 +43,7 @@ async function approve(token: Token, { $approve, $execute }: {
     if (!src_version) {
         throw new Error('missing data-source');
     }
-    const src_xpower = await XPowerFactory({
+    const src_xpower = await XPowerMoeFactory({
         token, version: src_version
     });
     console.debug(
@@ -57,7 +53,7 @@ async function approve(token: Token, { $approve, $execute }: {
     if (!tgt_version) {
         throw new Error('missing data-target');
     }
-    const tgt_xpower = await XPowerFactory({
+    const tgt_xpower = await XPowerMoeFactory({
         token, version: tgt_version
     });
     console.debug(
@@ -133,7 +129,7 @@ async function migrate(token: Token, { $execute }: {
     if (!src_version) {
         throw new Error('missing data-source');
     }
-    const src_xpower = await XPowerFactory({
+    const src_xpower = await XPowerMoeFactory({
         token, version: src_version
     });
     console.debug(
@@ -143,7 +139,7 @@ async function migrate(token: Token, { $execute }: {
     if (!tgt_version) {
         throw new Error('missing data-target');
     }
-    const tgt_xpower = await XPowerFactory({
+    const tgt_xpower = await XPowerMoeFactory({
         token, version: tgt_version
     });
     console.debug(

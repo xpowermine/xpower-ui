@@ -17,7 +17,7 @@ form#single-minting > .nft-details {
   .nft-image {
     border-radius: 4px;
     display: none;
-    width: 100%;
+    width: calc(100% - 6px);
   }
   @media (max-width: 575px) {
     .col-sm.nft-details-rhs  {

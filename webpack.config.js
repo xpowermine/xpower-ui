@@ -1,19 +1,23 @@
-const filters = require('./filters/pug-filters');
-const { Years } = require('./source/years');
-const env = require('./env');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const HTMLWebpackPlugin = require('html-webpack-plugin');
+const { resolve } = require('path');
 const pug = require('pug');
 
-const HTMLWebpackPlugin = require('html-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const filters = require('./filters/pug-filters');
+const { Years } = require('./source/years');
+const YEARS = Array.from(Years());
+const env = require('./env');
 
-const { resolve } = require('path');
-const configuration = (options) => ({
+const configuration = ({
+    mode, ...options
+}) => ({
     entry: {
         about: [
             './library/index.ts',
             './views/theme/theme.ts',
             './views/tooltips/tooltips.ts',
             './views/about/about.ts',
+            './views/header/header.ts',
             './views/footer/footer.ts',
         ],
         error: [
@@ -21,6 +25,7 @@ const configuration = (options) => ({
             './views/theme/theme.ts',
             './views/tooltips/tooltips.ts',
             './views/error/error.ts',
+            './views/header/header.ts',
             './views/footer/footer.ts',
         ],
         home: [
@@ -30,6 +35,7 @@ const configuration = (options) => ({
             './views/wallet/wallet.ts',
             './views/selector/selector.ts',
             './views/home/home.ts',
+            './views/header/header.ts',
             './views/footer/footer.ts',
             './views/connector/connector.ts',
         ],
@@ -38,6 +44,7 @@ const configuration = (options) => ({
             './views/theme/theme.ts',
             './views/tooltips/tooltips.ts',
             './views/migrate/index.ts',
+            './views/header/header.ts',
             './views/footer/footer.ts',
             './views/connector/connector.ts',
         ],
@@ -48,6 +55,7 @@ const configuration = (options) => ({
             './views/wallet/wallet.ts',
             './views/selector/selector.ts',
             './views/nfts/nfts.ts',
+            './views/header/header.ts',
             './views/footer/footer.ts',
             './views/connector/connector.ts',
         ],
@@ -58,6 +66,7 @@ const configuration = (options) => ({
             './views/wallet/wallet.ts',
             './views/selector/selector.ts',
             './views/staking/staking.ts',
+            './views/header/header.ts',
             './views/footer/footer.ts',
             './views/connector/connector.ts',
         ],
@@ -96,8 +105,8 @@ const configuration = (options) => ({
         }),
         new HTMLWebpackPlugin({
             templateContent: pug.renderFile('./views/migrate/index.pug', {
-                ...env.default, filters, PAGE: 'migrate',
-                TITLE: 'XPower: Migrate'
+                PAGE: 'migrate', TITLE: 'XPower: Migrate',
+                ...env.default, filters, mode
             }),
             filename: '../views/migrate/index.pig',
             minify: false, inject: 'body',
@@ -105,8 +114,8 @@ const configuration = (options) => ({
         }),
         new HTMLWebpackPlugin({
             templateContent: pug.renderFile('./views/home/home.pug', {
-                ...env.default, filters, PAGE: 'home',
-                TITLE: 'XPower'
+                PAGE: 'home', TITLE: 'XPower',
+                ...env.default, filters, mode
             }),
             filename: '../views/home/home.pig',
             minify: false, inject: 'body',
@@ -114,9 +123,8 @@ const configuration = (options) => ({
         }),
         new HTMLWebpackPlugin({
             templateContent: pug.renderFile('./views/nfts/nfts.pug', {
-                ...env.default, filters, PAGE: 'nfts',
-                TITLE: 'XPower: NFTs',
-                YEARS: Array.from(Years())
+                PAGE: 'nfts', TITLE: 'XPower: NFTs', YEARS,
+                ...env.default, filters, mode
             }),
             filename: '../views/nfts/nfts.pig',
             minify: false, inject: 'body',
@@ -124,9 +132,8 @@ const configuration = (options) => ({
         }),
         new HTMLWebpackPlugin({
             templateContent: pug.renderFile('./views/staking/staking.pug', {
-                ...env.default, filters, PAGE: 'staking',
-                TITLE: 'XPower: NFT Staking',
-                YEARS: Array.from(Years())
+                PAGE: 'staking', TITLE: 'XPower: NFT Staking', YEARS,
+                ...env.default, filters, mode
             }),
             filename: '../views/staking/staking.pig',
             minify: false, inject: 'body',
@@ -134,8 +141,8 @@ const configuration = (options) => ({
         }),
         new HTMLWebpackPlugin({
             templateContent: pug.renderFile('./views/about/about.pug', {
-                ...env.default, filters, PAGE: 'about',
-                TITLE: 'XPower: About'
+                PAGE: 'about', TITLE: 'XPower: About',
+                ...env.default, filters, mode
             }),
             filename: '../views/about/about.pig',
             minify: false, inject: 'body',
@@ -143,8 +150,8 @@ const configuration = (options) => ({
         }),
         new HTMLWebpackPlugin({
             templateContent: pug.renderFile('./views/error/error.pug', {
-                ...env.default, filters, PAGE: 'error',
-                TITLE: 'XPower: Error',
+                PAGE: 'error', TITLE: 'XPower: Error',
+                ...env.default, filters, mode
             }),
             filename: '../views/error/error.pig',
             minify: false, inject: 'body',
@@ -165,7 +172,7 @@ const configuration = (options) => ({
         filename: '[name].[contenthash:8].js',
         clean: true
     },
-    mode: 'none', ...options
+    mode, ...options
 });
 module.exports = (env, args) => {
     switch (args.mode) {

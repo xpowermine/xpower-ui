@@ -18,12 +18,16 @@ function routes(
   router.get('/home', async (req, res) => {
     const params = new URLSearchParams(req.query as any);
     const token = Tokenizer.token(params.get('token'));
-    const levels: { [key: string]: string } = {};
+    const amounts: Record<string, bigint> = {};
+    const levels: Record<string, number> = {};
     for (let i = 1; i <= 64; i++) {
-      levels[`LEVEL_${i}`] = `${Tokenizer.amount(token, i)}`;
+      amounts[`AMOUNT_${i}`] = Tokenizer.amount(
+        token, i
+      );
+      levels[`LEVEL_${i}`] = i;
     }
     res.render('home/home.pig', {
-      ...env_of(req), ...home_env, ...levels
+      ...env_of(req), ...home_env, ...amounts, ...levels
     });
   });
 }

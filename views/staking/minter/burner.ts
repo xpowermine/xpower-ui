@@ -6,10 +6,25 @@ import { Transaction } from 'ethers';
 import { alert, Alert, x40 } from '../../../source/functions';
 import { Amount, NftCoreId } from '../../../source/redux/types';
 import { Nft, NftLevel, NftLevels } from '../../../source/redux/types';
-import { OtfWallet } from '../../../source/wallet';
+import { NftWallet, OtfWallet } from '../../../source/wallet';
 import { Years } from '../../../source/years';
 
-$('#connect-metamask').on('connected', function initBurner() {
+Blockchain.onConnect(async function isApproved({
+    address, token
+}) {
+    const ppt_treasury = PptTreasuryFactory({ token });
+    const nft_wallet = new NftWallet(address, token);
+    const approved = await nft_wallet.isApprovedForAll(
+        await ppt_treasury.then((c) => c?.address)
+    );
+    const $burner = $('#batch-burner');
+    if (approved) {
+        $burner.addClass('show');
+    } else {
+        $burner.removeClass('show');
+    }
+});
+Blockchain.onceConnect(function initBurner() {
     const $burner = $('#batch-burner');
     const $approval = $('#burn-approval');
     $approval.on('approved', () => {
@@ -17,12 +32,8 @@ $('#connect-metamask').on('connected', function initBurner() {
         $burner.addClass('show');
     });
     const $amounts = $('.amount');
-    $amounts.on('change', (el, { amount }) => {
-        if (amount < 0n) {
-            $burner.prop('disabled', false);
-        } else if (amount === 0n) {
-            $burner.prop('disabled', !negatives($amounts));
-        }
+    $amounts.on('change', () => {
+        $burner.prop('disabled', !negatives($amounts));
     });
 });
 $('#batch-burner').on('click', async function batchBurnPpts() {
@@ -72,7 +83,9 @@ $('#batch-burner').on('click', async function batchBurnPpts() {
         $burner.trigger('burned');
     };
     const $burner = $('#batch-burner');
-    const ppt_treasury = PptTreasuryFactory();
+    const ppt_treasury = PptTreasuryFactory({
+        token: App.token
+    });
     let tx: Transaction | undefined;
     try {
         $('.alert').remove();
@@ -105,7 +118,7 @@ $('#batch-burner').on('click', async function batchBurnPpts() {
         console.error(ex);
     }
 });
-$('#connect-metamask').on('connected', function toggleBurner() {
+Blockchain.onceConnect(function toggleBurner() {
     const $burner = $('#batch-burner');
     $burner.on('burning', () => {
         $burner.prop('disabled', true);
@@ -114,24 +127,30 @@ $('#connect-metamask').on('connected', function toggleBurner() {
         $burner.prop('disabled', false);
     });
 });
-$('#connect-metamask').on('connected', function toggleBurnerSpinner() {
+Blockchain.onceConnect(function toggleBurnerSpinner() {
     const $burner = $('#batch-burner');
     const $text = $burner.find('.text');
     const $spinner = $burner.find('.spinner');
     $burner.on('burning', () => {
         $spinner.css('visibility', 'visible');
         $spinner.addClass('spinner-grow');
-        $text.text('Unstaking NFTs…');
+        $text.html(
+            'Unstaking<span class="d-none d-sm-inline"> NFTs…</span>'
+        );
     });
     $burner.on('burned', () => {
         $spinner.css('visibility', 'hidden');
         $spinner.removeClass('spinner-grow');
-        $text.text('Unstake NFTs');
+        $text.html(
+            'Unstake<span class="d-none d-sm-inline"> NFTs</span>'
+        );
     });
     $burner.on('error', () => {
         $spinner.css('visibility', 'hidden');
         $spinner.removeClass('spinner-grow');
-        $text.text('Unstake NFTs');
+        $text.html(
+            'Unstake<span class="d-none d-sm-inline"> NFTs</span>'
+        );
     });
 });
 function negatives($amounts: JQuery<HTMLElement>) {

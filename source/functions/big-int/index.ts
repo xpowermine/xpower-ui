@@ -1,3 +1,6 @@
+/* eslint @typescript-eslint/no-explicit-any: [off] */
+const prototype = BigInt.prototype as any;
+prototype.toJson = (b: bigint) => `${b}n`;
 export function max(
     lhs: bigint, rhs: bigint
 ) {

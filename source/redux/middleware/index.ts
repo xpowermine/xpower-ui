@@ -1,12 +1,16 @@
-import { applyMiddleware, StoreEnhancer } from 'redux';
+import { applyMiddleware, compose } from 'redux';
 import { logger } from './logger';
 
-export function middleware(configuration: {
+export function middleware<Ext, S>(configuration: {
     /** flag for console logging */
     logger: boolean
-}): StoreEnhancer {
-    return configuration.logger
-        ? applyMiddleware(logger)
-        : applyMiddleware();
+}) {
+    return [
+        compose(
+            configuration.logger
+                ? applyMiddleware<Ext, S>(logger)
+                : applyMiddleware<Ext, S>()
+        )
+    ];
 }
 export default middleware;

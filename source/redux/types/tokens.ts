@@ -14,7 +14,7 @@ export function* Tokens() {
 export type Tokens = {
     /** token => { amount, supply } */
     items: {
-        [token in Token]: {
+        [token in Token]?: {
             amount: Amount;
             supply: Supply;
         }

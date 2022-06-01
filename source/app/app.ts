@@ -1,4 +1,5 @@
-import { createStore, combineReducers, Unsubscribe } from 'redux';
+import { combineReducers, Unsubscribe } from 'redux';
+import { configureStore } from '@reduxjs/toolkit';
 import { Store } from 'redux';
 
 import { Address, Amount, Nonce, Supply, Token } from '../redux/types';
@@ -6,7 +7,7 @@ import { NftFullId, NftIssue, NftLevel, NftToken } from '../redux/types';
 import { BlockHash, State } from '../redux/types';
 
 import { middleware } from '../redux/middleware';
-import { Action, } from '../redux/actions'
+import { Action } from '../redux/actions'
 
 import { onNftAdded, OnNftAdded } from '../redux/observers';
 import { onPptAdded, OnPptAdded } from '../redux/observers';
@@ -30,11 +31,13 @@ import { addNft, addPpt } from '../redux/actions';
 import { removeNft, removePpt } from '../redux/actions';
 import { nftReducer, pptReducer } from '../redux/reducers';
 import { nftTotalBy, pptTotalBy } from '../redux/selectors';
+import { nftsBy, pptsBy } from '../redux/selectors';
 
 import { setToken } from '../redux/actions';
 import { addToken } from '../redux/actions';
 import { removeToken } from '../redux/actions';
 import { tokenReducer } from '../redux/reducers';
+import { tokensBy } from '../redux/selectors';
 
 import { refresh } from '../redux/actions';
 import { refreshed } from '../redux/selectors';
@@ -45,6 +48,8 @@ import { Miner } from '../miner';
 
 import { Tokenizer } from '../token';
 import { Parser } from '../parser';
+
+import { Version } from '../types';
 import { Global } from '../types';
 declare const global: Global;
 
@@ -57,11 +62,11 @@ export class App {
     }
     private constructor() {
         const reducer = combineReducers({
-            refresh: refreshReducer,
             nonces: nonceReducer,
             nfts: nftReducer,
             ppts: pptReducer,
-            tokens: tokenReducer
+            tokens: tokenReducer,
+            refresh: refreshReducer,
         });
         if (App.clear) {
             this.db.clear(App.persist);
@@ -69,11 +74,18 @@ export class App {
         if (App.clearAll) {
             this.db.clear();
         }
-        this._store = createStore(
-            reducer, this.db.load(App.persist), middleware({
+        this._store = configureStore({
+            reducer, middleware: (m) => m({
+                /**
+                 * @todo: fix bigint check & re-enable!
+                 */
+                serializableCheck: false
+            }),
+            enhancers: middleware<typeof reducer, State>({
                 logger: App.logger
-            })
-        );
+            }),
+            preloadedState: this.db.load(App.persist),
+        });
         if (App.persist > 0) this._store.subscribe(() => {
             const state = this._store.getState();
             if (!refreshed(state.refresh)) {
@@ -83,27 +95,37 @@ export class App {
     }
     public static addNonce(
         nonce: Nonce, item: {
-            address: Address, block_hash: BlockHash,
-            amount: Amount, worker: number
+            address: Address,
+            amount: Amount,
+            block_hash: BlockHash,
+            token: Token,
+            worker: number,
         }
     ) {
         this.me.store.dispatch(addNonce(nonce, item));
     }
     public static removeNonce(
         nonce: Nonce, item: {
-            address: Address, block_hash: BlockHash
+            address: Address,
+            block_hash: BlockHash,
+            token: Token
         }
     ) {
         this.me.store.dispatch(removeNonce(nonce, item));
     }
     public static removeNonceByAmount(
-        item: { address: Address, block_hash: BlockHash, amount: Amount }
+        item: {
+            address: Address,
+            amount: Amount,
+            block_hash: BlockHash,
+            token: Token
+        }
     ) {
         this.me.store.dispatch(removeNonceByAmount(item));
     }
     public static removeNonces() {
         this.me.store.dispatch(removeNonces({
-            address: null
+            address: null, token: null
         }));
     }
     public static onNonceAdded(
@@ -136,13 +158,19 @@ export class App {
         return () => { un_add(); un_rem(); };
     }
     public static getNonceBy(query?: {
-        address?: Address, block_hash?: BlockHash, amount?: Amount
+        address?: Address,
+        amount?: Amount,
+        block_hash?: BlockHash,
+        token?: Token
     }, index = 0): Nonce | undefined {
         const { nonces } = this.me.store.getState();
         return nonceBy(nonces, query, index);
     }
     public static getNoncesBy(query?: {
-        address?: Address, block_hash?: BlockHash, amount?: Amount
+        address?: Address,
+        amount?: Amount,
+        block_hash?: BlockHash,
+        token?: Token
     }): Nonce[] {
         const { nonces } = this.me.store.getState();
         return noncesBy(nonces, query);
@@ -259,6 +287,14 @@ export class App {
         const un_rem = this.onPptRemoved(callback);
         return () => { un_add(); un_rem(); };
     }
+    public static getNfts(nft: NftFullId | {
+        issue?: NftIssue,
+        level?: NftLevel,
+        token?: NftToken,
+    }) {
+        const { nfts } = this.me.store.getState();
+        return nftsBy(nfts, nft)
+    }
     public static getNftTotalBy(nft: NftFullId | {
         issue?: NftIssue,
         level?: NftLevel,
@@ -268,6 +304,14 @@ export class App {
     } {
         const { nfts } = this.me.store.getState();
         return nftTotalBy(nfts, nft);
+    }
+    public static getPpts(ppt: NftFullId | {
+        issue?: NftIssue,
+        level?: NftLevel,
+        token?: NftToken,
+    }) {
+        const { ppts } = this.me.store.getState();
+        return pptsBy(ppts, ppt)
     }
     public static getPptTotalBy(ppt: NftFullId | {
         issue?: NftIssue,
@@ -320,19 +364,30 @@ export class App {
         const un_rem = this.onTokenRemoved(callback);
         return () => { un_add(); un_rem(); };
     }
+    public static getTokens(token?: Token) {
+        const { tokens } = this.me.store.getState();
+        return tokensBy(tokens, token)
+    }
     public static refresh() {
-        this.me.store.dispatch(refresh());
+        this.me.refresh();
     }
-    public static miner(address: Address): Miner {
-        return this.me.miner(address);
+    private refresh() {
+        this.store.dispatch(refresh());
     }
-    private miner(address: Address): Miner {
-        if (this._miner === undefined) {
-            this._miner = new Miner(
-                App.token, address, App.level.min, App.speed
+    public static miner(
+        address: Address, { token }: { token: Token }
+    ): Miner {
+        return this.me.miner(address, { token });
+    }
+    private miner(
+        address: Address, { token }: { token: Token }
+    ): Miner {
+        if (this._miner[token] === undefined) {
+            this._miner[token] = new Miner(
+                token, address, App.level.min, App.speed
             );
         }
-        return this._miner;
+        return this._miner[token];
     }
     private get db(): StateDb {
         if (this._db === undefined) {
@@ -340,9 +395,9 @@ export class App {
         }
         return this._db;
     }
-    public static get amount(): { min: Amount, max: Amount } {
-        const min = Tokenizer.amount(App.token, App.level.min);
-        const max = Tokenizer.amount(App.token, App.level.max);
+    public static range(token: Token): { min: Amount, max: Amount } {
+        const min = Tokenizer.amount(token, App.level.min);
+        const max = Tokenizer.amount(token, App.level.max);
         return { min, max };
     }
     public static get clear(): boolean {
@@ -376,7 +431,7 @@ export class App {
     public static get token(): Token {
         return Tokenizer.token(this.params.get('token'));
     }
-    public static get version() {
+    public static get version(): Version {
         switch (this.params.get('version')) {
             case 'v2a':
                 return 'v2a';
@@ -400,7 +455,7 @@ export class App {
         return this._store;
     }
     private _db: StateDb | undefined;
-    private _miner: Miner | undefined;
+    private _miner = {} as Record<Token, Miner>;
     private _store: Store<State, Action>;
 }
 export default App;

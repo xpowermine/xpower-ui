@@ -11,7 +11,22 @@ form#selector {
     a:not(:last-of-type) {
       border-right: none;
     }
+    a.pseudo-disabled {
+      pointer-events: none;
+    }
     a {
+      span.spinner {
+        margin: 0 0.25em;
+      }
+      @media (min-width: 576px) {
+        span.spinner {
+          margin: 0.25em;
+        }
+      }
+      span.spinner {
+        height: 1em;
+        width: 1em;
+      }
       border: 1px solid var(--xp-powered);
       color: var(--xp-powered);
     }

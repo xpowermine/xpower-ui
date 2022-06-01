@@ -1,19 +1,15 @@
 /* eslint @typescript-eslint/no-explicit-any: [off] */
-import { Global } from '../../../source/types';
-declare const global: Global;
-
 import { App } from '../../../source/app';
 import { Blockchain } from '../../../source/blockchain';
 import { Transaction } from 'ethers';
-import { alert, Alert, x40 } from '../../../source/functions';
+import { Alert, alert, x40 } from '../../../source/functions';
 import { Amount, NftCoreId, Supply } from '../../../source/redux/types';
 import { Nft, NftFullId } from '../../../source/redux/types';
 import { NftLevel, NftLevels } from '../../../source/redux/types';
 import { NftWallet, NftWalletMock } from '../../../source/wallet';
 import { OnTransferSingle } from '../../../source/wallet';
 import { DeltaYears } from '../../../source/years';
-
-const { Tooltip } = global.bootstrap as any;
+import { Tooltip } from '../../tooltips';
 
 App.onNftChanged(async function setLevelDetails(
     id: NftFullId, { amount, supply }: {
@@ -37,14 +33,35 @@ App.onNftChanged(async function setLevelDetails(
     $balance.val(amount.toString());
     $balance.trigger('change');
 });
+$('#selector').on('switch', function resetImage() {
+    $('.nft-minter').each((_, el) => {
+        reset_image($(el));
+    });
+    function reset_image($nft_minter: JQuery) {
+        const level = $nft_minter.data('level') as NftLevels;
+        const $nft_details = $(`.nft-details[data-level=${level}]`);
+        const display = $nft_details.css('display');
+        if (display !== 'none') {
+            const $image = $nft_details.find('.nft-image');
+            $image.attr('src', '');
+            const $spinner = $image.siblings('.spinner');
+            $spinner.css('color', 'var(--xp-powered)');
+            $spinner.show();
+            $nft_minter.trigger('expanded', {
+                level: NftLevel[level]
+            });
+        }
+    }
+});
 $('.nft-minter').on('expanded', async function setImage(
     ev, { level }: { level: NftLevel }
 ) {
+    const token = App.token;
     const address = await Blockchain.selectedAddress;
     if (address) {
-        await set_image(new NftWallet(address));
+        await set_image(new NftWallet(address, token));
     } else {
-        await set_image(new NftWalletMock());
+        await set_image(new NftWalletMock(0n, token));
     }
     async function set_image(nft_wallet: NftWallet) {
         const $nft_details = $(
@@ -76,17 +93,20 @@ $('.nft-image').on('load', async function setCollectionUrl(ev) {
     if (url) {
         $image.parent('a').attr('href', url.toString());
         $image.css('cursor', 'pointer');
+    } else {
+        $image.parent('a').removeAttr('href');
+        $image.css('cursor', 'default');
     }
     async function href(nft_id: NftCoreId): Promise<URL | null> {
         const address = await Blockchain.selectedAddress;
         if (!address) {
             throw new Error('missing selected-address');
         }
-        const nft_wallet = new NftWallet(address);
+        const nft_wallet = new NftWallet(address, App.token);
         const supply = await nft_wallet.totalSupply(nft_id);
         if (supply > 0) {
+            const nft_contract = await nft_wallet.contract;
             const market = 'https://nftrade.com/assets/avalanche';
-            const nft_contract = await nft_wallet.contract.then((c) => c);
             return new URL(`${market}/${nft_contract.address}/${nft_id}`);
         }
         return null;
@@ -242,7 +262,7 @@ $('.nft-sender>.sender').on('click', async function transferNft(ev) {
     const $transfer_amount = $nft_sender.siblings('.nft-transfer-amount');
     const $amount = $transfer_amount.find('>input');
     const amount = BigInt($amount.val() as string);
-    const nft_wallet = new NftWallet(address);
+    const nft_wallet = new NftWallet(address, App.token);
     const on_single_tx: OnTransferSingle = async (
         op, from, to, id, value, ev
     ) => {
@@ -269,11 +289,11 @@ $('.nft-sender>.sender').on('click', async function transferNft(ev) {
                 const message = `${ex.message} [${ex.data.message}]`;
                 const $alert = $(alert(message, Alert.warning));
                 $alert.insertAfter($sender.parents('.row'));
-                $alert.find('.alert').css('margin-top', '0.5em');
+                $alert.find('.alert').css('margin', '1em 0 0');
             } else {
                 const $alert = $(alert(ex.message, Alert.warning));
                 $alert.insertAfter($sender.parents('.row'));
-                $alert.find('.alert').css('margin-top', '0.5em');
+                $alert.find('.alert').css('margin', '1em 0 0');
             }
         }
         $sender.trigger('error', {

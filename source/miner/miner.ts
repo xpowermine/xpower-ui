@@ -138,13 +138,13 @@ export class Miner extends EventEmitter {
     private get level() {
         return this._level;
     }
-    private get speed() {
+    public get speed() {
         return this._speed;
     }
     private set speed(value: number) {
         this._speed = value;
     }
-    private get token(): Token {
+    public get token(): Token {
         return this._token;
     }
     private get workers(): ModuleThread<IWorker>[] {
@@ -158,7 +158,7 @@ export class Miner extends EventEmitter {
     private _workers: ModuleThread<IWorker>[] = [];
 }
 function logical_cpus() {
-    const n_cpus = window.navigator.hardwareConcurrency;
+    const n_cpus = global?.navigator?.hardwareConcurrency ?? 1;
     return n_cpus + n_cpus % 2;
 }
 export default Miner;

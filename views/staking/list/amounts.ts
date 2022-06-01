@@ -3,12 +3,14 @@ import { Global } from '../../../source/types';
 declare const global: Global;
 
 import { App } from '../../../source/app';
-import { buffered } from '../../../source/functions';
-import { Amount, NftLevel, NftLevels } from '../../../source/redux/types';
+import { Blockchain } from '../../../source/blockchain';
+import { buffered, delayed } from '../../../source/functions';
+import { Amount, Nft, NftLevel, NftLevels, NftToken } from '../../../source/redux/types';
+import { Tooltip } from '../../tooltips';
 
-const { Tooltip } = global.bootstrap as any;
-
-$('#connect-metamask').on('connected', async function initAmounts() {
+Blockchain.onceConnect(function initAmounts({
+    token
+}) {
     const nft_wait = new Promise<void>((resolve) => {
         const un = App.onNftChanged(buffered(() => {
             un(); resolve();
@@ -19,16 +21,24 @@ $('#connect-metamask').on('connected', async function initAmounts() {
             un(); resolve();
         }));
     });
-    await Promise.all([nft_wait, ppt_wait]).then(
-        syncAmounts
+    Promise.all([nft_wait, ppt_wait]).then(
+        () => setAmounts(Nft.token(token))
     );
-    App.onNftChanged(syncAmounts);
-    App.onPptChanged(syncAmounts);
 });
-async function syncAmounts() {
+Blockchain.onceConnect(delayed(function syncAmounts() {
+    App.onNftChanged((id) => setAmounts(Nft.token(id)));
+    App.onPptChanged((id) => setAmounts(Nft.token(id)));
+}));
+async function setAmounts(
+    nft_token: NftToken
+) {
     for (const level of NftLevels()) {
-        const nft_total = App.getNftTotalBy({ level });
-        const ppt_total = App.getPptTotalBy({ level });
+        const nft_total = App.getNftTotalBy({
+            level, token: nft_token
+        });
+        const ppt_total = App.getPptTotalBy({
+            level, token: nft_token
+        });
         sync(level, nft_total, ppt_total);
     }
     function sync(
@@ -44,11 +54,6 @@ async function syncAmounts() {
             'disabled', nft_amount === 0n && ppt_amount === 0n
         );
         if (nft_amount > 0) {
-            const $toggle = $nft_minter.find('.toggle');
-            if ($toggle.attr('data-state') === 'off') {
-                $toggle.attr('data-state', 'on');
-                $toggle.trigger('click');
-            }
             $nft_minter.show();
         }
         const $amount = $nft_minter.find('.amount');
@@ -253,8 +258,8 @@ $('.amount').on('change', function onAmountChanged(ev, {
         $amount.attr('title', `${level} NFTs to (un)stake`);
         $minter.attr('title', `(Un)stake ${level} NFTs`);
     }
-    Tooltip.getInstance($amount).dispose();
-    Tooltip.getOrCreateInstance($amount);
-    Tooltip.getInstance($minter).dispose();
-    Tooltip.getOrCreateInstance($minter);
+    Tooltip.getInstance($amount[0])?.dispose();
+    Tooltip.getOrCreateInstance($amount[0]);
+    Tooltip.getInstance($minter[0])?.dispose();
+    Tooltip.getOrCreateInstance($minter[0]);
 });

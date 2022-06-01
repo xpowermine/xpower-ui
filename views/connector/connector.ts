@@ -1,13 +1,8 @@
-/* eslint @typescript-eslint/no-explicit-any: [off] */
-import { Global } from '../../source/types';
-declare const global: Global;
-
 import { App } from '../../source/app';
 import { Blockchain } from '../../source/blockchain';
 import { ChainId } from '../../source/blockchain';
 import { delayed } from '../../source/functions';
-
-const { Tooltip } = global.bootstrap as any;
+import { Tooltip } from '../tooltips';
 
 $(window).on('load', delayed(async function connect() {
     const $connect = $('#connect-metamask');
@@ -38,8 +33,8 @@ $(window).on('load', delayed(async function connect() {
     if (await Blockchain.isInstalled() === false) {
         const $info = $connect.siblings('.info');
         $info.attr('title', 'Install Metamask (and reload)');
-        Tooltip.getInstance($info).dispose();
-        Tooltip.getOrCreateInstance($info);
+        Tooltip.getInstance($info[0])?.dispose();
+        Tooltip.getOrCreateInstance($info[0]);
     }
 }, ms()));
 function ms(fallback?: number) {
@@ -87,13 +82,16 @@ function reload(delta_ms: number) {
         location.search = `?ms=${delta_ms}`;
     }
 }
-$(window).on('load', function refresh() {
+$('#selector').on('switch', async function reconnect() {
     const $connect = $('#connect-metamask');
-    $connect.on('connected', () => {
-        App.refresh();
-    });
+    try {
+        const address = await Blockchain.connect();
+        $connect.trigger('connected', { address });
+    } catch (ex) {
+        $connect.trigger('error', { error: ex });
+    }
 });
-$(window).on('load', function error() {
+$(window).on('load', function printConnectError() {
     const $connect = $('#connect-metamask');
     $connect.on('error', (ev, { error }) => {
         console.error(error);
@@ -140,11 +138,8 @@ $(window).on('load', function toggleConnectSpinner() {
         $spinner.removeClass('spinner-grow');
     });
 });
-$(window).on('load', function reloader() {
-    const $connect = $('#connect-metamask');
-    $connect.one('connected', delayed(async () => {
-        const p = await Blockchain.provider;
-        p.on('chainChanged', () => location.reload());
-        p.on('accountsChanged', () => location.reload());
-    }, 600));
-});
+Blockchain.onceConnect(delayed(async function reload() {
+    const p = await Blockchain.provider;
+    p.on('chainChanged', () => location.reload());
+    p.on('accountsChanged', () => location.reload());
+}, 600));
