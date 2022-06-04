@@ -17,7 +17,9 @@ html
       integrity="sha256-uxjsS9cYFLTjmlr8j5i+DqvOLCBugRzEeWxUMWZeYXQ="
       crossorigin="anonymous" rel="stylesheet")
     block styles
-  body.container.d-flex.flex-column.p-3.pb-0
+  body.container.d-flex.flex-column.p-3.pb-0(
+    ondragstart="return false;" ondrop="return false;"
+  )
     block globals
     block header
     block content
