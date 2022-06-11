@@ -6,10 +6,10 @@ node_modules/
 
 **/*.css
 **/*.css.map
-**/*.css.*.txt
 **/*.js
 **/*.js.map
-**/*.js.*.txt
+**/*.jsx
+**/*.jsx.map
 
 !jest.config.js
 !webpack.*.js

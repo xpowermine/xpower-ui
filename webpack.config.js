@@ -17,7 +17,7 @@ const configuration = ({
             './views/theme/theme.ts',
             './views/tooltips/tooltips.ts',
             './views/about/about.ts',
-            './views/header/header.ts',
+            './views/header/header.tsx',
             './views/footer/footer.ts',
         ],
         error: [
@@ -25,7 +25,7 @@ const configuration = ({
             './views/theme/theme.ts',
             './views/tooltips/tooltips.ts',
             './views/error/error.ts',
-            './views/header/header.ts',
+            './views/header/header.tsx',
             './views/footer/footer.ts',
         ],
         home: [
@@ -36,7 +36,7 @@ const configuration = ({
             './views/selector/selector.ts',
             './views/location/location.ts',
             './views/home/home.ts',
-            './views/header/header.ts',
+            './views/header/header.tsx',
             './views/footer/footer.ts',
             './views/connector/connector.ts',
         ],
@@ -45,7 +45,7 @@ const configuration = ({
             './views/theme/theme.ts',
             './views/tooltips/tooltips.ts',
             './views/migrate/index.ts',
-            './views/header/header.ts',
+            './views/header/header.tsx',
             './views/footer/footer.ts',
             './views/connector/connector.ts',
         ],
@@ -57,7 +57,7 @@ const configuration = ({
             './views/selector/selector.ts',
             './views/location/location.ts',
             './views/nfts/nfts.ts',
-            './views/header/header.ts',
+            './views/header/header.tsx',
             './views/footer/footer.ts',
             './views/connector/connector.ts',
         ],
@@ -69,7 +69,7 @@ const configuration = ({
             './views/selector/selector.ts',
             './views/location/location.ts',
             './views/staking/staking.ts',
-            './views/header/header.ts',
+            './views/header/header.tsx',
             './views/footer/footer.ts',
             './views/connector/connector.ts',
         ],
@@ -82,12 +82,15 @@ const configuration = ({
             test: /\.tsx?$/i,
             use: 'ts-loader'
         }, {
-            test: /\.js$/i,
+            test: /\.jsx?$/i,
             exclude: [/node_modules/i, /\.(min|umd)\.js$/i],
             use: {
                 loader: 'babel-loader',
                 options: {
-                    presets: ['@babel/preset-env'],
+                    presets: [
+                        '@babel/preset-react',
+                        '@babel/preset-env'
+                    ],
                     cacheDirectory: true
                 }
             }
