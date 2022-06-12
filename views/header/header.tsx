@@ -1,49 +1,86 @@
-import { Page, Token } from '../../source/redux/types';
 import { App } from '../../source/app';
+import { Page, Token } from '../../source/redux/types';
 
-import React from 'react';
-import { createElement } from 'react';
+import React, { createElement } from 'react';
 import { createRoot } from 'react-dom/client';
 
-class Header extends React.Component<{
-    token: Token, page: Page
+export class Header extends React.Component<{
+    token: Token, page: Page,
 }, {
-    token: Token
+    token: Token, page: Page,
 }> {
     constructor(props: {
         token: Token, page: Page
     }) {
         super(props);
         this.state = {
-            token: props.token
+            ...props
         };
         this.events();
     }
     events() {
-        App.onTokenSwitch((token) => this.setState({ token }));
+        App.onPageSwitch((page) => this.setState({
+            page
+        }))
+        App.onTokenSwitch((token) => this.setState({
+            token
+        }));
     }
     render() {
-        return <nav id='menu' className='nav nav-pills nav-justified mb-3'>
-            {this.a(Page.Home, 'XPower', 'bi-lightning-charge-fill')}
-            {this.a(Page.Nfts, 'NFTs', 'bi-image-fill')}
-            {this.a(Page.Staking, 'Staking', 'bi-cash-stack')}
-            {this.a(Page.About, 'About', 'bi-lightbulb-fill')}
+        return <nav
+            className='nav nav-pills nav-justified mb-3' id='menu'
+        >
+            {this.$anchor(Page.Home)}
+            {this.$anchor(Page.Nfts)}
+            {this.$anchor(Page.Staking)}
+            {this.$anchor(Page.About)}
         </nav>;
     }
-    a(page: Page, text: string, icon: string) {
-        return <a href={`/${page}?token=` + this.state.token} className={
-            `flex-sm-fill text-sm-center nav-link ${this.active(page)}`
-        }>
-            <i className={`${icon} float-sm-start`} />
-            <span className='d-none d-sm-inline'>{text}</span>
+    $anchor(page: Page) {
+        const active = this.props.page === page ? `active ${page}` : page;
+        const classes = [
+            'btn btn-outline-warning',
+            'flex-sm-fill text-sm-center',
+            'nav-link', active
+        ];
+        return <a
+            href={`/${page}?token=${this.state.token}`}
+            className={classes.join(' ')}
+        >
+            {this.$icon(page)}
+            {this.$label(page)}
         </a>;
     }
-    active(page: Page) {
-        return this.props.page === page ? `active ${page}` : page;
+    $icon(page: Page) {
+        const classes = [
+            'float-sm-start', this.icons[page]
+        ];
+        return <i className={classes.join(' ')} />;
+    }
+    $label(page: Page) {
+        return <span className='d-none d-sm-inline'>
+            {this.labels[page]}
+        </span>;
+    }
+    icons: Record<Page, string> = {
+        [Page.Home]: 'bi-lightning-charge-fill',
+        [Page.Nfts]: 'bi-image-fill',
+        [Page.Staking]: 'bi-cash-stack',
+        [Page.About]: 'bi-lightbulb-fill',
+        [Page.None]: '',
+    }
+    labels: Record<Page, string> = {
+        [Page.Home]: 'XPower',
+        [Page.Nfts]: 'NFTs',
+        [Page.Staking]: 'Staking',
+        [Page.About]: 'About',
+        [Page.None]: '',
     }
 }
-const container = document.querySelector('header');
-const root = createRoot(container!);
-root.render(createElement(Header, {
-    token: App.token, page: App.page
-}));
+if (require.main === module) {
+    const $header = document.querySelector('header');
+    createRoot($header!).render(createElement(Header, {
+        token: App.token, page: App.page
+    }));
+}
+export default Header;
