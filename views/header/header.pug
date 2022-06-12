@@ -1,24 +1,24 @@
 header
     nav#menu.nav.nav-pills.nav-justified.mb-3
-        a.flex-sm-fill.text-sm-center.nav-link.home(
+        a.btn.btn-outline-warning.flex-sm-fill.text-sm-center.nav-link.home(
             class=`${PAGE === 'home' ? 'active' : ''}`
             href="/home?token={{TOKEN}}"
         )
             i.bi-lightning-charge-fill.float-sm-start
             span.d-none.d-sm-inline: | XPower
-        a.flex-sm-fill.text-sm-center.nav-link.nfts(
+        a.btn.btn-outline-warning.flex-sm-fill.text-sm-center.nav-link.nfts(
             class=`${PAGE === 'nfts' ? 'active' : ''}`
             href="/nfts?token={{TOKEN}}"
         )
             i.bi-image-fill.float-sm-start
             span.d-none.d-sm-inline: | NFTs
-        a.flex-sm-fill.text-sm-center.nav-link.staking(
+        a.btn.btn-outline-warning.flex-sm-fill.text-sm-center.nav-link.staking(
             class=`${PAGE === 'staking' ? 'active' : ''}`
             href="/staking?token={{TOKEN}}"
         )
             i.bi-cash-stack.float-sm-start
             span.d-none.d-sm-inline: | Staking
-        a.flex-sm-fill.text-sm-center.nav-link.about(
+        a.btn.btn-outline-warning.flex-sm-fill.text-sm-center.nav-link.about(
             class=`${PAGE === 'about' ? 'active' : ''}`
             href="/about?token={{TOKEN}}"
         )
