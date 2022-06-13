@@ -1,6 +1,7 @@
 export * from './base';
 export * from './nfts';
 export * from './nonces';
+export * from './page';
 export * from './refresh';
 export * from './tokens';
 

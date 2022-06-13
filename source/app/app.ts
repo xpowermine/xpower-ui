@@ -2,7 +2,7 @@ import { combineReducers, Unsubscribe } from 'redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { Store } from 'redux';
 
-import { Address, Amount, Nonce, Supply, Token } from '../redux/types';
+import { Address, Amount, Nonce, Page, Pages, Supply, Token } from '../redux/types';
 import { NftFullId, NftIssue, NftLevel, NftToken } from '../redux/types';
 import { BlockHash, State } from '../redux/types';
 
@@ -407,7 +407,20 @@ export class App {
         return Math.min(100, Math.max(0, value)) / 100;
     }
     public static get token(): Token {
+        return this.me.token;
+    }
+    public get token(): Token {
         return Tokenizer.token(this.params.get('token'));
+    }
+    public static get page(): Page {
+        return this.me.page;
+    }
+    public get page(): Page {
+        const path = location.pathname.slice(1) as Page;
+        if (Pages().has(path)) {
+            return path;
+        }
+        return Page.Home;
     }
     public static get version(): Version {
         switch (this.params.get('version')) {
@@ -424,10 +437,10 @@ export class App {
         }
     }
     public static get params(): URLSearchParams {
-        if (typeof document !== 'undefined') {
-            return new URLSearchParams(document.location.search.substring(1));
-        }
-        return new URLSearchParams();
+        return new URLSearchParams(location?.search.substring(1));
+    }
+    public get params(): URLSearchParams {
+        return new URLSearchParams(location?.search.substring(1));
     }
     private get store(): Store<State, Action> {
         return this._store;

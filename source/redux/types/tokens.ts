@@ -6,10 +6,14 @@ export enum Token {
     ODIN = 'ODIN',
     HELA = 'HELA',
 }
-export function* Tokens() {
-    for (const t in Token) {
-        yield t as Token;
+export function Tokens(): Set<Token> {
+    const ref = Token as typeof Token & {
+        _set?: Set<Token>
+    };
+    if (ref._set === undefined) {
+        ref._set = new Set(Object.values(Token));
     }
+    return ref._set;
 }
 export type Tokens = {
     /** token => { amount, supply } */
