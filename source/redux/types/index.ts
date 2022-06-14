@@ -5,17 +5,20 @@ export * from './page';
 export * from './refresh';
 export * from './tokens';
 
+import { Page } from './page';
 import { Nfts } from './nfts';
 import { Nonces } from './nonces';
 import { Refresh } from './refresh';
-import { Tokens } from './tokens';
+import { Token, Tokens } from './tokens';
 
 export type State = {
+    page: Page,
     nfts: Nfts,
     ppts: Nfts,
     nonces: Nonces,
     refresh: Refresh,
-    tokens: Tokens
+    token: Token,
+    tokens: Tokens,
 };
 export function Empty<T extends {
     items: Record<string | number | symbol, unknown>

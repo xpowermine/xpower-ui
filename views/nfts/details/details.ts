@@ -33,7 +33,7 @@ App.onNftChanged(async function setLevelDetails(
     $balance.val(amount.toString());
     $balance.trigger('change');
 });
-$('#selector').on('switch', function resetImage() {
+App.onTokenSwitch(function resetImage() {
     $('.nft-minter').each((_, el) => {
         reset_image($(el));
     });

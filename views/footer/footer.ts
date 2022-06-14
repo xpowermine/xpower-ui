@@ -4,11 +4,9 @@ import { ChainId } from '../../source/blockchain';
 import { Token } from '../../source/redux/types';
 import { Version } from '../../source/types';
 
-$('#selector').on('switch', async function setFooterLinks(ev, {
+App.onTokenSwitch(async function setFooterLinks(
     token, old_token
-}: {
-    token: Token, old_token: Token
-}) {
+) {
     function href(rx: RegExp, el: HTMLElement) {
         const value = $(el).attr('href');
         if (value?.match(rx)) {
@@ -23,7 +21,7 @@ $('#selector').on('switch', async function setFooterLinks(ev, {
 $(window).on('load', function initContractAddress() {
     setContractAddress(App.token, App.version);
 });
-$('#selector').on('switch', function syncContractAddress() {
+App.onTokenSwitch(function syncContractAddress() {
     setContractAddress(App.token, App.version);
 });
 function setContractAddress(

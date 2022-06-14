@@ -1,8 +1,8 @@
 import { NftFullId, NftIssue, NftToken, NftLevel } from '../types';
 import { Amount, Supply } from '../types';
 
-export type SetPpt = {
-    type: 'ppt/set', payload: {
+export type SetNft = {
+    type: 'nfts/set', payload: {
         nft: NftFullId | {
             token: NftToken,
             issue: NftIssue,
@@ -14,7 +14,7 @@ export type SetPpt = {
         }
     }
 };
-export const setPpt = (
+export const setNft = (
     nft: NftFullId | {
         token: NftToken,
         issue: NftIssue,
@@ -24,13 +24,13 @@ export const setPpt = (
         amount: Amount,
         supply: Supply
     }
-): SetPpt => ({
-    type: 'ppt/set', payload: {
+): SetNft => ({
+    type: 'nfts/set', payload: {
         nft, item
     }
 });
-export type AddPpt = {
-    type: 'ppt/add', payload: {
+export type AddNft = {
+    type: 'nfts/add', payload: {
         nft: NftFullId | {
             token: NftToken,
             issue: NftIssue,
@@ -42,7 +42,7 @@ export type AddPpt = {
         }
     }
 };
-export const addPpt = (
+export const addNft = (
     nft: NftFullId | {
         token: NftToken,
         issue: NftIssue,
@@ -52,13 +52,13 @@ export const addPpt = (
         amount: Amount, // new-amount = old-amount + amount
         supply?: Supply // new-supply = supply ?? old-supply + amount
     }
-): AddPpt => ({
-    type: 'ppt/add', payload: {
+): AddNft => ({
+    type: 'nfts/add', payload: {
         nft, item
     }
 });
-export type RemovePpt = {
-    type: 'ppt/remove', payload: {
+export type RemoveNft = {
+    type: 'nfts/remove', payload: {
         nft: NftFullId | {
             token: NftToken,
             issue: NftIssue,
@@ -70,7 +70,7 @@ export type RemovePpt = {
         }
     }
 };
-export const removePpt = (
+export const removeNft = (
     nft: NftFullId | {
         token: NftToken,
         issue: NftIssue,
@@ -80,9 +80,9 @@ export const removePpt = (
         amount: Amount, // new-amount = old-amount - amount
         supply?: Supply // new-supply = supply ?? old-supply (*no* decrease!)
     }
-): RemovePpt => ({
-    type: 'ppt/remove', payload: {
+): RemoveNft => ({
+    type: 'nfts/remove', payload: {
         nft, item
     }
 });
-export type Action = SetPpt | AddPpt | RemovePpt;
+export type Action = SetNft | AddNft | RemoveNft;

@@ -11,11 +11,9 @@ import { formatUnits } from '@ethersproject/units';
 import { parseUnits } from '@ethersproject/units';
 import { Tooltip } from '../tooltips';
 
-$('#selector').on('switch', async function relabelWallet(ev, {
+App.onTokenSwitch(async function relabelWallet(
     token, old_token
-}: {
-    token: Token, old_token: Token
-}) {
+) {
     function text(rx: RegExp, el: HTMLElement) {
         const value = $(el).text();
         if (value?.match(rx)) {

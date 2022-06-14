@@ -1,4 +1,5 @@
 export enum Page {
+    None = 'none',
     Home = 'home',
     Nfts = 'nfts',
     Staking = 'staking',

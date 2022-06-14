@@ -5,7 +5,7 @@ import { Refresh } from '../types';
 export function refreshReducer(
     refresh: Refresh = { date: null }, action: Action
 ): Refresh {
-    if (!action.type.startsWith('refresh')) {
+    if (!action.type.startsWith('refresh/by-date')) {
         return refresh;
     }
     return { date: action.payload.date };

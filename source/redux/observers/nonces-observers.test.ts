@@ -1,13 +1,10 @@
-import { combineReducers, createStore } from 'redux';
-import { nftReducer } from '../reducers';
-import { pptReducer } from '../reducers';
-import { nonceReducer } from '../reducers';
-import { refreshReducer } from '../reducers';
-import { tokenReducer } from '../reducers';
+import { configureStore } from '@reduxjs/toolkit';
+import { combineReducers, Store } from 'redux';
+import { noncesReducer } from '../reducers';
 
-import { addNonce, removeNonce, removeNonceByAmount } from '../actions';
+import { Action, addNonce, removeNonce, removeNonceByAmount } from '../actions';
 import { onNonceAdded, onNonceRemoved } from '.';
-import { Token } from '../types';
+import { State, Token } from '../types';
 
 describe('onNonceAdded', () => {
     const address = BigInt('0xabcd');
@@ -15,14 +12,16 @@ describe('onNonceAdded', () => {
     const token = Token.THOR;
     it('should invoke handler (for addNonce)', () => {
         const reducer = combineReducers({
-            nfts: nftReducer,
-            ppts: pptReducer,
-            nonces: nonceReducer,
-            refresh: refreshReducer,
-            tokens: tokenReducer,
+            nonces: noncesReducer
         });
-        const store = createStore(reducer);
-        onNonceAdded(store, (n, i, t_by, t) => {
+        const store = configureStore({
+            reducer, middleware: (m) => m({
+                serializableCheck: false
+            })
+        });
+        onNonceAdded(store as Store<State, Action>, (
+            n, i, t_by, t
+        ) => {
             expect(n).toEqual(0xffff);
             expect(i.address).toEqual(address);
             expect(i.amount).toEqual(1n);
@@ -42,14 +41,16 @@ describe('onNonceRemoved', () => {
     const token = Token.THOR;
     it('should invoke handler (for removeNonce)', () => {
         const reducer = combineReducers({
-            nfts: nftReducer,
-            ppts: pptReducer,
-            nonces: nonceReducer,
-            refresh: refreshReducer,
-            tokens: tokenReducer,
+            nonces: noncesReducer
         });
-        const store = createStore(reducer);
-        onNonceRemoved(store, (n, i, t_by, t) => {
+        const store = configureStore({
+            reducer, middleware: (m) => m({
+                serializableCheck: false
+            })
+        });
+        onNonceRemoved(store as Store<State, Action>, (
+            n, i, t_by, t
+        ) => {
             expect(n).toEqual(0xffff);
             expect(i.address).toEqual(address);
             expect(i.amount).toEqual(1n);
@@ -67,14 +68,16 @@ describe('onNonceRemoved', () => {
     });
     it('should invoke handler (for removeNonceByAmount)', () => {
         const reducer = combineReducers({
-            nfts: nftReducer,
-            ppts: pptReducer,
-            nonces: nonceReducer,
-            refresh: refreshReducer,
-            tokens: tokenReducer,
+            nonces: noncesReducer
         });
-        const store = createStore(reducer);
-        onNonceRemoved(store, (n, i, t_by, t) => {
+        const store = configureStore({
+            reducer, middleware: (m) => m({
+                serializableCheck: false
+            })
+        });
+        onNonceRemoved(store as Store<State, Action>, (
+            n, i, t_by, t
+        ) => {
             expect(n).toEqual(0xffff);
             expect(i.address).toEqual(address);
             expect(i.amount).toEqual(1n);

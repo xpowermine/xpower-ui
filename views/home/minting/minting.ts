@@ -14,8 +14,10 @@ import { MoeWallet, OnTransfer, OtfWallet } from '../../../source/wallet';
 $(window).on('load', function initMinters() {
     resetMinters(App.level);
 });
-$('#selector').on('switch', function syncMinters() {
+App.onTokenSwitch(function syncMinters() {
     resetMinters(App.level);
+});
+App.onTokenSwitched(function syncMinters() {
     App.removeNonces();
 });
 function resetMinters(

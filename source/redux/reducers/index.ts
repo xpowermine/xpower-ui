@@ -1,5 +1,7 @@
-export { nftReducer } from './nft-reducer';
-export { pptReducer } from './ppt-reducer';
-export { nonceReducer } from './nonce-reducer';
-export { refreshReducer } from './refresh-reducer';
-export { tokenReducer } from './token-reducer';
+export * from './page-reducer';
+export * from './nfts-reducer';
+export * from './ppts-reducer';
+export * from './nonces-reducer';
+export * from './refresh-reducer';
+export * from './token-reducer';
+export * from './tokens-reducer';

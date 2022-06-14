@@ -1,7 +1,7 @@
 import { Address, Amount, BlockHash, Nonce, Token } from '../types';
 
 export type AddNonce = {
-    type: 'nonce/add', payload: {
+    type: 'nonces/add', payload: {
         nonce: Nonce, item: {
             address: Address,
             amount: Amount,
@@ -20,12 +20,12 @@ export const addNonce = (
         worker: number,
     }
 ): AddNonce => ({
-    type: 'nonce/add', payload: {
+    type: 'nonces/add', payload: {
         nonce, item
     }
 });
 export type RemoveNonce = {
-    type: 'nonce/remove', payload: {
+    type: 'nonces/remove', payload: {
         nonce: Nonce, item: {
             address: Address,
             block_hash: BlockHash,
@@ -40,12 +40,12 @@ export const removeNonce = (
         token: Token,
     }
 ): RemoveNonce => ({
-    type: 'nonce/remove', payload: {
+    type: 'nonces/remove', payload: {
         nonce, item
     }
 });
 export type RemoveNonceByAmount = {
-    type: 'nonce/remove-by-amount', payload: {
+    type: 'nonces/remove-by-amount', payload: {
         item: {
             address: Address,
             amount: Amount,
@@ -62,12 +62,12 @@ export const removeNonceByAmount = (
         token: Token,
     }
 ): RemoveNonceByAmount => ({
-    type: 'nonce/remove-by-amount', payload: {
+    type: 'nonces/remove-by-amount', payload: {
         item
     }
 });
 export type RemoveNonces = {
-    type: 'nonce/remove-all', payload: {
+    type: 'nonces/remove-all', payload: {
         item: {
             address: Address | null,
             token: Token | null,
@@ -80,7 +80,7 @@ export const removeNonces = (
         token: Token | null,
     }
 ): RemoveNonces => ({
-    type: 'nonce/remove-all', payload: {
+    type: 'nonces/remove-all', payload: {
         item
     }
 });

@@ -12,6 +12,15 @@
         "**/*.js": {
             "when": "$(basename).ts"
         },
+        "**/*.jsx.map": {
+            "when": "$(basename).map"
+        },
+        "**/*.jsx": {
+            "when": "$(basename).tsx"
+        },
+        "**/*?.js": {
+            "when": "$(basename).tsx"
+        },
     },
     "git.ignoreLimitWarning": true
 }

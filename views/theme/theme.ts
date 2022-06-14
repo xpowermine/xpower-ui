@@ -1,13 +1,15 @@
 import { Theme, theme } from '../../source/theme';
 import { App } from '../../source/app/app';
-export { theme };
 
-document.onreadystatechange = function () {
+document.onreadystatechange = function initTheme() {
     if (document.readyState === 'complete') {
         adapt(theme(App.token));
     }
 };
-export function adapt(theme: Theme): void {
+App.onTokenSwitch(function syncTheme(token) {
+    adapt(theme(token));
+});
+function adapt(theme: Theme): void {
     const root = document.querySelector(':root') as HTMLElement;
     if (root) {
         root.style.setProperty('--xp-powered', `var(
@@ -18,4 +20,3 @@ export function adapt(theme: Theme): void {
         )`);
     }
 }
-export default adapt;

@@ -2,13 +2,15 @@ import { combineReducers, Unsubscribe } from 'redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { Store } from 'redux';
 
-import { Address, Amount, Nonce, Page, Pages, Supply, Token } from '../redux/types';
-import { NftFullId, NftIssue, NftLevel, NftToken } from '../redux/types';
-import { BlockHash, State } from '../redux/types';
+import { NftFullId, NftIssue, NftLevel, NftToken, Pages } from '../redux/types';
+import { Address, Amount, Nonce, Supply, Token } from '../redux/types';
+import { BlockHash, Page, State } from '../redux/types';
 
 import { middleware } from '../redux/middleware';
 import { Action } from '../redux/actions'
 
+import { onPageSwitch, OnPageSwitch } from '../redux/observers';
+import { onTokenSwitch, OnTokenSwitch } from '../redux/observers';
 import { onNftAdded, OnNftAdded } from '../redux/observers';
 import { onPptAdded, OnPptAdded } from '../redux/observers';
 import { onNftRemoved, OnNftRemoved } from '../redux/observers';
@@ -18,25 +20,30 @@ import { onNonceRemoved, OnNonceRemoved } from '../redux/observers';
 import { onTokenAdded, OnTokenAdded } from '../redux/observers';
 import { onTokenRemoved, OnTokenRemoved } from '../redux/observers';
 
+import { switchPage } from '../redux/actions';
+import { pageReducer } from '../redux/reducers';
+import { switchToken } from '../redux/actions';
+import { tokenReducer } from '../redux/reducers';
+
 import { addNonce } from '../redux/actions';
 import { removeNonce } from '../redux/actions';
 import { removeNonces } from '../redux/actions';
 import { removeNonceByAmount } from '../redux/actions';
-import { nonceReducer } from '../redux/reducers';
+import { noncesReducer } from '../redux/reducers';
 import { noncesBy } from '../redux/selectors';
 import { nonceBy } from '../redux/selectors';
 
 import { setNft, setPpt } from '../redux/actions';
 import { addNft, addPpt } from '../redux/actions';
 import { removeNft, removePpt } from '../redux/actions';
-import { nftReducer, pptReducer } from '../redux/reducers';
+import { nftsReducer, pptsReducer } from '../redux/reducers';
 import { nftTotalBy, pptTotalBy } from '../redux/selectors';
 import { nftsBy, pptsBy } from '../redux/selectors';
 
 import { setToken } from '../redux/actions';
 import { addToken } from '../redux/actions';
 import { removeToken } from '../redux/actions';
-import { tokenReducer } from '../redux/reducers';
+import { tokensReducer } from '../redux/reducers';
 import { tokensBy } from '../redux/selectors';
 
 import { refresh } from '../redux/actions';
@@ -49,6 +56,7 @@ import { Parser } from '../parser';
 
 import { Version } from '../types';
 import { Global } from '../types';
+import { delayed } from '../functions';
 declare const global: Global;
 
 export class App {
@@ -60,11 +68,13 @@ export class App {
     }
     private constructor() {
         const reducer = combineReducers({
-            nonces: nonceReducer,
-            nfts: nftReducer,
-            ppts: pptReducer,
-            tokens: tokenReducer,
+            nfts: nftsReducer,
+            nonces: noncesReducer,
+            page: pageReducer,
+            ppts: pptsReducer,
             refresh: refreshReducer,
+            token: tokenReducer,
+            tokens: tokensReducer,
         });
         if (App.clear) {
             this.db.clear(App.persist);
@@ -90,6 +100,32 @@ export class App {
                 this.db.save(App.persist, state);
             }
         });
+    }
+    public static switchPage(page: Page) {
+        this.me.store.dispatch(switchPage(page));
+    }
+    public static onPageSwitch(
+        callback: OnPageSwitch
+    ) {
+        return onPageSwitch(this.me.store, callback);
+    }
+    public static onPageSwitched(
+        callback: OnPageSwitch, ms = 600
+    ) {
+        return onPageSwitch(this.me.store, delayed(callback, ms));
+    }
+    public static switchToken(token: Token) {
+        this.me.store.dispatch(switchToken(token));
+    }
+    public static onTokenSwitch(
+        callback: OnTokenSwitch
+    ) {
+        return onTokenSwitch(this.me.store, callback);
+    }
+    public static onTokenSwitched(
+        callback: OnTokenSwitch, ms = 600
+    ) {
+        return onTokenSwitch(this.me.store, delayed(callback, ms));
     }
     public static addNonce(
         nonce: Nonce, item: {
@@ -367,10 +403,7 @@ export class App {
         return tokensBy(tokens, token)
     }
     public static refresh() {
-        this.me.refresh();
-    }
-    private refresh() {
-        this.store.dispatch(refresh());
+        this.me.store.dispatch(refresh());
     }
     private get db(): StateDb {
         if (this._db === undefined) {
@@ -407,20 +440,14 @@ export class App {
         return Math.min(100, Math.max(0, value)) / 100;
     }
     public static get token(): Token {
-        return this.me.token;
-    }
-    public get token(): Token {
         return Tokenizer.token(this.params.get('token'));
     }
     public static get page(): Page {
-        return this.me.page;
-    }
-    public get page(): Page {
-        const path = location.pathname.slice(1) as Page;
-        if (Pages().has(path)) {
-            return path;
+        if (typeof location !== 'undefined') {
+            const path = location.pathname.slice(1) as Page;
+            return Pages().has(path) ? path : Page.None;
         }
-        return Page.Home;
+        return Page.None;
     }
     public static get version(): Version {
         switch (this.params.get('version')) {
@@ -437,10 +464,10 @@ export class App {
         }
     }
     public static get params(): URLSearchParams {
-        return new URLSearchParams(location?.search.substring(1));
-    }
-    public get params(): URLSearchParams {
-        return new URLSearchParams(location?.search.substring(1));
+        if (typeof location !== 'undefined') {
+            return new URLSearchParams(location.search.substring(1));
+        }
+        return new URLSearchParams();
     }
     private get store(): Store<State, Action> {
         return this._store;

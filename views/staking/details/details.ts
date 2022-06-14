@@ -52,7 +52,7 @@ App.onPptChanged(async function setLevelDetails(
     $claimable.val(claimable.toString());
     $claimable.trigger('change');
 });
-$('#selector').on('switch', function resetImage() {
+App.onTokenSwitch(function resetImage() {
     $('.nft-minter').each((_, el) => {
         reset_image($(el));
     });

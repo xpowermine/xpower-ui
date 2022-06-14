@@ -5,14 +5,11 @@ import { App } from '../../../source/app';
 import { NftLevel, NftLevels } from '../../../source/redux/types';
 import { Nft, NftFullId } from '../../../source/redux/types';
 import { Amount, Supply } from '../../../source/redux/types';
-import { Token } from '../../../source/redux/types';
 import { Tooltip } from '../../tooltips';
 
-$('#selector').on('switch', async function relabelMinter(ev, {
+App.onTokenSwitch(async function relabelMinter(
     token, old_token
-}: {
-    token: Token, old_token: Token
-}) {
+) {
     function text(rx: RegExp, el: HTMLElement) {
         const value = $(el).text();
         if (value?.match(rx)) {

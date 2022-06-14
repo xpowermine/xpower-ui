@@ -1,25 +1,23 @@
-import { combineReducers, createStore } from 'redux';
-import { nftReducer } from '../reducers';
-import { pptReducer } from '../reducers';
-import { nonceReducer } from '../reducers';
-import { refreshReducer } from '../reducers';
-import { tokenReducer } from '../reducers';
+import { configureStore } from '@reduxjs/toolkit';
+import { combineReducers, Store } from 'redux';
+import { pptsReducer } from '../reducers';
 
-import { addPpt, removePpt } from '../actions';
+import { Action, addPpt, removePpt } from '../actions';
 import { onPptAdded, onPptRemoved } from '.';
+import { State } from '../types';
 
 describe('onNftAdded', () => {
     const id = 'THOR:202103';
-    it('should invoke handler (for addNft)', () => {
+    it('should invoke handler (for addPpt)', () => {
         const reducer = combineReducers({
-            nfts: nftReducer,
-            ppts: pptReducer,
-            nonces: nonceReducer,
-            refresh: refreshReducer,
-            tokens: tokenReducer,
+            ppts: pptsReducer
         });
-        const store = createStore(reducer);
-        onPptAdded(store, (id, i, {
+        const store = configureStore({
+            reducer, middleware: (m) => m({
+                serializableCheck: false
+            })
+        });
+        onPptAdded(store as Store<State, Action>, (id, i, {
             amount: t_amount, supply: t_supply
         }) => {
             expect(id).toEqual('THOR:202103');
@@ -35,16 +33,16 @@ describe('onNftAdded', () => {
 });
 describe('onNftRemoved', () => {
     const id = 'LOKI:202206';
-    it('should invoke handler (for removeNft)', () => {
+    it('should invoke handler (for removePpt)', () => {
         const reducer = combineReducers({
-            nfts: nftReducer,
-            ppts: pptReducer,
-            nonces: nonceReducer,
-            refresh: refreshReducer,
-            tokens: tokenReducer,
+            ppts: pptsReducer
         });
-        const store = createStore(reducer);
-        onPptRemoved(store, (id, i, {
+        const store = configureStore({
+            reducer, middleware: (m) => m({
+                serializableCheck: false
+            })
+        });
+        onPptRemoved(store as Store<State, Action>, (id, i, {
             amount: t_amount, supply: t_supply
         }) => {
             expect(id).toEqual('LOKI:202206');

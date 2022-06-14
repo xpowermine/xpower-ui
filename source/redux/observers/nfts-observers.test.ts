@@ -1,25 +1,23 @@
-import { combineReducers, createStore } from 'redux';
-import { nftReducer } from '../reducers';
-import { pptReducer } from '../reducers';
-import { nonceReducer } from '../reducers';
-import { refreshReducer } from '../reducers';
-import { tokenReducer } from '../reducers';
+import { configureStore } from '@reduxjs/toolkit';
+import { combineReducers, Store } from 'redux';
+import { nftsReducer } from '../reducers';
 
-import { addNft, removeNft } from '../actions';
+import { Action, addNft, removeNft } from '../actions';
 import { onNftAdded, onNftRemoved } from '.';
+import { State } from '../types';
 
 describe('onNftAdded', () => {
     const id = 'THOR:202103';
     it('should invoke handler (for addNft)', () => {
         const reducer = combineReducers({
-            nfts: nftReducer,
-            ppts: pptReducer,
-            nonces: nonceReducer,
-            refresh: refreshReducer,
-            tokens: tokenReducer,
+            nfts: nftsReducer
         });
-        const store = createStore(reducer);
-        onNftAdded(store, (id, i, {
+        const store = configureStore({
+            reducer, middleware: (m) => m({
+                serializableCheck: false
+            })
+        });
+        onNftAdded(store as Store<State, Action>, (id, i, {
             amount: t_amount, supply: t_supply
         }) => {
             expect(id).toEqual('THOR:202103');
@@ -37,14 +35,14 @@ describe('onNftRemoved', () => {
     const id = 'LOKI:202206';
     it('should invoke handler (for removeNft)', () => {
         const reducer = combineReducers({
-            nfts: nftReducer,
-            ppts: pptReducer,
-            nonces: nonceReducer,
-            refresh: refreshReducer,
-            tokens: tokenReducer,
+            nfts: nftsReducer
         });
-        const store = createStore(reducer);
-        onNftRemoved(store, (id, i, {
+        const store = configureStore({
+            reducer, middleware: (m) => m({
+                serializableCheck: false
+            })
+        });
+        onNftRemoved(store as Store<State, Action>, (id, i, {
             amount: t_amount, supply: t_supply
         }) => {
             expect(id).toEqual('LOKI:202206');

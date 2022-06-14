@@ -82,7 +82,7 @@ function reload(delta_ms: number) {
         location.search = `?ms=${delta_ms}`;
     }
 }
-$('#selector').on('switch', async function reconnect() {
+App.onTokenSwitch(async function reconnect() {
     const $connect = $('#connect-metamask');
     try {
         const address = await Blockchain.connect();

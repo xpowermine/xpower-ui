@@ -1,16 +1,16 @@
 /* eslint @typescript-eslint/no-explicit-any: [off] */
-import { pptReducer } from './ppt-reducer';
+import { nftsReducer } from './nfts-reducer';
 
-import { setPpt } from '../actions';
-import { addPpt } from '../actions';
-import { removePpt } from '../actions';
+import { setNft } from '../actions';
+import { addNft } from '../actions';
+import { removeNft } from '../actions';
 import { Nfts, Empty } from '../types';
 
-describe('Store w/pptReducer (set)', () => {
+describe('Store w/nfts-reducer (set)', () => {
     const id = 'THOR:202103';
-    it('should set 1 ppt', () => {
+    it('should set 1 nft', () => {
         const state_0 = Empty<Nfts>();
-        const state_1 = pptReducer(state_0, setPpt(id, {
+        const state_1 = nftsReducer(state_0, setNft(id, {
             amount: 1n, supply: 1n
         }));
         expect(state_1.items[id]).toEqual({
@@ -19,9 +19,9 @@ describe('Store w/pptReducer (set)', () => {
         expect(state_1.more).toEqual([id]);
         expect(state_1.less).not.toBeDefined();
     });
-    it('should set 2 ppts', () => {
+    it('should set 2 nfts', () => {
         const state_0 = Empty<Nfts>();
-        const state_1 = pptReducer(state_0, setPpt(id, {
+        const state_1 = nftsReducer(state_0, setNft(id, {
             amount: 2n, supply: 5n
         }));
         expect(state_1.items[id]).toEqual({
@@ -31,11 +31,11 @@ describe('Store w/pptReducer (set)', () => {
         expect(state_1.less).not.toBeDefined();
     });
 });
-describe('Store w/pptReducer (add)', () => {
+describe('Store w/nfts-reducer (add)', () => {
     const id = 'LOKI:202103';
-    it('should add 1 ppt (w/rel. supply)', () => {
+    it('should add 1 nft (w/rel. supply)', () => {
         const state_0 = Empty<Nfts>();
-        const state_1 = pptReducer(state_0, addPpt(id, {
+        const state_1 = nftsReducer(state_0, addNft(id, {
             amount: 1n
         }));
         expect(state_1.items[id]).toEqual({
@@ -44,9 +44,9 @@ describe('Store w/pptReducer (add)', () => {
         expect(state_1.more).toEqual([id]);
         expect(state_1.less).not.toBeDefined();
     });
-    it('should add 1 ppt (w/abs. supply)', () => {
+    it('should add 1 nft (w/abs. supply)', () => {
         const state_0 = Empty<Nfts>();
-        const state_1 = pptReducer(state_0, addPpt(id, {
+        const state_1 = nftsReducer(state_0, addNft(id, {
             amount: 1n, supply: 10n
         }));
         expect(state_1.items[id]).toEqual({
@@ -55,27 +55,27 @@ describe('Store w/pptReducer (add)', () => {
         expect(state_1.more).toEqual([id]);
         expect(state_1.less).not.toBeDefined();
     });
-    it('should *not* add 1 ppt (w/abs. supply)', () => {
+    it('should *not* add 1 nft (w/abs. supply)', () => {
         const state_0 = Empty<Nfts>();
         let state_1;
         try {
-            state_1 = pptReducer(state_0, addPpt(id, {
+            state_1 = nftsReducer(state_0, addNft(id, {
                 amount: 2n, supply: 1n
             }));
         } catch (ex: any) {
-            expect(ex.message).toBe(`PPT(${id}) supply=1 < amount=2`)
+            expect(ex.message).toBe(`NFT(${id}) supply=1 < amount=2`)
         }
         expect(state_1).not.toBeDefined();
     });
-    it('should add 2 ppts (w/1st:rel. supply & 2nd:rel. supply)', () => {
+    it('should add 2 nfts (w/1st:rel. supply & 2nd:rel. supply)', () => {
         const state_0 = Empty<Nfts>();
-        const state_1 = pptReducer(state_0, addPpt(id, {
+        const state_1 = nftsReducer(state_0, addNft(id, {
             amount: 1n
         }));
         expect(state_1.items[id]).toEqual({
             amount: 1n, supply: 1n
         });
-        const state_2 = pptReducer(state_1, addPpt(id, {
+        const state_2 = nftsReducer(state_1, addNft(id, {
             amount: 2n
         }));
         expect(state_2.items[id]).toEqual({
@@ -86,15 +86,15 @@ describe('Store w/pptReducer (add)', () => {
         expect(state_2.more).toEqual([id]);
         expect(state_2.less).not.toBeDefined();
     });
-    it('should add 2 ppts (w/1st:abs. supply & 2nd:rel. supply)', () => {
+    it('should add 2 nfts (w/1st:abs. supply & 2nd:rel. supply)', () => {
         const state_0 = Empty<Nfts>();
-        const state_1 = pptReducer(state_0, addPpt(id, {
+        const state_1 = nftsReducer(state_0, addNft(id, {
             amount: 1n, supply: 10n
         }));
         expect(state_1.items[id]).toEqual({
             amount: 1n, supply: 10n
         });
-        const state_2 = pptReducer(state_1, addPpt(id, {
+        const state_2 = nftsReducer(state_1, addNft(id, {
             amount: 2n
         }));
         expect(state_2.items[id]).toEqual({
@@ -105,15 +105,15 @@ describe('Store w/pptReducer (add)', () => {
         expect(state_2.more).toEqual([id]);
         expect(state_2.less).not.toBeDefined();
     });
-    it('should add 2 ppts (w/1st:rel. supply & 2nd:abs. supply)', () => {
+    it('should add 2 nfts (w/1st:rel. supply & 2nd:abs. supply)', () => {
         const state_0 = Empty<Nfts>();
-        const state_1 = pptReducer(state_0, addPpt(id, {
+        const state_1 = nftsReducer(state_0, addNft(id, {
             amount: 1n
         }));
         expect(state_1.items[id]).toEqual({
             amount: 1n, supply: 1n
         });
-        const state_2 = pptReducer(state_1, addPpt(id, {
+        const state_2 = nftsReducer(state_1, addNft(id, {
             amount: 2n, supply: 20n
         }));
         expect(state_2.items[id]).toEqual({
@@ -124,15 +124,15 @@ describe('Store w/pptReducer (add)', () => {
         expect(state_2.more).toEqual([id]);
         expect(state_2.less).not.toBeDefined();
     });
-    it('should add 2 ppts (w/1st:abs. supply & 2nd:abs. supply)', () => {
+    it('should add 2 nfts (w/1st:abs. supply & 2nd:abs. supply)', () => {
         const state_0 = Empty<Nfts>();
-        const state_1 = pptReducer(state_0, addPpt(id, {
+        const state_1 = nftsReducer(state_0, addNft(id, {
             amount: 1n, supply: 10n
         }));
         expect(state_1.items[id]).toEqual({
             amount: 1n, supply: 10n
         });
-        const state_2 = pptReducer(state_1, addPpt(id, {
+        const state_2 = nftsReducer(state_1, addNft(id, {
             amount: 2n, supply: 20n
         }));
         expect(state_2.items[id]).toEqual({
@@ -144,36 +144,36 @@ describe('Store w/pptReducer (add)', () => {
         expect(state_2.less).not.toBeDefined();
     });
 });
-describe('Store w/pptReducer (remove)', () => {
+describe('Store w/nfts-reducer (remove)', () => {
     const id = 'ODIN:202109';
-    it('should remove 1 ppt (w/rel. supply)', () => {
+    it('should remove 1 nft (w/rel. supply)', () => {
         const state_0 = Empty<Nfts>();
-        const state_1 = pptReducer(state_0, addPpt(id, {
+        const state_1 = nftsReducer(state_0, addNft(id, {
             amount: 1n
         }));
         expect(state_1.items[id]).toEqual({
             amount: 1n, supply: 1n
         });
-        const state_2 = pptReducer(state_1, removePpt(id, {
+        const state_2 = nftsReducer(state_1, removeNft(id, {
             amount: 1n
         }));
         expect(state_2.items[id]).toEqual({
-            amount: 0n, supply: 0n
+            amount: 0n, supply: 1n
         });
         expect(state_1.more).toEqual([id]);
         expect(state_1.less).not.toBeDefined();
         expect(state_2.more).not.toBeDefined();
         expect(state_2.less).toEqual([id]);
     });
-    it('should remove 1 ppt (w/abs. supply)', () => {
+    it('should remove 1 nft (w/abs. supply)', () => {
         const state_0 = Empty<Nfts>();
-        const state_1 = pptReducer(state_0, addPpt(id, {
+        const state_1 = nftsReducer(state_0, addNft(id, {
             amount: 1n
         }));
         expect(state_1.items[id]).toEqual({
             amount: 1n, supply: 1n
         });
-        const state_2 = pptReducer(state_1, removePpt(id, {
+        const state_2 = nftsReducer(state_1, removeNft(id, {
             amount: 1n, supply: 10n
         }));
         expect(state_2.items[id]).toEqual({
@@ -184,42 +184,42 @@ describe('Store w/pptReducer (remove)', () => {
         expect(state_2.more).not.toBeDefined();
         expect(state_2.less).toEqual([id]);
     });
-    it('should *not* remove 1 ppt (w/abs. supply)', () => {
+    it('should *not* remove 1 nft (w/abs. supply)', () => {
         const state_0 = Empty<Nfts>();
-        const state_1 = pptReducer(state_0, addPpt(id, {
+        const state_1 = nftsReducer(state_0, addNft(id, {
             amount: 5n
         }));
         let state_2;
         try {
-            state_2 = pptReducer(state_1, removePpt(id, {
+            state_2 = nftsReducer(state_1, removeNft(id, {
                 amount: 2n, supply: 1n
             }));
         } catch (ex: any) {
-            expect(ex.message).toBe(`PPT(${id}) supply=1 < amount=3`)
+            expect(ex.message).toBe(`NFT(${id}) supply=1 < amount=3`)
         }
         expect(state_1.more).toEqual([id]);
         expect(state_1.less).not.toBeDefined();
         expect(state_2).not.toBeDefined();
     });
-    it('should remove 2 ppts (w/1st:rel. supply & 2nd:rel. supply)', () => {
+    it('should remove 2 nfts (w/1st:rel. supply & 2nd:rel. supply)', () => {
         const state_0 = Empty<Nfts>();
-        const state_1 = pptReducer(state_0, addPpt(id, {
+        const state_1 = nftsReducer(state_0, addNft(id, {
             amount: 5n
         }));
         expect(state_1.items[id]).toEqual({
             amount: 5n, supply: 5n
         });
-        const state_2 = pptReducer(state_1, removePpt(id, {
+        const state_2 = nftsReducer(state_1, removeNft(id, {
             amount: 2n
         }));
         expect(state_2.items[id]).toEqual({
-            amount: 3n, supply: 3n
+            amount: 3n, supply: 5n
         });
-        const state_3 = pptReducer(state_2, removePpt(id, {
+        const state_3 = nftsReducer(state_2, removeNft(id, {
             amount: 1n
         }));
         expect(state_3.items[id]).toEqual({
-            amount: 2n, supply: 2n
+            amount: 2n, supply: 5n
         });
         expect(state_1.more).toEqual([id]);
         expect(state_1.less).not.toBeDefined();
@@ -228,25 +228,25 @@ describe('Store w/pptReducer (remove)', () => {
         expect(state_3.more).not.toBeDefined();
         expect(state_3.less).toEqual([id]);
     });
-    it('should remove 2 ppts (w/1st:abs. supply & 2nd:rel. supply)', () => {
+    it('should remove 2 nfts (w/1st:abs. supply & 2nd:rel. supply)', () => {
         const state_0 = Empty<Nfts>();
-        const state_1 = pptReducer(state_0, addPpt(id, {
+        const state_1 = nftsReducer(state_0, addNft(id, {
             amount: 5n
         }));
         expect(state_1.items[id]).toEqual({
             amount: 5n, supply: 5n
         });
-        const state_2 = pptReducer(state_1, removePpt(id, {
+        const state_2 = nftsReducer(state_1, removeNft(id, {
             amount: 2n, supply: 4n
         }));
         expect(state_2.items[id]).toEqual({
             amount: 3n, supply: 4n
         });
-        const state_3 = pptReducer(state_2, removePpt(id, {
+        const state_3 = nftsReducer(state_2, removeNft(id, {
             amount: 1n
         }));
         expect(state_3.items[id]).toEqual({
-            amount: 2n, supply: 3n
+            amount: 2n, supply: 4n
         });
         expect(state_1.more).toEqual([id]);
         expect(state_1.less).not.toBeDefined();
@@ -255,25 +255,25 @@ describe('Store w/pptReducer (remove)', () => {
         expect(state_3.more).not.toBeDefined();
         expect(state_3.less).toEqual([id]);
     });
-    it('should remove 2 ppts (w/1st:rel. supply & 2nd:abs. supply)', () => {
+    it('should remove 2 nfts (w/1st:rel. supply & 2nd:abs. supply)', () => {
         const state_0 = Empty<Nfts>();
-        const state_1 = pptReducer(state_0, addPpt(id, {
+        const state_1 = nftsReducer(state_0, addNft(id, {
             amount: 5n
         }));
         expect(state_1.items[id]).toEqual({
             amount: 5n, supply: 5n
         });
-        const state_2 = pptReducer(state_1, removePpt(id, {
+        const state_2 = nftsReducer(state_1, removeNft(id, {
             amount: 2n
         }));
         expect(state_2.items[id]).toEqual({
-            amount: 3n, supply: 3n
+            amount: 3n, supply: 5n
         });
-        const state_3 = pptReducer(state_2, removePpt(id, {
-            amount: 1n, supply: 3n
+        const state_3 = nftsReducer(state_2, removeNft(id, {
+            amount: 1n, supply: 4n
         }));
         expect(state_3.items[id]).toEqual({
-            amount: 2n, supply: 3n
+            amount: 2n, supply: 4n
         });
         expect(state_1.more).toEqual([id]);
         expect(state_1.less).not.toBeDefined();
@@ -282,21 +282,21 @@ describe('Store w/pptReducer (remove)', () => {
         expect(state_3.more).not.toBeDefined();
         expect(state_3.less).toEqual([id]);
     });
-    it('should remove 2 ppts (w/1st:abs. supply & 2nd:abs. supply)', () => {
+    it('should remove 2 nfts (w/1st:abs. supply & 2nd:abs. supply)', () => {
         const state_0 = Empty<Nfts>();
-        const state_1 = pptReducer(state_0, addPpt(id, {
+        const state_1 = nftsReducer(state_0, addNft(id, {
             amount: 5n
         }));
         expect(state_1.items[id]).toEqual({
             amount: 5n, supply: 5n
         });
-        const state_2 = pptReducer(state_1, removePpt(id, {
+        const state_2 = nftsReducer(state_1, removeNft(id, {
             amount: 2n, supply: 4n
         }));
         expect(state_2.items[id]).toEqual({
             amount: 3n, supply: 4n
         });
-        const state_3 = pptReducer(state_2, removePpt(id, {
+        const state_3 = nftsReducer(state_2, removeNft(id, {
             amount: 1n, supply: 3n
         }));
         expect(state_3.items[id]).toEqual({

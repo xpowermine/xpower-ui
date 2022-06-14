@@ -1,12 +1,10 @@
-import { Token } from "../../source/redux/types";
+import { App } from "../../source/app";
 export const { Tooltip } = global.bootstrap;
 
-$('#selector').on('switch', async function retitleTips(ev, {
+App.onTokenSwitched(function retitleTips(
     token, old_token
-}: {
-    token: Token, old_token: Token
-}) {
-    function title(rx: RegExp, el: HTMLElement) {
+) {
+    function retitle(el: HTMLElement, rx: RegExp) {
         const value = $(el).attr('data-bs-original-title');
         if (value?.match(rx)) {
             $(el).attr('title', value.replace(rx, token));
@@ -16,7 +14,7 @@ $('#selector').on('switch', async function retitleTips(ev, {
     }
     const $tips = $('[data-bs-toggle=tooltip]:not([data-bs-fixed])');
     const rx = new RegExp(old_token, 'g');
-    $tips.each((_, el) => title(rx, el));
+    $tips.each((_, el) => retitle(el, rx));
 });
 $(window).one('load', function toggleTooltips() {
     const $tips = $('[data-bs-toggle=tooltip]');
