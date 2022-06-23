@@ -1,0 +1,33 @@
+form#aft-wallet {
+  margin-bottom: 0.5em;
+}
+form#aft-wallet {
+  div.wallet-address {
+    button#otf-wallet-toggle {
+      cursor: pointer;
+      i {
+        position: relative;
+        top: 1px;
+      }
+      width: 42px;
+    }
+    button#otf-wallet-toggle:hover {
+      border: 1px solid var(--xp-powered);
+      border-right: 1px solid var(--xp-dimgray);
+      background-color: var(--xp-dimgray);
+      color: var(--xp-powered);
+    }
+    input#aft-wallet-address {
+      cursor: text;
+      text-align: center;
+      width: calc(100% - 192px);
+    }
+    input#aft-wallet-balance {
+      text-align: center;
+      width: 105px;
+    }
+    input {
+      font-size: smaller;
+    }
+  }
+}
