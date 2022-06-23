@@ -1,20 +1,40 @@
+/* eslint @typescript-eslint/no-explicit-any: [off] */
 import { Global } from '../types';
 declare const global: Global;
 
 import { Blockchain } from '../blockchain';
+import { EventEmitter } from 'events';
 import { Contract, Wallet } from 'ethers';
 import { NonceManager } from '@ethersproject/experimental';
 import { Web3Provider } from '@ethersproject/providers';
 import { randomBytes } from '@ethersproject/random';
+import { parseUnits } from '@ethersproject/units';
 
-export class OtfWallet {
+export class OtfWallet extends EventEmitter {
+    private static get me(): OtfWallet {
+        if (this._me === undefined) {
+            this._me = new OtfWallet();
+        }
+        return this._me;
+    }
+    public static get threshold() {
+        return parseUnits('0.005');
+    }
     public static get enabled(): boolean {
         const item = localStorage.getItem('otf-wallet:flag');
         return JSON.parse(item ?? 'false');
     }
     public static set enabled(value: boolean) {
+        if (this.enabled !== value) {
+            this.me.emit('toggled', { toggled: value });
+        }
         const item = JSON.stringify(value);
         localStorage.setItem('otf-wallet:flag', item);
+    }
+    public static onToggled(
+        listener: ({ toggled }: { toggled: boolean }) => void
+    ) {
+        this.me.on('toggled', listener);
     }
     public static async init(
         key = 'otf-wallet'
@@ -44,5 +64,6 @@ export class OtfWallet {
         return fallback;
     }
     private static _wallet: NonceManager | undefined;
+    private static _me: any;
 }
 export default OtfWallet;

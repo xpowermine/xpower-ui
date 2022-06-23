@@ -1,0 +1,30 @@
+form#otf-wallet(
+  style="display: none"
+)
+  label.form-label
+    | Minter Address and AVAX Balance
+  div.input-group.otf-wallet-address
+    button.form-control.input-group-text#otf-wallet-transfer.withdraw(
+      data-bs-toggle="tooltip" data-bs-placement="top"
+      title="Withdraw AVAX from minter to wallet address"
+    )
+      span.spinner.spinner-border.spinner-border-sm.float-start(
+        role="status"
+      )
+      i.bi-circle
+    input#otf-wallet-address.form-control(
+      data-bs-toggle="tooltip" data-bs-placement="top"
+      placeholder="0x0000000000000000000000000000000000000000"
+      readonly type="text"
+      title="Minter address to pre-fund for transaction fees"
+    )
+    input#otf-wallet-balance.form-control(
+      data-bs-toggle="tooltip" data-bs-placement="top"
+      placeholder="0" readonly type="text"
+      title=`AVAX balance to auto-pay for transaction fees`
+    )
+    button.form-control.input-group-text.info(
+      data-bs-toggle="tooltip" data-bs-placement="top"
+      title="Minter address & balance for transaction fees"
+    )
+      include ../../public/images/pug/info-circle-fill.svg.pug
