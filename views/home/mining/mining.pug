@@ -26,7 +26,8 @@ form#mining
       title=`Mining speed: ${UI_MINING_SPEED}%`
     )
       div.progress: div#speed.progress-bar.with-indicator(
-        role="progressbar" style=`width: ${UI_MINING_SPEED}%`
+        role="progressbar" aria-label="mining speed controller"
+        style=`width: ${UI_MINING_SPEED}%`
       )
     div.btn-group.increaser(role="group")
       button.btn.btn-outline-warning#increase(
