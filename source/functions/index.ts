@@ -2,6 +2,7 @@ export * from './alert';
 export * from './big-int';
 export * from './buffered';
 export * from './delayed';
+export * from './dom-query';
 export * from './ellipse';
 export * from './message';
 export * from './mobile';
