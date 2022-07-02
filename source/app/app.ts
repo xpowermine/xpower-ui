@@ -44,8 +44,6 @@ import { refreshed } from '../redux/selectors';
 import { refreshReducer } from '../redux/reducers';
 
 import { StateDb } from '../state-db';
-import { Miner } from '../miner';
-
 import { Tokenizer } from '../token';
 import { Parser } from '../parser';
 
@@ -374,31 +372,11 @@ export class App {
     private refresh() {
         this.store.dispatch(refresh());
     }
-    public static miner(
-        address: Address, { token }: { token: Token }
-    ): Miner {
-        return this.me.miner(address, { token });
-    }
-    private miner(
-        address: Address, { token }: { token: Token }
-    ): Miner {
-        if (this._miner[token] === undefined) {
-            this._miner[token] = new Miner(
-                token, address, App.level.min, App.speed
-            );
-        }
-        return this._miner[token];
-    }
     private get db(): StateDb {
         if (this._db === undefined) {
             this._db = new StateDb(localStorage);
         }
         return this._db;
-    }
-    public static range(token: Token): { min: Amount, max: Amount } {
-        const min = Tokenizer.amount(token, App.level.min);
-        const max = Tokenizer.amount(token, App.level.max);
-        return { min, max };
     }
     public static get clear(): boolean {
         return Parser.boolean(this.params.get('clear'), false);
@@ -455,7 +433,6 @@ export class App {
         return this._store;
     }
     private _db: StateDb | undefined;
-    private _miner = {} as Record<Token, Miner>;
     private _store: Store<State, Action>;
 }
 export default App;
