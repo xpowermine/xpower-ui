@@ -6,13 +6,13 @@ describe('nonce-by', () => {
     const block_hash = BigInt('0xb10c');
     const token = Token.THOR;
     it('should return nonce = undefined', () => {
-        const nonce = nonceBy({ items: {} }, {
+        const { nonce } = nonceBy({ items: {} }, {
             address, block_hash, amount: 0n
         });
         expect(nonce).not.toBeDefined();
     });
     it('should return nonce = 0xffff', () => {
-        const nonce = nonceBy({
+        const { nonce } = nonceBy({
             items: {
                 0xffff: { address, amount: 1n, block_hash, token },
             }
@@ -22,7 +22,7 @@ describe('nonce-by', () => {
         expect(nonce).toEqual(0xffff);
     });
     it('should return nonce = 0xfff0', () => {
-        const nonce = nonceBy({
+        const { nonce } = nonceBy({
             items: {
                 0xffff: { address, amount: 1n, block_hash, token },
                 0xfff0: { address, amount: 2n, block_hash, token },
@@ -33,7 +33,7 @@ describe('nonce-by', () => {
         expect(nonce).toEqual(0xfff0);
     });
     it('should return nonce = 0xff00', () => {
-        const nonce = nonceBy({
+        const { nonce } = nonceBy({
             items: {
                 0xffff: { address, amount: 1n, block_hash, token },
                 0xfff0: { address, amount: 2n, block_hash, token },

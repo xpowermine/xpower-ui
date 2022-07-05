@@ -196,7 +196,14 @@ export class App {
         amount?: Amount,
         block_hash?: BlockHash,
         token?: Token
-    }, index = 0): Nonce | undefined {
+    }, index = 0): Partial<{
+        nonce: Nonce, item: {
+            address: Address,
+            amount: Amount,
+            block_hash: BlockHash
+            token: Token,
+        }
+    }> {
         const { nonces } = this.me.store.getState();
         return nonceBy(nonces, query, index);
     }
@@ -205,7 +212,14 @@ export class App {
         amount?: Amount,
         block_hash?: BlockHash,
         token?: Token
-    }): Nonce[] {
+    }): Array<{
+        nonce: Nonce, item: {
+            address: Address,
+            amount: Amount,
+            block_hash: BlockHash
+            token: Token,
+        }
+    }> {
         const { nonces } = this.me.store.getState();
         return noncesBy(nonces, query);
     }
