@@ -1,41 +1,66 @@
-import { App } from "../../source/app";
+import { App } from '../../source/app';
+import { ancestors, delayed } from '../../source/functions';
 export const { Tooltip } = global.bootstrap;
 
 App.onTokenSwitched(function retitleTips(
     token, old_token
 ) {
-    function retitle(el: HTMLElement, rx: RegExp) {
-        const value = $(el).attr('data-bs-original-title');
-        if (value?.match(rx)) {
-            $(el).attr('title', value.replace(rx, token));
-            Tooltip.getInstance(el)?.dispose();
-            Tooltip.getOrCreateInstance(el);
-        }
-    }
-    const $tips = $('[data-bs-toggle=tooltip]:not([data-bs-fixed])');
+    const $tips = document.querySelectorAll<HTMLElement>(
+        '[data-bs-toggle=tooltip]:not([data-bs-fixed])'
+    );
     const rx = new RegExp(old_token, 'g');
-    $tips.each((_, el) => retitle(el, rx));
+    $tips.forEach(($tip) => {
+        const title = $tip.getAttribute(
+            'data-bs-original-title'
+        );
+        if (title?.match(rx)) {
+            $tip.setAttribute('title', title.replace(rx, token));
+            Tooltip.getInstance($tip)?.dispose();
+            Tooltip.getOrCreateInstance($tip);
+        }
+    })
 });
-$(window).one('load', function toggleTooltips() {
-    const $tips = $('[data-bs-toggle=tooltip]');
-    $tips.map((_, el) => Tooltip.getOrCreateInstance(el));
-    $tips.on('shown.bs.tooltip', (ev) => {
-        $(ev.target).one('click', hide).off('click', show);
+global.addEventListener('load', delayed(function tooltips() {
+    const $tips = document.querySelectorAll<HTMLElement>(
+        '[data-bs-toggle=tooltip]'
+    );
+    $tips.forEach(($tip) => {
+        Tooltip.getOrCreateInstance($tip);
     });
-    $tips.on('hidden.bs.tooltip', (ev) => {
-        $(ev.target).off('click', hide).one('click', show);
-    });
+    $tips.forEach(($tip) => {
+        $tip.addEventListener('shown.bs.tooltip', ({
+            target
+        }) => {
+            target?.removeEventListener('click', show);
+            target?.addEventListener('click', hide, {
+                once: true
+            });
+        });
+        $tip.addEventListener('hidden.bs.tooltip', ({
+            target
+        }) => {
+            target?.removeEventListener('click', hide);
+            target?.addEventListener('click', show, {
+                once: true
+            });
+        });
+    })
+}), {
+    once: true
 });
-function hide(ev: JQuery.ClickEvent) {
-    const [tip] = $tip($(ev.target));
-    Tooltip.getInstance(tip)?.hide();
+function show(e: Event) {
+    const $tip = $tooltip(e.target as HTMLElement | null);
+    Tooltip.getInstance($tip)?.show();
 }
-function show(ev: JQuery.ClickEvent) {
-    const [tip] = $tip($(ev.target));
-    Tooltip.getInstance(tip)?.show();
+function hide(e: Event) {
+    const $tip = $tooltip(e.target as HTMLElement | null);
+    Tooltip.getInstance($tip)?.hide();
 }
-function $tip($el: JQuery<HTMLElement>) {
-    const $tt = $el.parents(`[data-bs-toggle=tooltip]`);
-    return $tt.length ? $tt : $el;
+function $tooltip($target: HTMLElement | null) {
+    const [$tip] = ancestors($target, ($el) => {
+        const a = $el.getAttribute('data-bs-toggle');
+        return a === 'tooltip';
+    });
+    return $tip ?? $target;
 }
 export default Tooltip;
