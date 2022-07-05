@@ -8,7 +8,14 @@ export function noncesBy(
         block_hash?: BlockHash,
         token?: Token,
     }
-): Nonce[] {
+): Array<{
+    nonce: Nonce, item: {
+        address: Address,
+        amount: Amount,
+        block_hash: BlockHash
+        token: Token,
+    }
+}> {
     const filtered = Object.entries(nonces.items).filter(([n, i]) => {
         if (item !== undefined) {
             if (item.address !== undefined &&
@@ -34,7 +41,9 @@ export function noncesBy(
         }
         return true;
     });
-    const keys = filtered.map(([n, i]) => Number(n));
-    return keys;
+    const mapped = filtered.map(([n, i]) => ({
+        nonce: Number(n), item: i
+    }));
+    return mapped;
 }
 export default noncesBy;
