@@ -5,11 +5,11 @@ form#connector {
   div.connect-metamask {
     button#connect-metamask {
       span.spinner {
-        margin-top: 0.25em;
-      }
-      span.spinner {
         height: 1em;
         width: 1em;
+      }
+      span.spinner {
+        margin-top: 0.25em;
       }
       border-right: none;
       width: calc(100% - 41.5px);

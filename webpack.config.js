@@ -38,7 +38,7 @@ const configuration = ({
             './views/home/home.ts',
             './views/header/header.tsx',
             './views/footer/footer.tsx',
-            './views/connector/connector.ts',
+            './views/connector/connector.tsx',
         ],
         migrate: [
             './library/index.ts',
@@ -47,7 +47,7 @@ const configuration = ({
             './views/migrate/index.ts',
             './views/header/header.tsx',
             './views/footer/footer.tsx',
-            './views/connector/connector.ts',
+            './views/connector/connector.tsx',
         ],
         nfts: [
             './library/index.ts',
@@ -59,7 +59,7 @@ const configuration = ({
             './views/nfts/nfts.ts',
             './views/header/header.tsx',
             './views/footer/footer.tsx',
-            './views/connector/connector.ts',
+            './views/connector/connector.tsx',
         ],
         staking: [
             './library/index.ts',
@@ -71,7 +71,7 @@ const configuration = ({
             './views/staking/staking.ts',
             './views/header/header.tsx',
             './views/footer/footer.tsx',
-            './views/connector/connector.ts',
+            './views/connector/connector.tsx',
         ],
         worker: [
             './source/miner/scripts/worker.ts',
