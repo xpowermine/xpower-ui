@@ -18,7 +18,7 @@ const configuration = ({
             './views/tooltips/tooltips.ts',
             './views/about/about.ts',
             './views/header/header.tsx',
-            './views/footer/footer.ts',
+            './views/footer/footer.tsx',
         ],
         error: [
             './library/index.ts',
@@ -26,7 +26,7 @@ const configuration = ({
             './views/tooltips/tooltips.ts',
             './views/error/error.ts',
             './views/header/header.tsx',
-            './views/footer/footer.ts',
+            './views/footer/footer.tsx',
         ],
         home: [
             './library/index.ts',
@@ -37,7 +37,7 @@ const configuration = ({
             './views/location/location.ts',
             './views/home/home.ts',
             './views/header/header.tsx',
-            './views/footer/footer.ts',
+            './views/footer/footer.tsx',
             './views/connector/connector.ts',
         ],
         migrate: [
@@ -46,7 +46,7 @@ const configuration = ({
             './views/tooltips/tooltips.ts',
             './views/migrate/index.ts',
             './views/header/header.tsx',
-            './views/footer/footer.ts',
+            './views/footer/footer.tsx',
             './views/connector/connector.ts',
         ],
         nfts: [
@@ -58,7 +58,7 @@ const configuration = ({
             './views/location/location.ts',
             './views/nfts/nfts.ts',
             './views/header/header.tsx',
-            './views/footer/footer.ts',
+            './views/footer/footer.tsx',
             './views/connector/connector.ts',
         ],
         staking: [
@@ -70,7 +70,7 @@ const configuration = ({
             './views/location/location.ts',
             './views/staking/staking.ts',
             './views/header/header.tsx',
-            './views/footer/footer.ts',
+            './views/footer/footer.tsx',
             './views/connector/connector.ts',
         ],
         worker: [
