@@ -1,4 +1,4 @@
-import { Amount, Token } from '../redux/types';
+import { Amount, Level, Token } from '../redux/types';
 
 enum TokenLower {
     THOR = 'thor',
@@ -36,14 +36,26 @@ export class Tokenizer {
                 return TokenLower.HELA;
         }
     }
-    public static amount(token: Token, zeros: number): Amount {
+    public static amount(token: Token, level: Level): Amount {
         switch (token) {
             case Token.THOR:
-                return BigInt(zeros);
+                return BigInt(level);
             case Token.LOKI:
-                return 2n ** BigInt(zeros) - 1n;
+                return 2n ** BigInt(level) - 1n;
             case Token.ODIN:
-                return 16n ** BigInt(zeros) - 1n;
+                return 16n ** BigInt(level) - 1n;
+            case Token.HELA:
+                throw new Error('not applicable');
+        }
+    }
+    public static level(token: Token, amount: Amount): Level {
+        switch (token) {
+            case Token.THOR:
+                return Number(amount);
+            case Token.LOKI:
+                return (amount + 1n).toString(2).length - 1;
+            case Token.ODIN:
+                return (amount + 1n).toString(16).length - 1;
             case Token.HELA:
                 throw new Error('not applicable');
         }
