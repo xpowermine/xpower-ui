@@ -3,6 +3,7 @@
 
 import { App } from '../app';
 import { Chain, ChainId } from './chain';
+import { x40 } from '../functions';
 import { Address, Token, TokenInfo, Tokens } from '../redux/types';
 
 import detectProvider from '@metamask/detect-provider';
@@ -118,7 +119,9 @@ export class Blockchain extends EventEmitter {
         try {
             return await this.provider.then((p) => p?.request({
                 method: 'wallet_watchAsset', params: {
-                    type: 'ERC20', options: info
+                    type: 'ERC20', options: {
+                        ...info, address: x40(info.address)
+                    }
                 }
             }));
         } catch (ex) {
