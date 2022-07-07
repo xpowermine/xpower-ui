@@ -4,13 +4,16 @@ form#selector
   )
     a.btn.btn-outline-warning.selector-thor(
       type="button" data-bs-toggle="tooltip" data-bs-placement="top"
-      href=`?token=THOR` title="XPower THOR" data-bs-fixed="true"
+      href="?token=THOR" title="XPower THOR" data-bs-fixed="true"
     )
       span.spinner.spinner-border.spinner-border-sm.float-sm-start(
         role="status" style="display:none"
       )
       img.float-sm-start(
-          class="{{token}}" src=`/images/svg/thor-black.svg`
+          alt="Thor"
+          class="{{token}}"
+          height="24" width="24"
+          src=`/images/svg/thor-black.svg`
       )
       span.d-none.d-sm-inline: | THOR
     a.btn.btn-outline-warning.selector-loki(
@@ -18,10 +21,13 @@ form#selector
       href="?token=LOKI" title="XPower LOKI" data-bs-fixed="true"
     )
       span.spinner.spinner-border.spinner-border-sm.float-sm-start(
-        role="status" style="display:none"
+        role="status"  style="display:none"
       )
       img.float-sm-start(
-          class="{{token}}" src=`/images/svg/loki-black.svg`
+          alt="Loki"
+          class="{{token}}"
+          height="24" width="24"
+          src=`/images/svg/loki-black.svg`
       )
       span.d-none.d-sm-inline: | LOKI
     a.btn.btn-outline-warning.selector-odin(
@@ -32,6 +38,9 @@ form#selector
         role="status" style="display:none"
       )
       img.float-sm-start(
-          class="{{token}}" src=`/images/svg/odin-black.svg`
+          alt="Odin"
+          class="{{token}}"
+          height="24" width="24"
+          src=`/images/svg/odin-black.svg`
       )
       span.d-none.d-sm-inline: | ODIN
