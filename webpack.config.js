@@ -104,7 +104,7 @@ const configuration = ({
     },
     plugins: [
         new (require('eslint-webpack-plugin'))({
-            extensions: ['ts']
+            extensions: ['ts', 'tsx']
         }),
         new HTMLWebpackPlugin({
             templateContent: pug.renderFile('./views/migrate/index.pug', {
