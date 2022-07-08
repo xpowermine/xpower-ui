@@ -8,16 +8,19 @@ form#minting {
       width: calc(100% - 150px);
     }
     button.nn-counter {
+      border-radius: 0;
       border-right: none;
       cursor: default;
       width: 53.75px;
     }
     button.tx-counter {
+      border-radius: 0;
       border-right: none;
       cursor: default;
       width: 53.75px;
     }
     button.forget {
+      border-radius: 0 4px 4px 0;
       width: 42.5px;
     }
     margin-bottom: 1em;
