@@ -163,7 +163,7 @@ export class MiningSpeed extends React.Component<{
         return speed < 1 ? 'with-indicator' : '';
     }
     onWheel(
-        e: globalThis.WheelEvent
+        e: WheelEvent
     ) {
         e.preventDefault();
         e.stopPropagation();
@@ -178,18 +178,18 @@ export class MiningSpeed extends React.Component<{
         return false;
     }
     componentDidMount() {
-        const $progressor = document.querySelector<HTMLElement>(
-            '.progressor'
-        );
-        $progressor?.addEventListener('wheel', this.onWheel.bind(this), {
-            passive: false
-        });
         if (document.body.clientWidth <= 576) {
             const $inc = document.getElementById('increase');
             if ($inc) Tooltip.getInstance($inc)?.disable();
             const $dec = document.getElementById('decrease');
             if ($dec) Tooltip.getInstance($dec)?.disable();
         }
+        const $progressor = document.querySelector<HTMLElement>(
+            '.progressor'
+        );
+        $progressor?.addEventListener('wheel', this.onWheel.bind(this), {
+            passive: false
+        });
     }
     componentDidUpdate() {
         const $progressor = document.querySelector<HTMLElement>(
