@@ -69,7 +69,7 @@
   },
   "scripts": {
     "clean": "rimraf './public/{scripts,styles,views}/*'",
-    "lint": "eslint '**/*.ts'",
+    "lint": "eslint '**/*.ts' '**/*.tsx'",
     "wp-pro": "webpack --mode production",
     "wp-dev": "webpack --mode development --devtool source-map --watch",
     "ts-app": "ts-node ./bin/www.ts",
