@@ -106,6 +106,7 @@ const configuration = ({
         }),
         new HTMLWebpackPlugin({
             templateContent: pug.renderFile('./views/migrate/index.pug', {
+                DESCRIPTION: 'Upgrade old XPower tokens to v4',
                 PAGE: 'migrate', TITLE: 'XPower: Migrate',
                 ...env.default, filters, mode
             }),
@@ -115,6 +116,7 @@ const configuration = ({
         }),
         new HTMLWebpackPlugin({
             templateContent: pug.renderFile('./views/home/home.pug', {
+                DESCRIPTION: 'Mine & Mint Proof-of-Work Tokens on Avalanche',
                 PAGE: 'home', TITLE: 'XPower',
                 ...env.default, filters, mode
             }),
@@ -124,6 +126,7 @@ const configuration = ({
         }),
         new HTMLWebpackPlugin({
             templateContent: pug.renderFile('./views/nfts/nfts.pug', {
+                DESCRIPTION: 'Mint stakeable XPower NFTs on Avalanche',
                 PAGE: 'nfts', TITLE: 'XPower: NFTs', YEARS,
                 ...env.default, filters, mode
             }),
@@ -133,6 +136,7 @@ const configuration = ({
         }),
         new HTMLWebpackPlugin({
             templateContent: pug.renderFile('./views/staking/staking.pug', {
+                DESCRIPTION: 'Stake minted XPower NFTs on Avalanche',
                 PAGE: 'staking', TITLE: 'XPower: NFT Staking', YEARS,
                 ...env.default, filters, mode
             }),
@@ -142,6 +146,7 @@ const configuration = ({
         }),
         new HTMLWebpackPlugin({
             templateContent: pug.renderFile('./views/about/about.pug', {
+                DESCRIPTION: 'Mine & Mint Proof-of-Work Tokens on Avalanche',
                 PAGE: 'about', TITLE: 'XPower: About',
                 ...env.default, filters, mode
             }),
@@ -151,6 +156,7 @@ const configuration = ({
         }),
         new HTMLWebpackPlugin({
             templateContent: pug.renderFile('./views/error/error.pug', {
+                DESCRIPTION: 'Oops, something bad happened!',
                 PAGE: 'error', TITLE: 'XPower: Error',
                 ...env.default, filters, mode
             }),
