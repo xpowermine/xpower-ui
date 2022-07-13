@@ -1,11 +1,13 @@
+import { Year } from "../redux/types";
+
 export const MAX_YEAR = ({ inclusive } = { inclusive: false }) => {
-    return (inclusive ? 1 : 0) + new Date().getUTCFullYear();
+    return Number((inclusive ? 1 : 0) + new Date().getUTCFullYear());
 }
 export const MIN_YEAR = () => {
     return 2021;
 }
 export function* DeltaYears(
-    min = MIN_YEAR(), max?: number
+    min = MIN_YEAR(), max?: Year
 ) {
     if (typeof max !== 'number') {
         max = MAX_YEAR({ inclusive: true })
@@ -15,7 +17,7 @@ export function* DeltaYears(
     }
 }
 export function* Years(
-    min = MIN_YEAR(), max?: number
+    min = MIN_YEAR(), max?: Year
 ) {
     if (typeof max !== 'number') {
         max = MAX_YEAR({ inclusive: true })

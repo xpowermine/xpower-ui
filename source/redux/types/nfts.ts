@@ -1,4 +1,4 @@
-import { Amount, Supply } from './base';
+import { Amount, Supply, Year } from './base';
 
 export class Nft {
     static nameOf(level: NftLevel) {
@@ -115,7 +115,7 @@ export class Nft {
 }
 export type NftFullId = `${NftToken}:${NftCoreId}`;
 export type NftCoreId = `${NftIssue}${NftLevel}`;
-export type NftIssue = number;
+export type NftIssue = Year;
 export enum NftToken {
     THOR = 'THOR',
     LOKI = 'LOKI',

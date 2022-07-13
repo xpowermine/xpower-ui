@@ -25,7 +25,7 @@ export class PptWallet extends ERC1155Wallet {
         const year: BigNumber = await this.contract.then((c) => {
             return c?.year();
         });
-        return year.sub(delta_years).toBigInt();
+        return year.sub(delta_years).toNumber();
     }
     get contract(): Promise<Contract> {
         if (this._contract === undefined) {
