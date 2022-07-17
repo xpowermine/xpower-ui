@@ -6,7 +6,7 @@ import { Transaction } from 'ethers';
 import { Alert, alert, x40 } from '../../../source/functions';
 import { Amount, NftCoreId, Supply } from '../../../source/redux/types';
 import { Nft, NftFullId } from '../../../source/redux/types';
-import { NftLevel, NftLevels } from '../../../source/redux/types';
+import { NftLevel, NftName } from '../../../source/redux/types';
 import { OtfWallet, PptWallet, PptWalletMock } from '../../../source/wallet';
 import { DeltaYears } from '../../../source/years';
 import { Tooltip } from '../../tooltips';
@@ -57,7 +57,7 @@ App.onTokenSwitch(function resetImage() {
         reset_image($(el));
     });
     function reset_image($nft_minter: JQuery) {
-        const level = $nft_minter.data('level') as NftLevels;
+        const level = $nft_minter.data('level') as NftName;
         const $nft_details = $(`.nft-details[data-level=${level}]`);
         const display = $nft_details.css('display');
         if (display !== 'none') {

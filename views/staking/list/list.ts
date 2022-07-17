@@ -2,7 +2,7 @@ import './list.scss';
 import './amounts';
 
 import { App } from '../../../source/app';
-import { NftLevel, NftLevels } from '../../../source/redux/types';
+import { NftLevel, NftName } from '../../../source/redux/types';
 import { Nft, NftFullId } from '../../../source/redux/types';
 import { Amount, Supply } from '../../../source/redux/types';
 import { Tooltip } from '../../tooltips';
@@ -41,7 +41,7 @@ App.onPptChanged(function setLevelHeader(
 });
 $('.nft-minter .toggle').on('click', function toggleDetails(ev) {
     const $nft_minter = $(ev.target).parents('.nft-minter');
-    const level = $nft_minter.data('level') as NftLevels;
+    const level = $nft_minter.data('level') as NftName;
     const $nft_details = $(`.nft-details[data-level=${level}]`);
     const display = $nft_details.css('display');
     if (display === 'none') {
@@ -98,7 +98,7 @@ $('#toggle-all').on('click', function toggleList() {
             const $amount = $nft_minter.find('.amount');
             const amount = BigInt($amount.text());
             if (amount === 0n) {
-                const level = $nft_minter.data('level') as NftLevels;
+                const level = $nft_minter.data('level') as NftName;
                 const { amount: balance } = App.getPptTotalBy({
                     level: NftLevel[level], token: nft_token
                 });
