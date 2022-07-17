@@ -1,6 +1,9 @@
 import { Amount, Supply } from './base';
 
 export class Nft {
+    static nameOf(level: NftLevel) {
+        return NftLevel[level] as NftName | undefined;
+    }
     static token(id: string): NftToken {
         const [prefix] = id.split(':');
         switch (prefix.toLowerCase()) {
@@ -136,7 +139,7 @@ export enum NftLevel {
     ZETTA = 21,
     YOTTA = 24
 }
-export type NftLevels = keyof typeof NftLevel;
+export type NftName = keyof typeof NftLevel;
 export function* NftLevels() {
     for (const l in NftLevel) {
         if (isNaN(Number(l))) {
