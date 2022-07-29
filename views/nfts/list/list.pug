@@ -22,7 +22,9 @@ form#single-minting
         type="button" data-bs-toggle="tooltip" data-bs-placement="top"
         title=`Overall personal balance & supply (${levels[index]} NFTs)`
       )
-        | &middot;&middot;&middot;
+        span: | 0
+        span.d-none.d-sm-inline: | &nbsp;/&nbsp;
+        span.d-none.d-sm-inline: | 0
       div.btn-group(role="group")
         button.btn.btn-outline-warning.decrease(
           type="button" disabled
