@@ -1,6 +1,7 @@
+import { delayed } from "../../../source/functions";
 import { Tooltip } from "../../tooltips";
 
-$(window).on('load', function toggleApproval() {
+$(window).on('load', delayed(function toggleApproval() {
     const $approval = $('#burn-approval');
     $approval.on('approving', () => {
         $approval.prop('disabled', true);
@@ -12,8 +13,8 @@ $(window).on('load', function toggleApproval() {
     $approval.on('error', () => {
         $approval.prop('disabled', false);
     });
-});
-$(window).on('load', function toggleApprovalSpinner() {
+}));
+$(window).on('load', delayed(function toggleApprovalSpinner() {
     const $approval = $('#burn-approval');
     const $text = $approval.find('.text');
     const $spinner = $approval.find('.spinner');
@@ -32,8 +33,8 @@ $(window).on('load', function toggleApprovalSpinner() {
         $spinner.removeClass('spinner-grow');
         $text.text('Approve NFT Minting');
     });
-});
-$(window).on('load', function toggleApprovalTooltip() {
+}));
+$(window).on('load', delayed(function toggleApprovalTooltip() {
     const $approval = $('#burn-approval');
     $approval.on('approved', () => {
         Tooltip.getInstance($approval[0])?.disable();
@@ -41,4 +42,4 @@ $(window).on('load', function toggleApprovalTooltip() {
     $approval.on('error', () => {
         Tooltip.getInstance($approval[0])?.enable();
     });
-});
+}));
