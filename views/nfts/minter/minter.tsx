@@ -17,43 +17,73 @@ import { InfoCircle } from '../../../public/images/tsx';
 import './allowance';
 import './approving';
 
-export class NftMinter extends React.Component<{
-    token: Token
-}, {
-    token: Token
-}> {
+type Props = {
+    token: Token;
+    list: List;
+}
+type List = Record<NftLevel, {
+    amount: Amount;
+    max: Amount;
+    min: Amount;
+    toggled: boolean;
+}>
+type State = {
+    approved: boolean
+}
+export class NftMinter extends React.Component<
+    Props, State
+> {
     constructor(props: {
-        token: Token
+        token: Token, list: List
     }) {
         super(props);
         this.state = {
-            ...this.props
+            approved: false
         };
         this.events();
     }
     events() {
-        App.onTokenSwitch((token) => this.setState({
-            token
-        }));
+        Blockchain.onConnect(async/*check-allowance*/({
+            address, token
+        }) => {
+            const moe_wallet = new MoeWallet(address, token);
+            const nft_wallet = new NftWallet(address, token);
+            const nft_contract = await nft_wallet.contract;
+            const allowance = await moe_wallet.allowance(
+                address, nft_contract.address
+            );
+            this.setState({
+                approved: allowance > MID_UINT256
+            });
+        });
+        Blockchain.onceConnect(/*init-minter*/() => {
+            const $approval = $('#burn-approval');
+            /**
+             * @todo remove jQuery listener!
+             */
+            $approval.on('approved', () => {
+                this.setState({ approved: true });
+            });
+        });
     }
     render() {
-        const { token } = this.state;
-        return <div className='btn-group nft-batch-minter'
+        const { token, list } = this.props;
+        const { approved } = this.state;
+        return <div
+            className='btn-group nft-batch-minter'
             role='group'
         >
             {this.$toggleAll()}
             {this.$burnApproval(token)}
-            {this.$batchMinter()}
+            {this.$batchMinter(approved, list)}
             {this.$info(token)}
         </div>;
     }
     $toggleAll() {
         return <button type='button' id='toggle-all'
             className='btn btn-outline-warning no-ellipsis'
-            data-bs-placement='top'
-            data-bs-toggle='tooltip'
-            data-state='off'
-            title='Show all NFT levels'
+            data-bs-placement='top' data-bs-toggle='tooltip'
+            data-state='off' title='Show all NFT levels'
         >
             <i className='bi-chevron-down' />
         </button>;
@@ -66,23 +96,28 @@ export class NftMinter extends React.Component<{
             data-bs-placement='top' data-bs-toggle='tooltip'
             title={`Approve burning of ${token}s to enable NFT minting`}
         >
-            <span
-                className='spinner spinner-border spinner-border-sm float-start'
-                role='status' style={{ visibility: 'hidden' }}
-            />
+            {Spinner({
+                show: false, grow: true
+            })}
             <span className='text'>
                 Approve NFT Minting
             </span>
         </button>;
     }
-    $batchMinter() {
-        return <button type="button" id='batch-minter'
-            className='btn btn-outline-warning' disabled
+    $batchMinter(
+        approved: boolean, list: List
+    ) {
+        const classes = [
+            'btn btn-outline-warning', approved ? 'show' : ''
+        ];
+        return <button
+            type="button" id='batch-minter'
+            className={classes.join(' ')}
+            disabled={!this.positives(list)}
         >
-            <span
-                className='spinner spinner-border spinner-border-sm float-start'
-                role='status' style={{ visibility: 'hidden' }}
-            />
+            {Spinner({
+                show: false, grow: true
+            })}
             <span className='text'>
                 Mint NFTs
             </span>
@@ -99,43 +134,30 @@ export class NftMinter extends React.Component<{
             <InfoCircle fill={true} />
         </button>;
     }
-}
-Blockchain.onConnect(async function checkAllowance({
-    address, token
-}) {
-    const moe_wallet = new MoeWallet(address, token);
-    const nft_wallet = new NftWallet(address, token);
-    const nft_contract = await nft_wallet.contract;
-    const allowance = await moe_wallet.allowance(
-        address, nft_contract.address
-    );
-    const $minter = $('#batch-minter');
-    const approved = allowance > MID_UINT256;
-    if (approved) {
-        $minter.addClass('show');
-    } else {
-        $minter.removeClass('show');
-    }
-});
-Blockchain.onceConnect(function initMinter() {
-    function positives($amounts: JQuery<HTMLElement>) {
-        const amounts = Array.from(
-            $amounts.map((i, el) => BigInt($(el).text() || 0n))
+    positives(
+        list: List
+    ) {
+        const amounts = Object.values(list).map(
+            ({ amount }) => amount
         );
-        const positives = amounts.filter((a) => a > 0n);
+        const positives = amounts.filter(
+            (amount) => amount > 0n
+        );
         return positives.length > 0;
     }
-    const $minter = $('#batch-minter');
-    const $approval = $('#burn-approval');
-    $approval.on('approved', async () => {
-        $minter.prop('disabled', !positives($amounts));
-        $minter.addClass('show');
-    });
-    const $amounts = $('.amount');
-    $amounts.on('change', () => {
-        $minter.prop('disabled', !positives($amounts));
-    });
-});
+}
+function Spinner(
+    { show, grow }: { show: boolean, grow?: boolean }
+) {
+    const classes = [
+        'spinner spinner-border spinner-border-sm',
+        'float-start', grow ? 'spinner-grow' : ''
+    ];
+    return <span
+        className={classes.join(' ')} role='status'
+        style={{ visibility: show ? 'visible' : 'hidden' }}
+    />;
+}
 $(window).on('load', delayed(() => {
     $('#toggle-all').on('click', function toggleList() {
         const $toggle_all = $('#toggle-all');

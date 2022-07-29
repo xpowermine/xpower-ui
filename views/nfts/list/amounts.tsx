@@ -198,8 +198,7 @@ export class NftAmount extends Referable(
         }
     }
     componentDidMount() {
-        const $ref = this.ref<HTMLElement>('amount');
-        const $amount = $ref?.current;
+        const $amount = this.ref<HTMLElement>('amount').current;
         $amount?.addEventListener(
             'wheel', this.decreaseByWheel.bind(this), {
                 passive: false
@@ -210,17 +209,6 @@ export class NftAmount extends Referable(
                 passive: false
             }
         );
-    }
-    /**
-     * @todo remove jQuery trigger!
-     */
-    componentDidUpdate() {
-        const { amount, max, min, level } = this.props;
-        const $nft_minter = $(
-            `.nft-minter[data-level=${Nft.nameOf(level)}]`
-        );
-        const $amount = $nft_minter.find('.amount');
-        $amount.trigger('change', { amount, max, min });
     }
 }
 export default NftAmount;

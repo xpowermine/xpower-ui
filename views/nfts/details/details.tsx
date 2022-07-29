@@ -1,5 +1,5 @@
 import { App } from '../../../source/app';
-import { update } from '../../../source/functions';
+import { Referable, update } from '../../../source/functions';
 import { Address, Amount, Supply, Token } from '../../../source/redux/types';
 import { Nft, NftIssue, NftLevel, NftLevels } from '../../../source/redux/types';
 import { Years } from '../../../source/years';
@@ -15,7 +15,6 @@ import { InfoCircle } from '../../../public/images/tsx';
 type Props = {
     token: Token;
     level: NftLevel;
-    toggled: boolean;
 }
 type State = Record<NftLevel, Record<NftIssue, {
     target: {
@@ -26,23 +25,26 @@ type State = Record<NftLevel, Record<NftIssue, {
         valid: boolean | null,
         value: Amount | null
     };
+    fixed: boolean;
+    toggled: boolean;
 }>>
 function state(
     target = { valid: null, value: null },
     amount = { valid: null, value: null }
 ) {
+    const issues = Array.from(Years()).reverse();
+    const levels = Array.from(NftLevels());
     const state = Object.fromEntries(
-        Array.from(NftLevels()).map((nft_level) => [
-            nft_level, Object.fromEntries(
-                Array.from(Years()).map((nft_issue) => [
-                    nft_issue, { target, amount }
-                ])
-            )
-        ])
+        levels.map((level) => [level, Object.fromEntries(
+            issues.map((issue) => [issue, {
+                fixed: issues[0] - issue ? false : true,
+                toggled: false, target, amount
+            }])
+        )])
     );
     return state as State;
 }
-export class NftDetail extends React.Component<
+export class NftDetail extends Referable(React.Component)<
     Props, State
 > {
     constructor(props: Props) {
@@ -53,15 +55,17 @@ export class NftDetail extends React.Component<
         const years = Array.from(Years()).reverse();
         return <React.Fragment>{
             years.map((year) => this.$row(
-                years[0], year, this.props.level
+                year, this.props.level
             ))
         }</React.Fragment>;
     }
     $row(
-        curr_year: NftIssue,
         nft_issue: NftIssue,
         nft_level: NftLevel,
     ) {
+        const by_level = this.state[nft_level];
+        const by_issue = by_level[nft_issue];
+        const { fixed, toggled } = by_issue;
         const nft_token = Nft.token(
             this.props.token
         );
@@ -84,11 +88,11 @@ export class NftDetail extends React.Component<
         };
         return <React.Fragment key={core_id}>
             <div className='row year'
-                data-year={nft_issue} data-state={
-                    curr_year - nft_issue ? 'off' : 'on'
-                }
+                data-year={nft_issue}
+                data-state={fixed || toggled ? 'on' : 'off'}
+                ref={this.global_ref(`nft:${core_id}`)}
                 style={{
-                    display: curr_year - nft_issue ? 'none' : 'flex'
+                    display: fixed || toggled ? 'flex' : 'none'
                 }}
             >
                 <div className='col-sm nft-details-lhs'>
@@ -98,26 +102,29 @@ export class NftDetail extends React.Component<
                     {this.$issue(nft_issue, nft_level)}
                     {this.$balance(nft_issue, nft_level, nft)}
                     {this.$supply(nft_issue, nft_level, nft)}
-                    {this.$expander(nft_level)}
+                    {this.$expander(nft_issue, nft_level)}
                     {this.$target(nft_issue, nft_level, nft)}
                     {this.$amount(nft_issue, nft_level, nft)}
                     {this.$sender(nft_issue, nft_level)}
                 </div>
             </div>
             <hr className='year' style={{
-                display: curr_year - nft_issue ? 'none' : 'block'
+                display: fixed || toggled ? 'block' : 'none'
             }} />
         </React.Fragment>;
     }
     $image(
         nft_issue: NftIssue, nft_level: NftLevel
     ) {
-        const { toggled, token } = this.props;
+        const by_level = this.state[nft_level];
+        const by_issue = by_level[nft_issue];
+        const { fixed, toggled } = by_issue;
+        const { token } = this.props;
         return <NftImage
             token={token}
             level={nft_level}
             issue={nft_issue}
-            toggled={toggled}
+            toggled={fixed || toggled}
         />;
     }
     $issue(
@@ -183,10 +190,25 @@ export class NftDetail extends React.Component<
         </React.Fragment>;
     }
     $expander(
-        nft_level: NftLevel
+        nft_issue: NftIssue, nft_level: NftLevel,
     ) {
+        const by_level = this.state[nft_level];
+        const by_issue = by_level[nft_issue];
+        const { toggled } = by_issue;
         return <NftTxExpander
+            issue={nft_issue}
             level={nft_level}
+            onToggle={(flag) => {
+                const issues = Array.from(Years());
+                update<State>.bind(this)({
+                    [nft_level]: Object.fromEntries(
+                        issues.map((issue) => [issue, {
+                            toggled: !flag
+                        }])
+                    )
+                });
+            }}
+            toggled={toggled}
         />;
     }
     $target(
@@ -197,9 +219,10 @@ export class NftDetail extends React.Component<
         const by_issue = by_level[nft_issue];
         const { target } = by_issue;
         return <NftTxTarget
-            balance={balance}
             issue={nft_issue}
             level={nft_level}
+            balance={balance}
+            value={target.value}
             valid={target.valid}
             onChange={(value, flag) => {
                 update<State>.bind(this)({
@@ -220,11 +243,11 @@ export class NftDetail extends React.Component<
         const by_issue = by_level[nft_issue];
         const { amount } = by_issue;
         return <NftTxAmount
-            balance={balance}
             issue={nft_issue}
             level={nft_level}
-            valid={amount.valid}
+            balance={balance}
             value={amount.value}
+            valid={amount.valid}
             onChange={(value, flag) => {
                 update<State>.bind(this)({
                     [nft_level]: {
@@ -242,7 +265,7 @@ export class NftDetail extends React.Component<
         const { token } = this.props;
         const by_level = this.state[nft_level];
         const by_issue = by_level[nft_issue];
-        const { target, amount } = by_issue;
+        const { target, amount, toggled } = by_issue;
         return <NftTxSender
             token={token}
             issue={nft_issue}
@@ -261,6 +284,17 @@ export class NftDetail extends React.Component<
                     }
                 });
             }}
+            onToggle={(flag) => {
+                const issues = Array.from(Years());
+                update<State>.bind(this)({
+                    [nft_level]: Object.fromEntries(
+                        issues.map((issue) => [issue, {
+                            toggled: !flag
+                        }])
+                    )
+                });
+            }}
+            toggled={toggled}
         />;
     }
 }

@@ -10,6 +10,7 @@ type Props = {
     issue: NftIssue;
     level: NftLevel;
     balance: Amount;
+    value: Address | null;
     valid: boolean | null;
     onChange: (
         value: Address | null,
@@ -20,11 +21,12 @@ export class NftTxTarget extends React.Component<
     Props
 > {
     render() {
-        const { issue, level, balance } = this.props;
-        return this.$target(issue, level, balance);
+        const { issue, level, balance, value } = this.props;
+        return this.$target(issue, level, balance, value);
     }
     $target(
-        nft_issue: NftIssue, nft_level: NftLevel, balance: Amount
+        nft_issue: NftIssue, nft_level: NftLevel,
+        balance: Amount, value: Address | null
     ) {
         const classes = [
             'form-control', this.validity(this.props.valid)
@@ -36,7 +38,7 @@ export class NftTxTarget extends React.Component<
             <div className='input-group nft-transfer-to d-none d-sm-flex'
                 data-level={Nft.nameOf(nft_level)} role='group'
             >
-                <input type='text'
+                <input type='text' key={this.rekey(value)}
                     className={classes.join(' ')}
                     disabled={!balance} placeholder='0x…'
                     onChange={this.onChange.bind(this)}
@@ -55,7 +57,7 @@ export class NftTxTarget extends React.Component<
     cursor(
         balance: Amount
     ) {
-        return balance ? 'text' : 'not-allowed'
+        return balance ? 'text' : 'not-allowed';
     }
     validity(
         valid: boolean | null
@@ -96,5 +98,18 @@ export class NftTxTarget extends React.Component<
             this.props.onChange(value, false);
         }
     }
+    /**
+     * If value is null, then a new key is generated
+     * resetting the input field back to its default.
+     */
+    rekey(
+        value: Address | null
+    ) {
+        if (this._key === undefined || value === null) {
+            this._key = String.random();
+        }
+        return this._key;
+    }
+    private _key?: string;
 }
 export default NftTxTarget;

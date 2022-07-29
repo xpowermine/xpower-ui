@@ -2,11 +2,9 @@ import './list.scss';
 import './amounts';
 
 import { App } from '../../../source/app';
-import { Blockchain } from '../../../source/blockchain';
-import { delayed, update } from '../../../source/functions';
-import { Amount, Balance, Supply, Token } from '../../../source/redux/types';
-import { NftLevel, NftLevels, Nfts, Nft } from '../../../source/redux/types';
-import { MoeWallet, OnTransfer } from '../../../source/wallet';
+import { delayed } from '../../../source/functions';
+import { Amount, Supply, Token } from '../../../source/redux/types';
+import { Nft, Nfts, NftLevel, NftLevels } from '../../../source/redux/types';
 import { Tooltip } from '../../tooltips';
 
 import React from 'react';
@@ -14,72 +12,22 @@ import { NftAmount } from './amounts';
 import { NftDetail } from '../details/details';
 
 type Props = {
-    token: Token,
-    nfts: Nfts
+    token: Token;
+    nfts: Nfts;
+    list: List;
+    onList: (list: Partial<List>) => void;
 }
-type State = Record<NftLevel, {
-    amount: Amount,
-    max: Amount,
-    min: Amount,
-    toggled: boolean
-}>
-function state(
-    amount = 0n, max = 0n, min = 0n, toggled = false
-) {
-    const state = Object.fromEntries(
-        Array.from(NftLevels()).map((nft_level): [
-            NftLevel, State[NftLevel]
-        ] => [nft_level, {
-            amount, max, min, toggled
-        }])
-    );
-    return state as State;
-}
+type List = Record<NftLevel, {
+    amount: Amount;
+    max: Amount;
+    min: Amount;
+    toggled: boolean;
+}>;
 export class NftList extends React.Component<
-    Props, State
+    Props
 > {
-    constructor(props: {
-        token: Token, nfts: Nfts
-    }) {
-        super(props);
-        this.state = state();
-        this.events();
-    }
-    events() {
-        Blockchain.onConnect(async/*init-state*/({
-            address, token
-        }) => {
-            const moe_wallet = new MoeWallet(address, token);
-            set_state(await moe_wallet.balance);
-        });
-        Blockchain.onceConnect(async/*sync-state*/({
-            address, token
-        }) => {
-            const on_transfer: OnTransfer = async () => {
-                set_state(await moe_wallet.balance);
-            };
-            const moe_wallet = new MoeWallet(address, token);
-            moe_wallet.onTransfer(on_transfer);
-        }, {
-            per: () => App.token
-        });
-        const set_state = (
-            balance: Balance
-        ) => {
-            const state = Object.fromEntries(
-                Array.from(NftLevels()).map((nft_level): [
-                    NftLevel, Omit<State[NftLevel], 'toggled'>
-                ] => {
-                    const remainder = balance % 10n ** (BigInt(nft_level) + 3n);
-                    const amount = remainder / 10n ** BigInt(nft_level);
-                    return [nft_level, { amount, max: amount, min: 0n }];
-                })
-            );
-            update<State>.bind(this)(state);
-        };
-    }
     render() {
-        const { token } = this.props;
+        const { token, list } = this.props;
         return <React.Fragment>
             <label className='form-label'>
                 Mint & Manage {token} NFTs
@@ -97,7 +45,7 @@ export class NftList extends React.Component<
                 return this.$nftMinter(
                     token, nft_level,
                     by_token, by_level,
-                    this.state[nft_level]
+                    list[nft_level]
                 );
             })}
         </React.Fragment>;
@@ -106,7 +54,7 @@ export class NftList extends React.Component<
         token: Token, nft_level: NftLevel,
         by_token: { amount: Amount, supply: Supply },
         by_level: { amount: Amount, supply: Supply },
-        { amount, max, min, toggled }: State[NftLevel],
+        { amount, max, min, toggled }: List[NftLevel],
     ) {
         const nft_name = Nft.nameOf(nft_level);
         const array = [
@@ -129,7 +77,7 @@ export class NftList extends React.Component<
                     level={nft_level}
                     max={max} min={min}
                     onUpdate={({ amount }) => {
-                        update<State>.bind(this)({
+                        this.props.onList({
                             [nft_level]: { amount }
                         });
                     }}
@@ -142,7 +90,6 @@ export class NftList extends React.Component<
                 <NftDetail
                     token={token}
                     level={nft_level}
-                    toggled={toggled}
                 />
             </div>
         </React.Fragment>;
@@ -172,10 +119,10 @@ export class NftList extends React.Component<
     toggle(
         nft_level: NftLevel, toggled: boolean
     ) {
-        update<State>.bind(this)({
+        this.props.onList({
             [nft_level]: { toggled: !toggled }
         });
-    }
+}
     $minter(
         nft_level: NftLevel, token: Token
     ) {
@@ -231,10 +178,10 @@ export class NftList extends React.Component<
         const $toggles = document.querySelectorAll(
             `.nft-minter .toggle`
         );
-        $toggles.forEach(($toggle) => {
+        $toggles.forEach(delayed(($toggle: HTMLElement) => {
             Tooltip.getInstance($toggle)?.hide();
-        });
-        $toggles.forEach((delayed(($toggle: Element) => {
+        }));
+        $toggles.forEach((delayed(($toggle: HTMLElement) => {
             Tooltip.getInstance($toggle)?.dispose();
             Tooltip.getOrCreateInstance($toggle);
         })));

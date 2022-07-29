@@ -2,62 +2,52 @@ import { delayed } from '../../../source/functions';
 import { Tooltip } from '../../tooltips';
 
 import React from 'react';
-
-export class NftUiToggle extends React.Component {
+type Props = {
+    toggled: boolean;
+    onToggle: (toggled: boolean) => void;
+}
+export class NftUiToggle extends React.Component<
+    Props
+> {
     render() {
-        return this.$toggle();
+        const { toggled } = this.props;
+        return this.$toggle(toggled);
     }
-    $toggle() {
+    $toggle(
+        toggled: boolean
+    ) {
         return <button type='button'
             className='btn btn-outline-warning toggle-old no-ellipsis'
             data-bs-placement='top' data-bs-toggle='tooltip'
-            data-state='off' title='Show older NFTs'
+            data-state={toggled ? 'on' : 'off' }
+            onClick={this.toggle.bind(this, toggled)}
+            title={this.title(toggled)}
         >
-            <i className='bi-eye-fill' />
+            <i className={
+                toggled ? 'bi-eye-slash-fill' : 'bi-eye-fill'
+            } />
         </button>;
     }
+    title(
+        toggled: boolean
+    ) {
+        return toggled
+            ? 'Hide older NFTs'
+            : 'Show older NFTs';
+    }
+    toggle(
+        toggled: boolean
+    ) {
+        this.props.onToggle(toggled);
+    }
+    componentDidUpdate() {
+        const $toggles = document.querySelectorAll<HTMLElement>(
+            '.toggle-old'
+        );
+        $toggles.forEach(delayed(($el: HTMLElement) => {
+            Tooltip.getInstance($el)?.dispose();
+            Tooltip.getOrCreateInstance($el);
+        }));
+    }
 }
-$(window).on('load', delayed(() => {
-    $('.toggle-old').on('click', function toggleOldNfts(ev) {
-        const $nft_details = $(ev.target).parents(`.nft-details`);
-        const $rows_off = $nft_details.find(`.row.year[data-state=off]`);
-        const $rules = $nft_details.find(`.row.year[data-state=off]+hr`);
-        const state = $rows_off.data('state');
-        if (state === 'off') {
-            $rows_off.data('state', 'on');
-        } else {
-            $rows_off.data('state', 'off');
-        }
-        if (state === 'off') {
-            $rows_off.show();
-            $rules.show();
-        } else {
-            $rows_off.hide();
-            $rules.hide();
-        }
-        const $rows_all = $nft_details.find('.row.year');
-        const $toggles = $rows_all.find('.toggle-old');
-        if (state === 'off') {
-            $toggles.attr('title', 'Hide older NFTs');
-            $toggles.each((_, el) => {
-                Tooltip.getInstance(el)?.dispose();
-                Tooltip.getOrCreateInstance(el);
-            });
-        } else {
-            $toggles.attr('title', 'Show older NFTs');
-            $toggles.each((_, el) => {
-                Tooltip.getInstance(el)?.dispose();
-                Tooltip.getOrCreateInstance(el);
-            });
-        }
-        const $icons = $toggles.find('i');
-        if (state === 'off') {
-            $icons.removeClass('bi-eye-fill')
-            $icons.addClass('bi-eye-slash-fill')
-        } else {
-            $icons.removeClass('bi-eye-slash-fill')
-            $icons.addClass('bi-eye-fill')
-        }
-    });
-}));
 export default NftUiToggle;

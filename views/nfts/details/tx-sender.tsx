@@ -28,6 +28,8 @@ type Props = {
     onSending?(): void;
     onSent?(): void;
     onError?(): void;
+    toggled: boolean;
+    onToggle: (toggled: boolean) => void;
 }
 type State = {
     status: Status;
@@ -61,7 +63,10 @@ export class NftTxSender extends Referable(React.Component)<
             className='btn-group nft-sender d-none d-sm-flex'
             data-id={nft_id} data-level={Nft.nameOf(nft_level)}
         >
-            <NftUiToggle />
+            <NftUiToggle
+                toggled={this.props.toggled}
+                onToggle={this.props.onToggle}
+            />
             {this.$button(nft_issue, nft_level)}
             {this.$info(nft_issue, nft_level)}
         </div>;

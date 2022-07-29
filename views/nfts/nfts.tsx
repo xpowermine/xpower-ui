@@ -2,10 +2,11 @@ import './nfts.scss';
 
 import { App } from '../../source/app';
 import { Blockchain } from '../../source/blockchain';
-import { x40 } from '../../source/functions';
-import { Nft, Nfts, Token } from '../../source/redux/types';
-import { NftFullId, NftLevels } from '../../source/redux/types';
-import { NftWallet } from '../../source/wallet';
+import { update, x40 } from '../../source/functions';
+import { Amount, Balance, Token } from '../../source/redux/types';
+import { Nft, Nfts, NftFullId } from '../../source/redux/types';
+import { NftLevel, NftLevels } from '../../source/redux/types';
+import { MoeWallet, NftWallet, OnTransfer } from '../../source/wallet';
 import { OnTransferBatch } from '../../source/wallet';
 import { OnTransferSingle } from '../../source/wallet';
 import { Years } from '../../source/years';
@@ -21,18 +22,41 @@ type Props = {
     token: Token
 }
 type State = {
-    token: Token,
-    nfts: Nfts
+    token: Token;
+    nfts: Nfts;
+    list: List;
 }
+type List = Record<NftLevel, {
+    amount: Amount;
+    max: Amount;
+    min: Amount;
+    toggled: boolean;
+}>;
+function list(
+    amount = 0n, max = 0n, min = 0n, toggled = false
+) {
+    const entries = Array.from(NftLevels()).map(
+        (nft_level): [
+            NftLevel, List[NftLevel]
+        ] => [nft_level, {
+            amount, max, min, toggled
+        }]
+    );
+    return Object.fromEntries(entries) as List;
+}
+
 export class UiNfts extends React.Component<
     Props, State
 > {
     constructor(props: Props) {
         super(props);
+        const { token } = this.props;
         this.state = {
-            ...this.props, nfts: App.getNfts({
-                token: Nft.token(props.token)
-            })
+            list: list(),
+            nfts: App.getNfts({
+                token: Nft.token(token)
+            }),
+            token
         };
         this.events();
     }
@@ -44,15 +68,56 @@ export class UiNfts extends React.Component<
             const token = Nft.token(this.props.token);
             this.setState({ nfts: App.getNfts({ token }) });
         });
+        Blockchain.onConnect(async/*init-state*/({
+            address, token
+        }) => {
+            const moe_wallet = new MoeWallet(address, token);
+            set_list(await moe_wallet.balance);
+        });
+        Blockchain.onceConnect(async/*sync-state*/({
+            address, token
+        }) => {
+            const on_transfer: OnTransfer = async () => {
+                set_list(await moe_wallet.balance);
+            };
+            const moe_wallet = new MoeWallet(address, token);
+            moe_wallet.onTransfer(on_transfer);
+        }, {
+            per: () => App.token
+        });
+        const set_list = (
+            balance: Balance
+        ) => {
+            const entries = Array.from(NftLevels()).map((nft_level): [
+                NftLevel, Omit<List[NftLevel], 'toggled'>
+            ] => {
+                const remainder = balance % 10n ** (BigInt(nft_level) + 3n);
+                const amount = remainder / 10n ** BigInt(nft_level);
+                return [nft_level, { amount, max: amount, min: 0n }];
+            });
+            update<State>.bind(this)({
+                list: Object.fromEntries(entries)
+            });
+        };
     }
     render() {
-        const { token, nfts } = this.state;
+        const { token, nfts, list } = this.state;
         return <React.Fragment>
             <form id='single-minting'>
-                <NftList token={token} nfts={nfts} />
+                <NftList
+                    onList={(list) => {
+                        update<State>.bind(this)({ list });
+                    }}
+                    list={list}
+                    nfts={nfts}
+                    token={token}
+                />
             </form>
             <form id='batch-minting'>
-                <NftMinter token={token} />
+                <NftMinter
+                    list={list}
+                    token={token}
+                />
             </form>
         </React.Fragment>;
     }
